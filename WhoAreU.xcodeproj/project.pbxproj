@@ -31,6 +31,8 @@
 		122262D01E8B7E6900F51FAE /* AWSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CD1E8B7E6900F51FAE /* AWSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		122262D11E8B7E6900F51FAE /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; };
 		122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		122262D71E8B81FC00F51FAE /* S3File.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D61E8B81FC00F51FAE /* S3File.m */; };
+		122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D91E8B822B00F51FAE /* ObjectIdStore.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -76,6 +78,10 @@
 		122262BD1E8B79B900F51FAE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		122262CD1E8B7E6900F51FAE /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSCore.framework; sourceTree = "<group>"; };
 		122262CE1E8B7E6900F51FAE /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
+		122262D51E8B81FC00F51FAE /* S3File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = S3File.h; sourceTree = "<group>"; };
+		122262D61E8B81FC00F51FAE /* S3File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = S3File.m; sourceTree = "<group>"; };
+		122262D81E8B822B00F51FAE /* ObjectIdStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdStore.h; sourceTree = "<group>"; };
+		122262D91E8B822B00F51FAE /* ObjectIdStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectIdStore.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +147,10 @@
 		1222627A1E8B6E8000F51FAE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				122262D51E8B81FC00F51FAE /* S3File.h */,
+				122262D61E8B81FC00F51FAE /* S3File.m */,
+				122262D81E8B822B00F51FAE /* ObjectIdStore.h */,
+				122262D91E8B822B00F51FAE /* ObjectIdStore.m */,
 				1222627B1E8B6E8000F51FAE /* main.m */,
 				122262B21E8B76EC00F51FAE /* WhoAreU.pch */,
 			);
@@ -181,6 +191,7 @@
 				122262741E8B6E8000F51FAE /* Frameworks */,
 				122262751E8B6E8000F51FAE /* Resources */,
 				122262D31E8B7E6900F51FAE /* Embed Frameworks */,
+				122262D41E8B810700F51FAE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -243,12 +254,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		122262D41E8B810700F51FAE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework/strip-frameworks.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		122262731E8B6E8000F51FAE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
+				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 			);
