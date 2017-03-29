@@ -1,0 +1,15 @@
+//
+//  WhoAreU.pch
+//  WhoAreU
+//
+//  Created by 한정욱 on 2017. 3. 29..
+//  Copyright © 2017년 SMARTLY CO. All rights reserved.
+//
+
+#ifndef WhoAreU_pch
+#define WhoAreU_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* WhoAreU_pch */
