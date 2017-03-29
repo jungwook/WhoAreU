@@ -28,8 +28,8 @@
         configuration.localDatastoreEnabled = YES;
     }]];
     
-    //    [self setupAppearances];
     [self setupAWSDefaultACLs];
+        
     return YES;
 }
 
