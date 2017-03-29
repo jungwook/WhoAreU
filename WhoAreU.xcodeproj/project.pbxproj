@@ -27,9 +27,26 @@
 		122262C61E8B79B900F51FAE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262BB1E8B79B900F51FAE /* Security.framework */; };
 		122262C71E8B79B900F51FAE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262BC1E8B79B900F51FAE /* StoreKit.framework */; };
 		122262C81E8B79B900F51FAE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262BD1E8B79B900F51FAE /* SystemConfiguration.framework */; };
-		122262CB1E8B79DB00F51FAE /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262C91E8B79DB00F51FAE /* AWSCore.framework */; };
-		122262CC1E8B79DB00F51FAE /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CA1E8B79DB00F51FAE /* AWSS3.framework */; };
+		122262CF1E8B7E6900F51FAE /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CD1E8B7E6900F51FAE /* AWSCore.framework */; };
+		122262D01E8B7E6900F51FAE /* AWSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CD1E8B7E6900F51FAE /* AWSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		122262D11E8B7E6900F51FAE /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; };
+		122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		122262D31E8B7E6900F51FAE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */,
+				122262D01E8B7E6900F51FAE /* AWSCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,8 +74,8 @@
 		122262BB1E8B79B900F51FAE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		122262BC1E8B79B900F51FAE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		122262BD1E8B79B900F51FAE /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		122262C91E8B79DB00F51FAE /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSCore.framework; sourceTree = "<group>"; };
-		122262CA1E8B79DB00F51FAE /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
+		122262CD1E8B7E6900F51FAE /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSCore.framework; sourceTree = "<group>"; };
+		122262CE1E8B7E6900F51FAE /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,8 +94,8 @@
 				122262C61E8B79B900F51FAE /* Security.framework in Frameworks */,
 				122262C71E8B79B900F51FAE /* StoreKit.framework in Frameworks */,
 				122262C81E8B79B900F51FAE /* SystemConfiguration.framework in Frameworks */,
-				122262CB1E8B79DB00F51FAE /* AWSCore.framework in Frameworks */,
-				122262CC1E8B79DB00F51FAE /* AWSS3.framework in Frameworks */,
+				122262CF1E8B7E6900F51FAE /* AWSCore.framework in Frameworks */,
+				122262D11E8B7E6900F51FAE /* AWSS3.framework in Frameworks */,
 				122262B01E8B6EA600F51FAE /* Parse.framework in Frameworks */,
 				122262B11E8B6EA600F51FAE /* ParseUI.framework in Frameworks */,
 				122262AF1E8B6EA600F51FAE /* Bolts.framework in Frameworks */,
@@ -133,8 +150,8 @@
 		122262911E8B6E8D00F51FAE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				122262C91E8B79DB00F51FAE /* AWSCore.framework */,
-				122262CA1E8B79DB00F51FAE /* AWSS3.framework */,
+				122262CD1E8B7E6900F51FAE /* AWSCore.framework */,
+				122262CE1E8B7E6900F51FAE /* AWSS3.framework */,
 				122262B31E8B79B900F51FAE /* AudioToolbox.framework */,
 				122262B41E8B79B900F51FAE /* CFNetwork.framework */,
 				122262B51E8B79B900F51FAE /* CoreGraphics.framework */,
@@ -163,6 +180,7 @@
 				122262731E8B6E8000F51FAE /* Sources */,
 				122262741E8B6E8000F51FAE /* Frameworks */,
 				122262751E8B6E8000F51FAE /* Resources */,
+				122262D31E8B7E6900F51FAE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

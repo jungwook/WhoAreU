@@ -16,7 +16,20 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [self setupAWSCredentials];
+
+    // register subclasses like below
+    //    [User registerSubclass];
+    
+    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+        configuration.applicationId = @"WhoAreU";
+        configuration.server = @"http://mondays.kr:1336/WhoAreU";
+        configuration.clientKey = @"whoareu";
+        configuration.localDatastoreEnabled = YES;
+    }]];
+    
+    //    [self setupAppearances];
+    [self setupAWSDefaultACLs];
     return YES;
 }
 
@@ -46,6 +59,27 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+
+- (void)setupAWSDefaultACLs
+{
+    PFACL *defaultACL = [PFACL ACL];
+    defaultACL.publicReadAccess = YES;
+    defaultACL.publicWriteAccess = YES;
+    
+    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
+}
+
+- (void)setupAWSCredentials
+{
+    AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc] initWithRegionType:AWSRegionUSEast1 identityPoolId:@"us-east-1:cf811cfd-3215-4274-aec5-82040e033bfe"];
+    AWSServiceConfiguration *configuration = [[AWSServiceConfiguration alloc] initWithRegion:AWSRegionAPNortheast2 credentialsProvider:credentialsProvider];
+    configuration.maxRetryCount = 3;
+    AWSServiceManager.defaultServiceManager.defaultServiceConfiguration = configuration;
+    
+    [AWSLogger defaultLogger].logLevel = AWSLogLevelError;
+}
+
 
 
 @end
