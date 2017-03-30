@@ -19,7 +19,7 @@
     [self setupAWSCredentials];
 
     // register subclasses like below
-    //    [User registerSubclass];
+    [User registerSubclass];
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";

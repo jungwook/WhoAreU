@@ -28,4 +28,7 @@
 @import AWSCore;
 @import AWSS3;
 
+#import "User.h"
+#import "Extensions.h"
+
 #endif /* WhoAreU_pch */

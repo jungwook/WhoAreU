@@ -33,6 +33,10 @@
 		122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		122262D71E8B81FC00F51FAE /* S3File.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D61E8B81FC00F51FAE /* S3File.m */; };
 		122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D91E8B822B00F51FAE /* ObjectIdStore.m */; };
+		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
+		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
+		126154101E8CCBB600F2AD4F /* Setup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540F1E8CCBB600F2AD4F /* Setup.m */; };
+		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -82,6 +86,14 @@
 		122262D61E8B81FC00F51FAE /* S3File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = S3File.m; sourceTree = "<group>"; };
 		122262D81E8B822B00F51FAE /* ObjectIdStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdStore.h; sourceTree = "<group>"; };
 		122262D91E8B822B00F51FAE /* ObjectIdStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectIdStore.m; sourceTree = "<group>"; };
+		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		126154081E8CBBEC00F2AD4F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		1261540A1E8CC85C00F2AD4F /* Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions.m; sourceTree = "<group>"; };
+		1261540C1E8CC87100F2AD4F /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
+		1261540E1E8CCBB600F2AD4F /* Setup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Setup.h; sourceTree = "<group>"; };
+		1261540F1E8CCBB600F2AD4F /* Setup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Setup.m; sourceTree = "<group>"; };
+		126154121E8CCC7900F2AD4F /* PhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoView.h; sourceTree = "<group>"; };
+		126154131E8CCC7900F2AD4F /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +143,9 @@
 		122262791E8B6E8000F51FAE /* WhoAreU */ = {
 			isa = PBXGroup;
 			children = (
+				126154111E8CCC6500F2AD4F /* Views */,
+				1261540D1E8CCB9B00F2AD4F /* View Controllers */,
+				126154061E8CBBAD00F2AD4F /* Engine */,
 				1222627D1E8B6E8000F51FAE /* AppDelegate.h */,
 				1222627E1E8B6E8000F51FAE /* AppDelegate.m */,
 				122262801E8B6E8000F51FAE /* ViewController.h */,
@@ -178,6 +193,35 @@
 				122262A11E8B6EA600F51FAE /* ParseUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		126154061E8CBBAD00F2AD4F /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				126154071E8CBBEC00F2AD4F /* User.h */,
+				126154081E8CBBEC00F2AD4F /* User.m */,
+				1261540A1E8CC85C00F2AD4F /* Extensions.m */,
+				1261540C1E8CC87100F2AD4F /* Extensions.h */,
+			);
+			name = Engine;
+			sourceTree = "<group>";
+		};
+		1261540D1E8CCB9B00F2AD4F /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1261540E1E8CCBB600F2AD4F /* Setup.h */,
+				1261540F1E8CCBB600F2AD4F /* Setup.m */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		126154111E8CCC6500F2AD4F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				126154121E8CCC7900F2AD4F /* PhotoView.h */,
+				126154131E8CCC7900F2AD4F /* PhotoView.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,8 +319,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
+				126154101E8CCBB600F2AD4F /* Setup.m in Sources */,
+				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
@@ -456,6 +504,7 @@
 				122262901E8B6E8000F51FAE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
