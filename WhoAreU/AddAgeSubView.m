@@ -27,7 +27,6 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    self.backgroundColor = [UIColor clearColor];
     [self.age setPickerForAgeGroupsWithHandler:^(id item) {
         if (self.nextBlock) {
             self.nextBlock(item);

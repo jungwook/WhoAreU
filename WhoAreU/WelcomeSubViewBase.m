@@ -18,4 +18,23 @@
 }
 */
 
+- (void)awakeFromNib
+{
+    __LF
+    [super awakeFromNib];
+
+    self.backgroundColor = [UIColor clearColor];
+    
+}
+
+- (void)viewOnTop
+{
+    [self.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([view isKindOfClass:[UITextField class]]) {
+            [view becomeFirstResponder];
+        }
+    }];
+}
+
+
 @end

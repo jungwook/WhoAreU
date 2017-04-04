@@ -20,6 +20,7 @@
 {
     BOOL empty = [self.nickname.text isEqualToString:@""];
     if (!empty && self.nextBlock) {
+        [self.nickname resignFirstResponder];
         self.nextBlock(self.nickname.text);
     }
     return empty;
@@ -28,15 +29,14 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    NSLog(@"awakeFrom");
     
-    [self.nickname becomeFirstResponder];
     self.nickname.delegate = self;
 }
 
 - (IBAction)nextView:(id)sender {
     BOOL empty = [self.nickname.text isEqualToString:@""];
     if (!empty && self.nextBlock) {
+        [self.nickname resignFirstResponder];
         self.nextBlock(self.nickname.text);
     }
 }

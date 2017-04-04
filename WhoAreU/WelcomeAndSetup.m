@@ -77,7 +77,7 @@
         NSLog(@"nickname is %@", nickname);
     };
     
-    
+    [[self.subViews firstObject] viewOnTop];
 }
 
 - (void) scrollToPreviousPage
@@ -88,6 +88,10 @@
     
     CGFloat nextPage = MAX(roundf(pageFraction)-1, 0);
     [self.scrollView setContentOffset:CGPointMake(pageWidth*nextPage, 0) animated:YES];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[self.subViews objectAtIndex:nextPage] viewOnTop];
+    });
 }
 
 - (void) scrollToNextPage
@@ -98,6 +102,9 @@
     
     CGFloat nextPage = MIN(roundf(pageFraction)+1, self.subViews.count-1);
     [self.scrollView setContentOffset:CGPointMake(pageWidth*nextPage, 0) animated:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[self.subViews objectAtIndex:nextPage] viewOnTop];
+    });
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
