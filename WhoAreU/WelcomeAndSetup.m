@@ -8,6 +8,8 @@
 
 #import "WelcomeAndSetup.h"
 
+
+
 @interface WelcomeAndSetup ()
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIScrollView *backgroundScrollView;

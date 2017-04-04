@@ -17,4 +17,8 @@
 @property (nonatomic) IBInspectable CGFloat borderWidth;
 @end
 
+@interface UILabel(Shadow)
+@property (nonatomic) IBInspectable BOOL shadow;
+@end
+
 #endif /* Extensions_h */

@@ -44,3 +44,29 @@
 
 @end
 
+
+@implementation UILabel(Shadow)
+@dynamic shadow;
+
+- (void)setShadow:(BOOL)shadow
+{
+    if (shadow) {
+        self.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.layer.shadowOffset = CGSizeMake(0, 0);
+        self.layer.shadowRadius = 3;
+        self.layer.shadowOpacity = 0.4;
+    }
+    else {
+        self.layer.shadowColor = nil;
+        self.layer.shadowOffset = CGSizeMake(0, 0);
+        self.layer.shadowRadius = 0;
+        self.layer.shadowOpacity = 0;
+    }
+}
+
+- (BOOL)shadow
+{
+    return (BOOL) self.layer.shadowColor;
+}
+
+@end

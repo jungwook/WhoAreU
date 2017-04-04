@@ -7,6 +7,11 @@
 //
 
 #import "AddIntroductionsSubView.h"
+#import "ListField.h"
+
+@interface AddIntroductionsSubView()
+@property (weak, nonatomic) IBOutlet ListField *introduction;
+@end
 
 @implementation AddIntroductionsSubView
 
@@ -18,4 +23,14 @@
 }
 */
 
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    [self.introduction setPickerForIntroductionsWithHandler:^(id item) {
+        if (self.nextBlock) {
+            self.nextBlock(item);
+        }
+    }];
+}
 @end
