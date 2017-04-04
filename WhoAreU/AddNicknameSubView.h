@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WelcomeSubViewBase.h"
 
-@interface AddNicknameSubView : UIView <UITextFieldDelegate>
-@property (nonatomic, copy) StringBlock nextBlock;
-@property (nonatomic, copy) VoidBlock prevBlock;
+@interface AddNicknameSubView : WelcomeSubViewBase <UITextFieldDelegate>
 @end

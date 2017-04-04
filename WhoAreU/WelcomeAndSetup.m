@@ -7,28 +7,31 @@
 //
 
 #import "WelcomeAndSetup.h"
-#import "AddNicknameSubView.h"
 
 @interface WelcomeAndSetup ()
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIScrollView *backgroundScrollView;
-@property NSArray<UIView*> *subViews;
+@property NSArray<WelcomeSubViewBase*> *subViews;
 @end
 
 @implementation WelcomeAndSetup
+
+#define NIBVIEW(__X__) [[[NSBundle mainBundle] loadNibNamed:__X__ owner:self options:nil] firstObject]
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    AddNicknameSubView *addNicknameSubView = [[[NSBundle mainBundle] loadNibNamed:@"AddNicknameSubView" owner:self options:nil] firstObject];
+    WelcomeSubViewBase *addNicknameSubView = NIBVIEW(@"AddNicknameSubView");
+    WelcomeSubViewBase *addAgeSubView = NIBVIEW(@"AddAgeSubView");
+    WelcomeSubViewBase *addIntroductionsSubView = NIBVIEW(@"AddIntroductionsSubView");
+    WelcomeSubViewBase *addMediaSubView = NIBVIEW(@"AddMediaSubView");
     
     self.subViews = @[
                       addNicknameSubView,
-                      [[[NSBundle mainBundle] loadNibNamed:@"AddMediaSubView" owner:self options:nil] firstObject],
-                      [[[NSBundle mainBundle] loadNibNamed:@"AddAgeSubView" owner:self options:nil] firstObject],
-                      [[[NSBundle mainBundle] loadNibNamed:@"AddIntroductionSubView" owner:self options:nil] firstObject],
-                      [[[NSBundle mainBundle] loadNibNamed:@"AddAgeSubView" owner:self options:nil] firstObject],
+                      addAgeSubView,
+                      addIntroductionsSubView,
+                      addMediaSubView,
                       ];
     
     NSLog(@"SubViews:%@", self.subViews);
@@ -61,15 +64,20 @@
     [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     [self.view addSubview:self.scrollView];
     
-    [self.subViews enumerateObjectsUsingBlock:^(UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+    [self.subViews enumerateObjectsUsingBlock:^(WelcomeSubViewBase * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
         view.frame = CGRectMake(idx*viewWidth, 0, viewWidth, viewHeight);
         [self.scrollView addSubview:view];
+        view.prevBlock = ^(){
+            [self scrollToPreviousPage];
+        };
     }];
     
     addNicknameSubView.nextBlock = ^(NSString* nickname) {
         [self scrollToNextPage];
         NSLog(@"nickname is %@", nickname);
     };
+    
+    
 }
 
 - (void) scrollToPreviousPage

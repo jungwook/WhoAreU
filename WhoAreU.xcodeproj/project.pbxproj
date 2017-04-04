@@ -40,11 +40,14 @@
 		126154101E8CCBB600F2AD4F /* Setup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540F1E8CCBB600F2AD4F /* Setup.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 		12A95B8B1E92181B00DBD4A6 /* AddNicknameSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8A1E92181B00DBD4A6 /* AddNicknameSubView.xib */; };
-		12A95B8D1E92183A00DBD4A6 /* AddIntroductionSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8C1E92183A00DBD4A6 /* AddIntroductionSubView.xib */; };
+		12A95B8D1E92183A00DBD4A6 /* AddIntroductionsSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8C1E92183A00DBD4A6 /* AddIntroductionsSubView.xib */; };
 		12A95B8F1E92184500DBD4A6 /* AddAgeSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8E1E92184500DBD4A6 /* AddAgeSubView.xib */; };
 		12A95B911E92185C00DBD4A6 /* AddMediaSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B901E92185C00DBD4A6 /* AddMediaSubView.xib */; };
 		12A95B941E92188200DBD4A6 /* WelcomeAndSetup.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */; };
 		12A95B971E92380C00DBD4A6 /* AddNicknameSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B961E92380C00DBD4A6 /* AddNicknameSubView.m */; };
+		12A95B9B1E93586700DBD4A6 /* WelcomeSubViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B9A1E93586700DBD4A6 /* WelcomeSubViewBase.m */; };
+		12A95B9E1E93590600DBD4A6 /* AddIntroductionsSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B9D1E93590600DBD4A6 /* AddIntroductionsSubView.m */; };
+		12A95BA11E935D2000DBD4A6 /* AddMediaSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,13 +110,19 @@
 		126154121E8CCC7900F2AD4F /* PhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoView.h; sourceTree = "<group>"; };
 		126154131E8CCC7900F2AD4F /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
 		12A95B8A1E92181B00DBD4A6 /* AddNicknameSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddNicknameSubView.xib; sourceTree = "<group>"; };
-		12A95B8C1E92183A00DBD4A6 /* AddIntroductionSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddIntroductionSubView.xib; sourceTree = "<group>"; };
+		12A95B8C1E92183A00DBD4A6 /* AddIntroductionsSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddIntroductionsSubView.xib; sourceTree = "<group>"; };
 		12A95B8E1E92184500DBD4A6 /* AddAgeSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddAgeSubView.xib; sourceTree = "<group>"; };
 		12A95B901E92185C00DBD4A6 /* AddMediaSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddMediaSubView.xib; sourceTree = "<group>"; };
 		12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeAndSetup.h; sourceTree = "<group>"; };
 		12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WelcomeAndSetup.m; sourceTree = "<group>"; };
 		12A95B951E92380C00DBD4A6 /* AddNicknameSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNicknameSubView.h; sourceTree = "<group>"; };
 		12A95B961E92380C00DBD4A6 /* AddNicknameSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNicknameSubView.m; sourceTree = "<group>"; };
+		12A95B991E93586700DBD4A6 /* WelcomeSubViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeSubViewBase.h; sourceTree = "<group>"; };
+		12A95B9A1E93586700DBD4A6 /* WelcomeSubViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WelcomeSubViewBase.m; sourceTree = "<group>"; };
+		12A95B9C1E93590600DBD4A6 /* AddIntroductionsSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddIntroductionsSubView.h; sourceTree = "<group>"; };
+		12A95B9D1E93590600DBD4A6 /* AddIntroductionsSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddIntroductionsSubView.m; sourceTree = "<group>"; };
+		12A95B9F1E935D2000DBD4A6 /* AddMediaSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddMediaSubView.h; sourceTree = "<group>"; };
+		12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddMediaSubView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,13 +262,19 @@
 				12A95B8A1E92181B00DBD4A6 /* AddNicknameSubView.xib */,
 				12A95B951E92380C00DBD4A6 /* AddNicknameSubView.h */,
 				12A95B961E92380C00DBD4A6 /* AddNicknameSubView.m */,
-				12A95B8C1E92183A00DBD4A6 /* AddIntroductionSubView.xib */,
+				12A95B8C1E92183A00DBD4A6 /* AddIntroductionsSubView.xib */,
+				12A95B9C1E93590600DBD4A6 /* AddIntroductionsSubView.h */,
+				12A95B9D1E93590600DBD4A6 /* AddIntroductionsSubView.m */,
 				12A95B8E1E92184500DBD4A6 /* AddAgeSubView.xib */,
 				12144DB81E934EFB000828BF /* AddAgeSubView.h */,
 				12144DB91E934EFB000828BF /* AddAgeSubView.m */,
 				12A95B901E92185C00DBD4A6 /* AddMediaSubView.xib */,
+				12A95B9F1E935D2000DBD4A6 /* AddMediaSubView.h */,
+				12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */,
 				12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */,
 				12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */,
+				12A95B991E93586700DBD4A6 /* WelcomeSubViewBase.h */,
+				12A95B9A1E93586700DBD4A6 /* WelcomeSubViewBase.m */,
 			);
 			name = "Welcome and Setup";
 			sourceTree = "<group>";
@@ -331,7 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				12A95B911E92185C00DBD4A6 /* AddMediaSubView.xib in Resources */,
-				12A95B8D1E92183A00DBD4A6 /* AddIntroductionSubView.xib in Resources */,
+				12A95B8D1E92183A00DBD4A6 /* AddIntroductionsSubView.xib in Resources */,
 				1222628A1E8B6E8000F51FAE /* LaunchScreen.storyboard in Resources */,
 				122262871E8B6E8000F51FAE /* Assets.xcassets in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
@@ -366,11 +381,14 @@
 				12A95B941E92188200DBD4A6 /* WelcomeAndSetup.m in Sources */,
 				12A95B971E92380C00DBD4A6 /* AddNicknameSubView.m in Sources */,
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
+				12A95B9B1E93586700DBD4A6 /* WelcomeSubViewBase.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				12A95B9E1E93590600DBD4A6 /* AddIntroductionsSubView.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
 				12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
+				12A95BA11E935D2000DBD4A6 /* AddMediaSubView.m in Sources */,
 				126154101E8CCBB600F2AD4F /* Setup.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WelcomeSubViewBase.h"
 
 @interface WelcomeAndSetup : UIViewController <UIScrollViewDelegate>
 
