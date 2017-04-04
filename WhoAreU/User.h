@@ -12,11 +12,6 @@ typedef NS_OPTIONS(NSUInteger, GenderType)
 {
     kGenderTypeMale = 0,
     kGenderTypeFemale,
-    kGenderTypeMaleGay,
-    kGenderTypeMaleBi,
-    kGenderTypeFemaleLesbian,
-    kGenderTypeFemaleBi,
-    kGenderTypeUnknown
 };
 
 @interface User : PFUser <PFSubclassing>
@@ -29,5 +24,8 @@ typedef NS_OPTIONS(NSUInteger, GenderType)
 @property GenderType            gender;
 
 + (User*)me;
++ (NSArray *)genders;
++ (NSArray*) ageGroups;
++ (NSArray*) introductions;
 
 @end

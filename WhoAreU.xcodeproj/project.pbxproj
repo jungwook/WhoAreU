@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
+		12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB91E934EFB000828BF /* AddAgeSubView.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
 		122262821E8B6E8000F51FAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262811E8B6E8000F51FAE /* ViewController.m */; };
@@ -61,6 +63,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
+		12144DB61E934CEA000828BF /* ListField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListField.m; sourceTree = "<group>"; };
+		12144DB81E934EFB000828BF /* AddAgeSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddAgeSubView.h; sourceTree = "<group>"; };
+		12144DB91E934EFB000828BF /* AddAgeSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddAgeSubView.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1222627B1E8B6E8000F51FAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1222627D1E8B6E8000F51FAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -213,6 +219,8 @@
 		126154061E8CBBAD00F2AD4F /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				12144DB51E934CEA000828BF /* ListField.h */,
+				12144DB61E934CEA000828BF /* ListField.m */,
 				126154071E8CBBEC00F2AD4F /* User.h */,
 				126154081E8CBBEC00F2AD4F /* User.m */,
 				1261540A1E8CC85C00F2AD4F /* Extensions.m */,
@@ -247,6 +255,8 @@
 				12A95B961E92380C00DBD4A6 /* AddNicknameSubView.m */,
 				12A95B8C1E92183A00DBD4A6 /* AddIntroductionSubView.xib */,
 				12A95B8E1E92184500DBD4A6 /* AddAgeSubView.xib */,
+				12144DB81E934EFB000828BF /* AddAgeSubView.h */,
+				12144DB91E934EFB000828BF /* AddAgeSubView.m */,
 				12A95B901E92185C00DBD4A6 /* AddMediaSubView.xib */,
 				12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */,
 				12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */,
@@ -359,6 +369,8 @@
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
+				12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */,
+				12144DB71E934CEA000828BF /* ListField.m in Sources */,
 				126154101E8CCBB600F2AD4F /* Setup.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,

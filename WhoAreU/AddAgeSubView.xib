@@ -1,29 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB">
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="AddAgeSubView">
             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="JK2-qg-a8v">
-                    <rect key="frame" x="226" y="0.0" width="94" height="29"/>
-                </stepper>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nwL-Yf-v9A">
+                    <rect key="frame" x="16" y="20" width="34" height="30"/>
+                    <state key="normal" title="Back"/>
+                    <connections>
+                        <action selector="previousView:" destination="iN0-l3-epB" eventType="touchUpInside" id="6wH-kD-dyE"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WhoAreU" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WIh-Ro-4Cf">
+                    <rect key="frame" x="57" y="100" width="207" height="36"/>
+                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="30"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Now enter your age group" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VTV-S9-Ti0">
+                    <rect key="frame" x="57" y="176" width="207" height="53"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="53" id="6aP-do-i6L"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="your age group" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0Jl-mw-xqo" customClass="ListField">
+                    <rect key="frame" x="98" y="237" width="125" height="40"/>
+                    <color key="backgroundColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="0.39800941779999999" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="bQQ-Nl-tjH"/>
+                    </constraints>
+                    <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" keyboardAppearance="alert" returnKeyType="next"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                            <real key="value" value="8"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a8O-Fz-fqQ">
+                    <rect key="frame" x="141" y="327" width="39" height="30"/>
+                    <state key="normal" title="NEXT">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="0.40000000600000002" alpha="0.52258133561643838" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
             <constraints>
-                <constraint firstItem="JK2-qg-a8v" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="9Rk-mr-mCX"/>
-                <constraint firstAttribute="trailing" secondItem="JK2-qg-a8v" secondAttribute="trailing" id="aSm-Xz-ix9"/>
+                <constraint firstItem="a8O-Fz-fqQ" firstAttribute="top" secondItem="0Jl-mw-xqo" secondAttribute="bottom" constant="50" id="59R-nL-Pl7"/>
+                <constraint firstItem="0Jl-mw-xqo" firstAttribute="centerX" secondItem="VTV-S9-Ti0" secondAttribute="centerX" id="9xM-E9-lV7"/>
+                <constraint firstItem="VTV-S9-Ti0" firstAttribute="trailing" secondItem="WIh-Ro-4Cf" secondAttribute="trailing" id="Cki-m8-Wi2"/>
+                <constraint firstItem="nwL-Yf-v9A" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="Giw-j5-sqW"/>
+                <constraint firstItem="a8O-Fz-fqQ" firstAttribute="centerX" secondItem="0Jl-mw-xqo" secondAttribute="centerX" id="GtO-3C-VfC"/>
+                <constraint firstItem="VTV-S9-Ti0" firstAttribute="leading" secondItem="WIh-Ro-4Cf" secondAttribute="leading" id="Ttq-73-EvS"/>
+                <constraint firstItem="0Jl-mw-xqo" firstAttribute="top" secondItem="VTV-S9-Ti0" secondAttribute="bottom" constant="8" id="fUe-OV-R43"/>
+                <constraint firstItem="WIh-Ro-4Cf" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="fmr-JZ-HWs"/>
+                <constraint firstItem="nwL-Yf-v9A" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="h8F-2I-ycG"/>
+                <constraint firstItem="VTV-S9-Ti0" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="nEk-rE-ZMV"/>
+                <constraint firstItem="VTV-S9-Ti0" firstAttribute="top" secondItem="WIh-Ro-4Cf" secondAttribute="bottom" constant="40" id="roy-qa-ucq"/>
+                <constraint firstItem="WIh-Ro-4Cf" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="100" id="s6C-oX-ufR"/>
+                <constraint firstItem="0Jl-mw-xqo" firstAttribute="top" secondItem="VTV-S9-Ti0" secondAttribute="bottom" constant="8" id="wDZ-py-9Yx"/>
             </constraints>
+            <connections>
+                <outlet property="age" destination="0Jl-mw-xqo" id="CPx-hn-kUY"/>
+            </connections>
         </view>
     </objects>
 </document>

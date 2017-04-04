@@ -1,14 +1,14 @@
 //
-//  AddNicknameSubView.h
+//  AddAgeSubView.h
 //  WhoAreU
 //
-//  Created by 한정욱 on 2017. 4. 3..
+//  Created by 한정욱 on 2017. 4. 4..
 //  Copyright © 2017년 SMARTLY CO. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface AddNicknameSubView : UIView <UITextFieldDelegate>
+@interface AddAgeSubView : UIView
 @property (nonatomic, copy) StringBlock nextBlock;
 @property (nonatomic, copy) VoidBlock prevBlock;
 @end

@@ -16,20 +16,13 @@
 
 @implementation AddNicknameSubView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        NSLog(@"initWithCoder");
+    BOOL empty = [self.nickname.text isEqualToString:@""];
+    if (!empty && self.nextBlock) {
+        self.nextBlock(self.nickname.text);
     }
-    return self;
+    return empty;
 }
 
 - (void)awakeFromNib
@@ -37,11 +30,15 @@
     [super awakeFromNib];
     NSLog(@"awakeFrom");
     
-    self.nextBut.enabled = false;
     [self.nickname becomeFirstResponder];
+    self.nickname.delegate = self;
 }
 
 - (IBAction)nextView:(id)sender {
+    BOOL empty = [self.nickname.text isEqualToString:@""];
+    if (!empty && self.nextBlock) {
+        self.nextBlock(self.nickname.text);
+    }
 }
 
 @end

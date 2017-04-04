@@ -9,6 +9,8 @@
 #ifndef WhoAreU_pch
 #define WhoAreU_pch
 
+#define __LF NSLog(@"%s", __FUNCTION__);
+
 #define kJPEGCompressionLow 0.2f
 #define kJPEGCompressionMedium 0.4f
 #define kJPEGCompressionDefault 0.6f
@@ -27,6 +29,12 @@
 @import Bolts;
 @import AWSCore;
 @import AWSS3;
+
+typedef void(^BOOLBlock)(BOOL value);
+typedef void(^VoidBlock)(void);
+typedef void(^ImageBlock)(UIImage* image);
+typedef void(^ArrayBlock)(NSArray* array);
+typedef void(^StringBlock)(NSString* string);
 
 #import "User.h"
 #import "Extensions.h"

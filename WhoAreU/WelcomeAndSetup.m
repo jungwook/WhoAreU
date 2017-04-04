@@ -7,6 +7,7 @@
 //
 
 #import "WelcomeAndSetup.h"
+#import "AddNicknameSubView.h"
 
 @interface WelcomeAndSetup ()
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -20,8 +21,10 @@
 {
     [super viewDidLoad];
     
+    AddNicknameSubView *addNicknameSubView = [[[NSBundle mainBundle] loadNibNamed:@"AddNicknameSubView" owner:self options:nil] firstObject];
+    
     self.subViews = @[
-                      [[[NSBundle mainBundle] loadNibNamed:@"AddNicknameSubView" owner:self options:nil] firstObject],
+                      addNicknameSubView,
                       [[[NSBundle mainBundle] loadNibNamed:@"AddMediaSubView" owner:self options:nil] firstObject],
                       [[[NSBundle mainBundle] loadNibNamed:@"AddAgeSubView" owner:self options:nil] firstObject],
                       [[[NSBundle mainBundle] loadNibNamed:@"AddIntroductionSubView" owner:self options:nil] firstObject],
@@ -62,6 +65,31 @@
         view.frame = CGRectMake(idx*viewWidth, 0, viewWidth, viewHeight);
         [self.scrollView addSubview:view];
     }];
+    
+    addNicknameSubView.nextBlock = ^(NSString* nickname) {
+        [self scrollToNextPage];
+        NSLog(@"nickname is %@", nickname);
+    };
+}
+
+- (void) scrollToPreviousPage
+{
+    CGRect keyFrame = self.view.frame;
+    CGFloat pageWidth = CGRectGetWidth(keyFrame);
+    CGFloat pageFraction = self.scrollView.contentOffset.x / pageWidth;
+    
+    CGFloat nextPage = MAX(roundf(pageFraction)-1, 0);
+    [self.scrollView setContentOffset:CGPointMake(pageWidth*nextPage, 0) animated:YES];
+}
+
+- (void) scrollToNextPage
+{
+    CGRect keyFrame = self.view.frame;
+    CGFloat pageWidth = CGRectGetWidth(keyFrame);
+    CGFloat pageFraction = self.scrollView.contentOffset.x / pageWidth;
+    
+    CGFloat nextPage = MIN(roundf(pageFraction)+1, self.subViews.count-1);
+    [self.scrollView setContentOffset:CGPointMake(pageWidth*nextPage, 0) animated:YES];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
