@@ -54,7 +54,7 @@
                     </userDefinedRuntimeAttributes>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a8O-Fz-fqQ">
-                    <rect key="frame" x="141" y="327" width="39" height="30"/>
+                    <rect key="frame" x="265" y="20" width="39" height="30"/>
                     <state key="normal" title="NEXT">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -65,12 +65,12 @@
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
             <constraints>
-                <constraint firstItem="a8O-Fz-fqQ" firstAttribute="top" secondItem="0Jl-mw-xqo" secondAttribute="bottom" constant="50" id="59R-nL-Pl7"/>
+                <constraint firstAttribute="trailing" secondItem="a8O-Fz-fqQ" secondAttribute="trailing" constant="16" id="0Zd-Qv-YJp"/>
                 <constraint firstItem="0Jl-mw-xqo" firstAttribute="centerX" secondItem="VTV-S9-Ti0" secondAttribute="centerX" id="9xM-E9-lV7"/>
                 <constraint firstItem="VTV-S9-Ti0" firstAttribute="trailing" secondItem="WIh-Ro-4Cf" secondAttribute="trailing" id="Cki-m8-Wi2"/>
                 <constraint firstItem="nwL-Yf-v9A" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="Giw-j5-sqW"/>
-                <constraint firstItem="a8O-Fz-fqQ" firstAttribute="centerX" secondItem="0Jl-mw-xqo" secondAttribute="centerX" id="GtO-3C-VfC"/>
                 <constraint firstItem="VTV-S9-Ti0" firstAttribute="leading" secondItem="WIh-Ro-4Cf" secondAttribute="leading" id="Ttq-73-EvS"/>
+                <constraint firstItem="a8O-Fz-fqQ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="az1-0U-ddU"/>
                 <constraint firstItem="0Jl-mw-xqo" firstAttribute="top" secondItem="VTV-S9-Ti0" secondAttribute="bottom" constant="8" id="fUe-OV-R43"/>
                 <constraint firstItem="WIh-Ro-4Cf" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="fmr-JZ-HWs"/>
                 <constraint firstItem="nwL-Yf-v9A" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="h8F-2I-ycG"/>

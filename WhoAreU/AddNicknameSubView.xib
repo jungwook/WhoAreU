@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -30,7 +30,7 @@
                         <constraint firstAttribute="height" constant="53" id="bfr-O0-Hrv"/>
                     </constraints>
                     <string key="text">Welcome to WhoAreU. 
-You can start by entering your nickname!</string>
+You can start by choosing your nickname!</string>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
@@ -57,7 +57,7 @@ You can start by entering your nickname!</string>
                     </connections>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUc-TW-zEW">
-                    <rect key="frame" x="167.5" y="327" width="39" height="30"/>
+                    <rect key="frame" x="320" y="20" width="39" height="30"/>
                     <state key="normal" title="NEXT">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -65,25 +65,20 @@ You can start by entering your nickname!</string>
                         <action selector="nextView:" destination="iN0-l3-epB" eventType="touchUpInside" id="lpt-ll-bVT"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rm9-Fy-ICF">
-                    <rect key="frame" x="16" y="20" width="34" height="30"/>
-                    <state key="normal" title="back"/>
-                </button>
             </subviews>
+            <color key="backgroundColor" white="0.078020134229999996" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="ttt-LO-4ty" firstAttribute="leading" secondItem="Pbu-HI-xqp" secondAttribute="leading" id="4Z8-Bp-2ic"/>
-                <constraint firstItem="rm9-Fy-ICF" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="HUO-1e-7GO"/>
-                <constraint firstItem="rm9-Fy-ICF" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="Je8-sM-D3O"/>
                 <constraint firstItem="bg4-gY-f8W" firstAttribute="top" secondItem="ttt-LO-4ty" secondAttribute="bottom" constant="8" id="NC9-oa-736"/>
+                <constraint firstAttribute="trailing" secondItem="qUc-TW-zEW" secondAttribute="trailing" constant="16" id="T8g-ts-8VJ"/>
                 <constraint firstAttribute="trailing" secondItem="Pbu-HI-xqp" secondAttribute="trailing" constant="16" id="V5O-q1-Hxc"/>
                 <constraint firstItem="ttt-LO-4ty" firstAttribute="trailing" secondItem="Pbu-HI-xqp" secondAttribute="trailing" id="YMC-hM-NCP"/>
                 <constraint firstAttribute="trailing" secondItem="bg4-gY-f8W" secondAttribute="trailing" constant="68" id="dIR-bx-1F8"/>
-                <constraint firstItem="qUc-TW-zEW" firstAttribute="centerX" secondItem="bg4-gY-f8W" secondAttribute="centerX" id="kZY-hN-WM3"/>
                 <constraint firstItem="ttt-LO-4ty" firstAttribute="top" secondItem="Pbu-HI-xqp" secondAttribute="bottom" constant="40" id="lSG-Xy-pEh"/>
                 <constraint firstItem="Pbu-HI-xqp" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="100" id="lhg-dd-nZa"/>
+                <constraint firstItem="qUc-TW-zEW" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="pCA-yY-ZFM"/>
                 <constraint firstItem="Pbu-HI-xqp" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="uJ8-mj-Ujq"/>
                 <constraint firstItem="bg4-gY-f8W" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="68" id="xag-Qz-JCC"/>
-                <constraint firstItem="qUc-TW-zEW" firstAttribute="top" secondItem="bg4-gY-f8W" secondAttribute="bottom" constant="50" id="ygF-AE-WUO"/>
             </constraints>
             <connections>
                 <outlet property="nextBut" destination="qUc-TW-zEW" id="U8x-dJ-oAd"/>

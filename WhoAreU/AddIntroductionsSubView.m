@@ -23,11 +23,25 @@
 }
 */
 
+- (IBAction)previousView:(id)sender {
+    if (self.prevBlock) {
+        self.prevBlock();
+    }
+}
+
+- (IBAction)nextView:(id)sender {
+    BOOL empty = [self.introduction.text isEqualToString:@""];
+    if (!empty && self.nextBlock) {
+        self.nextBlock(self.introduction.text);
+    }
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
     
     [self.introduction setPickerForIntroductionsWithHandler:^(id item) {
+        __LF
         if (self.nextBlock) {
             self.nextBlock(item);
         }

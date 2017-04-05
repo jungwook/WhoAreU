@@ -49,6 +49,8 @@
 		12A95B9B1E93586700DBD4A6 /* WelcomeSubViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B9A1E93586700DBD4A6 /* WelcomeSubViewBase.m */; };
 		12A95B9E1E93590600DBD4A6 /* AddIntroductionsSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95B9D1E93590600DBD4A6 /* AddIntroductionsSubView.m */; };
 		12A95BA11E935D2000DBD4A6 /* AddMediaSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */; };
+		12A95BA31E948BED00DBD4A6 /* MediaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95BA21E948BED00DBD4A6 /* MediaCell.xib */; };
+		12A95BA51E948D1300DBD4A6 /* AddMediaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95BA41E948D1300DBD4A6 /* AddMediaCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -126,6 +128,8 @@
 		12A95B9D1E93590600DBD4A6 /* AddIntroductionsSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddIntroductionsSubView.m; sourceTree = "<group>"; };
 		12A95B9F1E935D2000DBD4A6 /* AddMediaSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddMediaSubView.h; sourceTree = "<group>"; };
 		12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddMediaSubView.m; sourceTree = "<group>"; };
+		12A95BA21E948BED00DBD4A6 /* MediaCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MediaCell.xib; sourceTree = "<group>"; };
+		12A95BA41E948D1300DBD4A6 /* AddMediaCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddMediaCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,6 +280,8 @@
 				12A95B901E92185C00DBD4A6 /* AddMediaSubView.xib */,
 				12A95B9F1E935D2000DBD4A6 /* AddMediaSubView.h */,
 				12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */,
+				12A95BA21E948BED00DBD4A6 /* MediaCell.xib */,
+				12A95BA41E948D1300DBD4A6 /* AddMediaCell.xib */,
 				12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */,
 				12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */,
 				12A95B991E93586700DBD4A6 /* WelcomeSubViewBase.h */,
@@ -356,7 +362,9 @@
 				122262871E8B6E8000F51FAE /* Assets.xcassets in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
 				12A95B8B1E92181B00DBD4A6 /* AddNicknameSubView.xib in Resources */,
+				12A95BA31E948BED00DBD4A6 /* MediaCell.xib in Resources */,
 				12A95B8F1E92184500DBD4A6 /* AddAgeSubView.xib in Resources */,
+				12A95BA51E948D1300DBD4A6 /* AddMediaCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

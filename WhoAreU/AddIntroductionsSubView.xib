@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -46,29 +46,35 @@
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCL-xV-jJR">
+                    <rect key="frame" x="16" y="20" width="34" height="30"/>
+                    <state key="normal" title="Back"/>
+                    <connections>
+                        <action selector="previousView:" destination="iN0-l3-epB" eventType="touchUpInside" id="OfX-Ra-xg6"/>
+                    </connections>
+                </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ldF-Ys-vWf">
-                    <rect key="frame" x="168.5" y="327" width="39" height="30"/>
+                    <rect key="frame" x="320" y="20" width="39" height="30"/>
                     <state key="normal" title="NEXT">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCL-xV-jJR">
-                    <rect key="frame" x="16" y="20" width="34" height="30"/>
-                    <state key="normal" title="back"/>
+                    <connections>
+                        <action selector="nextView:" destination="iN0-l3-epB" eventType="touchUpInside" id="Ubt-yP-8Ui"/>
+                    </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" red="0.65790163589999995" green="1" blue="0.32605390099999998" alpha="0.48854880136986301" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="8ic-fY-BC1" firstAttribute="leading" secondItem="h5d-nq-ZVy" secondAttribute="leading" id="J97-IP-ZGc"/>
                 <constraint firstItem="h5d-nq-ZVy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="100" id="PQb-q0-7Nf"/>
                 <constraint firstItem="fCL-xV-jJR" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="WFM-UE-TyO"/>
+                <constraint firstAttribute="trailing" secondItem="ldF-Ys-vWf" secondAttribute="trailing" constant="16" id="XKU-Ru-ua2"/>
+                <constraint firstItem="ldF-Ys-vWf" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="XbK-My-whx"/>
                 <constraint firstItem="fCL-xV-jJR" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="cuz-jE-9aX"/>
                 <constraint firstItem="h5d-nq-ZVy" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="fE3-U5-MNC"/>
                 <constraint firstItem="K11-tm-4h3" firstAttribute="top" secondItem="8ic-fY-BC1" secondAttribute="bottom" constant="8" id="gOt-e5-PnK"/>
                 <constraint firstItem="8ic-fY-BC1" firstAttribute="trailing" secondItem="h5d-nq-ZVy" secondAttribute="trailing" id="lM5-IP-vR4"/>
                 <constraint firstItem="8ic-fY-BC1" firstAttribute="centerX" secondItem="h5d-nq-ZVy" secondAttribute="centerX" id="lz1-Nc-S7g"/>
-                <constraint firstItem="ldF-Ys-vWf" firstAttribute="centerX" secondItem="K11-tm-4h3" secondAttribute="centerX" id="mXL-8g-ca2"/>
-                <constraint firstItem="ldF-Ys-vWf" firstAttribute="top" secondItem="K11-tm-4h3" secondAttribute="bottom" constant="50" id="nrp-iX-dca"/>
                 <constraint firstItem="K11-tm-4h3" firstAttribute="centerX" secondItem="8ic-fY-BC1" secondAttribute="centerX" id="p7n-FM-vCX"/>
                 <constraint firstItem="8ic-fY-BC1" firstAttribute="top" secondItem="h5d-nq-ZVy" secondAttribute="bottom" constant="40" id="w5S-Ks-duB"/>
             </constraints>

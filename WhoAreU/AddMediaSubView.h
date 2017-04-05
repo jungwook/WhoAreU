@@ -8,6 +8,6 @@
 
 #import "WelcomeSubViewBase.h"
 
-@interface AddMediaSubView : WelcomeSubViewBase
+@interface AddMediaSubView : WelcomeSubViewBase <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end
