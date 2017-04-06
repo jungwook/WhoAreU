@@ -20,6 +20,7 @@
 
     // register subclasses like below
     [User registerSubclass];
+    [Media registerSubclass];
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";

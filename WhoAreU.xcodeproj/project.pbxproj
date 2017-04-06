@@ -10,6 +10,7 @@
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB91E934EFB000828BF /* AddAgeSubView.m */; };
+		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
 		122262821E8B6E8000F51FAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262811E8B6E8000F51FAE /* ViewController.m */; };
@@ -75,6 +76,8 @@
 		12144DB61E934CEA000828BF /* ListField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListField.m; sourceTree = "<group>"; };
 		12144DB81E934EFB000828BF /* AddAgeSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddAgeSubView.h; sourceTree = "<group>"; };
 		12144DB91E934EFB000828BF /* AddAgeSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddAgeSubView.m; sourceTree = "<group>"; };
+		121E15B31E95FE59009CCF51 /* MediaPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPicker.h; sourceTree = "<group>"; };
+		121E15B41E95FE59009CCF51 /* MediaPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPicker.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1222627B1E8B6E8000F51FAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1222627D1E8B6E8000F51FAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -243,6 +246,8 @@
 				1261540C1E8CC87100F2AD4F /* Extensions.h */,
 				12082F921E9376D700E8D051 /* ShadowLabel.h */,
 				12082F931E9376D700E8D051 /* ShadowLabel.m */,
+				121E15B31E95FE59009CCF51 /* MediaPicker.h */,
+				121E15B41E95FE59009CCF51 /* MediaPicker.m */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -407,6 +412,7 @@
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
+				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

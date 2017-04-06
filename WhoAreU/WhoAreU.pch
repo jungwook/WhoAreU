@@ -30,12 +30,6 @@
 @import AWSCore;
 @import AWSS3;
 
-typedef void(^BOOLBlock)(BOOL value);
-typedef void(^VoidBlock)(void);
-typedef void(^ImageBlock)(UIImage* image);
-typedef void(^ArrayBlock)(NSArray* array);
-typedef void(^StringBlock)(NSString* string);
-
 #import "User.h"
 #import "Extensions.h"
 

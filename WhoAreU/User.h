@@ -8,11 +8,44 @@
 
 #import <Parse/Parse.h>
 
+typedef void(^BOOLBlock)(BOOL value);
+typedef void(^VoidBlock)(void);
+typedef void(^ImageBlock)(UIImage* image);
+typedef void(^ArrayBlock)(NSArray* array);
+typedef void(^StringBlock)(NSString* string);
+
 typedef NS_OPTIONS(NSUInteger, GenderType)
 {
     kGenderTypeMale = 0,
     kGenderTypeFemale,
 };
+
+typedef NS_OPTIONS(BOOL, MediaType)
+{
+    kMediaTypePhoto = 0,
+    kMediaTypeVideo
+};
+
+typedef NS_OPTIONS(BOOL, SourceType)
+{
+    kSourceUploaded = 0,
+    kSourceTaken,
+};
+
+@interface Media : PFObject <PFSubclassing>
+@property (retain) NSString* userId;
+@property (retain) NSString* comment;
+@property (retain) NSString* thumbnail;
+@property (retain) NSString* media;
+@property MediaType type;
+@property CGSize size;
+@property BOOL source;
+
+- (void) fetched:(VoidBlock)handler;
+- (void) saved:(VoidBlock)handler;
+- (void) imageLoaded:(ImageBlock)block;
+- (void) thumbnailLoaded:(ImageBlock)block;
+@end
 
 @interface User : PFUser <PFSubclassing>
 @property (retain) NSString*    nickname;
@@ -29,3 +62,5 @@ typedef NS_OPTIONS(NSUInteger, GenderType)
 + (NSArray*) introductions;
 
 @end
+
+
