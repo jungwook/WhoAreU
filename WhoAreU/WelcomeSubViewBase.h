@@ -11,5 +11,6 @@
 @interface WelcomeSubViewBase : UIView
 @property (nonatomic, copy) StringBlock nextBlock;
 @property (nonatomic, copy) VoidBlock prevBlock;
+@property (nonatomic, weak) UIViewController *parent;
 - (void) viewOnTop;
 @end

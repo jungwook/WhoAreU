@@ -13,6 +13,12 @@
 - (void) deleteUserMedia:(Media*)media;
 @end
 
+@protocol AddMediaCellDelegate <NSObject>
+@required
+- (void) addMedia;
+
+@end
+
 @interface AddMediaSubView : WelcomeSubViewBase <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end

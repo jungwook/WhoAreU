@@ -8,11 +8,29 @@
 
 #import "AddMediaSubView.h"
 #import "S3File.h"
+#import "MediaPicker.h"
+
+@interface AddMediaCell : UICollectionViewCell
+@property (nonatomic, weak) id<AddMediaCellDelegate> delegate;
+@end
+
+@implementation AddMediaCell
+
+- (IBAction)addMedia:(id)sender {
+    if (self.delegate) {
+        [self.delegate addMedia];
+    }
+}
+
+
+@end
+
 
 @interface DeletableMediaCell : UICollectionViewCell
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activity;
 @property (nonatomic, strong) Media *media;
 @property (nonatomic, weak) id<DeletableMediaCellDelegate> delegate;
+@property (nonatomic, weak) UIViewController *parent;
 @end
 
 @implementation DeletableMediaCell
@@ -54,6 +72,16 @@ void drawImage(UIImage *image, UIView* view)
 
 - (IBAction)deleteMedia:(id)sender
 {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"My Alert"
+                                                                   message:@"This is an alert."
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+    [self.parent presentViewController:alert animated:YES completion:nil];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(deleteUserMedia:)]) {
         [self.delegate deleteUserMedia:self.media];
     }
@@ -62,9 +90,9 @@ void drawImage(UIImage *image, UIView* view)
 @end
 
 
-@interface AddMediaSubView()
+@interface AddMediaSubView() <AddMediaCellDelegate>
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (strong, nonatomic) NSArray* media;
+@property (strong, nonatomic) NSMutableArray* media;
 @end
 
 @implementation AddMediaSubView
@@ -84,7 +112,7 @@ void drawImage(UIImage *image, UIView* view)
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     
-    [self.collectionView registerNib:[UINib nibWithNibName:@"MediaCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"MediaCell"];
+    [self.collectionView registerNib:[UINib nibWithNibName:@"DeletableMediaCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"DeletableMediaCell"];
     [self.collectionView registerNib:[UINib nibWithNibName:@"AddMediaCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"AddMediaCell"];
 }
 
@@ -107,13 +135,29 @@ void drawImage(UIImage *image, UIView* view)
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == self.media.count) {
-        UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"AddMediaCell" forIndexPath:indexPath];
+        AddMediaCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"AddMediaCell" forIndexPath:indexPath];
+        cell.delegate = self;
         return cell;
     }
     else {
-        UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MediaCell" forIndexPath:indexPath];
+        DeletableMediaCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"DeletableMediaCell" forIndexPath:indexPath];
+        cell.media = [self.media objectAtIndex:indexPath.row];
+        cell.parent = self.parent;
         return cell;
     }
+}
+
+- (void)addMedia
+{
+    [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
+        if (picked) {
+            [self.media addObject:media];
+            NSInteger index = self.media.count - 1;
+            [self.collectionView performBatchUpdates:^{
+                [self.collectionView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
+            } completion:nil];
+        }
+    }];
 }
 
 @end

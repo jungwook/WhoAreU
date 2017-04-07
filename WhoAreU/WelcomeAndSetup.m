@@ -20,14 +20,21 @@
 
 #define NIBVIEW(__X__) [[[NSBundle mainBundle] loadNibNamed:__X__ owner:self options:nil] firstObject]
 
+- (WelcomeSubViewBase*) nibViewNamed:(NSString*) name
+{
+    WelcomeSubViewBase* ret = [[[NSBundle mainBundle] loadNibNamed:name owner:self options:nil] firstObject];
+    ret.parent = self;
+    return ret;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    WelcomeSubViewBase *addNicknameSubView = NIBVIEW(@"AddNicknameSubView");
-    WelcomeSubViewBase *addAgeSubView = NIBVIEW(@"AddAgeSubView");
-    WelcomeSubViewBase *addIntroductionsSubView = NIBVIEW(@"AddIntroductionsSubView");
-    WelcomeSubViewBase *addMediaSubView = NIBVIEW(@"AddMediaSubView");
+    WelcomeSubViewBase *addNicknameSubView = [self nibViewNamed:@"AddNicknameSubView"];
+    WelcomeSubViewBase *addAgeSubView = [self nibViewNamed:@"AddAgeSubView"];
+    WelcomeSubViewBase *addIntroductionsSubView = [self nibViewNamed:@"AddIntroductionsSubView"];
+    WelcomeSubViewBase *addMediaSubView =  [self nibViewNamed:@"AddMediaSubView"];
     
     self.subViews = @[
                       addNicknameSubView,
