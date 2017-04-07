@@ -7,6 +7,60 @@
 //
 
 #import "AddMediaSubView.h"
+#import "S3File.h"
+
+@interface DeletableMediaCell : UICollectionViewCell
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activity;
+@property (nonatomic, strong) Media *media;
+@property (nonatomic, weak) id<DeletableMediaCellDelegate> delegate;
+@end
+
+@implementation DeletableMediaCell
+
+void drawImage(UIImage *image, UIView* view)
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [view.layer setContents:(id)image.CGImage];
+        [view.layer setContentsGravity:kCAGravityResizeAspectFill];
+        [view.layer setMasksToBounds:YES];
+    });
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    self.radius = 4.0f;
+    self.clipsToBounds = YES;
+    self.layer.borderColor = [UIColor colorWithWhite:0.2 alpha:0.4].CGColor;
+    self.layer.borderWidth = 4.0f;
+    
+    self.activity.hidden = NO;
+    [self.activity startAnimating];
+    
+}
+
+- (void)setMedia:(Media *)media
+{
+    drawImage(nil, self);
+    _media = media;
+    
+    [S3File getDataFromFile:media.thumbnail dataBlock:^(NSData *data) {
+        drawImage([UIImage imageWithData:data], self);
+        [self.activity stopAnimating];
+        self.activity.hidden = YES;
+    }];
+}
+
+- (IBAction)deleteMedia:(id)sender
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(deleteUserMedia:)]) {
+        [self.delegate deleteUserMedia:self.media];
+    }
+}
+
+@end
+
 
 @interface AddMediaSubView()
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;

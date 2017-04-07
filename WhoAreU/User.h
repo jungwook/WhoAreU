@@ -26,7 +26,7 @@ typedef NS_OPTIONS(BOOL, MediaType)
     kMediaTypeVideo
 };
 
-typedef NS_OPTIONS(BOOL, SourceType)
+typedef NS_OPTIONS(NSUInteger, SourceType)
 {
     kSourceUploaded = 0,
     kSourceTaken,

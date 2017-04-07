@@ -16,9 +16,9 @@
 @import MobileCoreServices;
 
 @interface MediaPicker ()
-@property (nonatomic, copy) MediaInfoBlock userMediaInfoBlock;
-@property (nonatomic, copy) MediaBlock userMediaBlock;
-@property (nonatomic, copy) MediaDataBlock mediaBlock;
+@property (nonatomic, copy) MediaInfoBlock infoBlock;
+@property (nonatomic, copy) MediaBlock mediaBlock;
+@property (nonatomic, copy) MediaDataBlock dataBlock;
 @end
 
 @implementation MediaPicker
@@ -172,9 +172,9 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 }
 
 - (void) selfInitializersWithSourceType:(UIImagePickerControllerSourceType)sourceType
-                     userMediaInfoBlock:(MediaInfoBlock)userMediaInfoBlock
-                         userMediaBlock:(MediaBlock)userMediaBlock
-                             mediaBlock:(MediaDataBlock)mediaBlock
+                     userMediaInfoBlock:(MediaInfoBlock)infoBlock
+                         userMediaBlock:(MediaBlock)mediaBlock
+                             mediaBlock:(MediaDataBlock)dataBlock
 {
     self.delegate = self;
     self.allowsEditing = YES;
@@ -183,21 +183,21 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     self.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     self.modalPresentationStyle = UIModalPresentationOverFullScreen;
     
-    self.userMediaInfoBlock = userMediaInfoBlock;
-    self.userMediaBlock = userMediaBlock;
+    self.infoBlock = infoBlock;
     self.mediaBlock = mediaBlock;
+    self.dataBlock = dataBlock;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    if (self.mediaBlock) {
-        self.mediaBlock( NO, nil, nil, nil, NO, NO);
+    if (self.dataBlock) {
+        self.dataBlock( NO, nil, nil, nil, NO, NO);
     }
-    else if (self.userMediaBlock) {
-        self.userMediaBlock(nil, NO);
+    else if (self.mediaBlock) {
+        self.mediaBlock(nil, NO);
     }
-    else if (self.userMediaInfoBlock) {
-        self.userMediaInfoBlock(NO, nil, nil, nil, CGSizeZero, NO, NO);
+    else if (self.infoBlock) {
+        self.infoBlock(NO, nil, nil, nil, CGSizeZero, NO, NO);
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
@@ -219,7 +219,8 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 
 - (void) handlePhoto:(NSDictionary<NSString*, id>*)info url:(NSURL*)url source:(UIImagePickerControllerSourceType)sourceType
 {
-    BOOL isReal = (sourceType == UIImagePickerControllerSourceTypeCamera);
+    SourceType source = (sourceType == UIImagePickerControllerSourceTypeCamera) ? kSourceTaken : kSourceUploaded;
+    
     // Original image
     UIImage *image = (UIImage *) [info objectForKey:UIImagePickerControllerEditedImage];
     
@@ -229,8 +230,8 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     // Thumbnail data
     NSData *thumbnailData = compressedImageData(imageData, kThumbnailWidth);
     
-    if (self.mediaBlock) {
-        self.mediaBlock(kMediaTypePhoto, thumbnailData, imageData, nil, isReal, YES);
+    if (self.dataBlock) {
+        self.dataBlock(kMediaTypePhoto, thumbnailData, imageData, nil, source, YES);
     }
     else {
         NSString *thumbFileName = [S3File saveImageData:thumbnailData completedBlock:^(NSString *thumbnailFile, BOOL succeeded, NSError *error) {
@@ -245,78 +246,25 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
             }
         }];
 
-        if (self.userMediaBlock) {
+        if (self.mediaBlock) {
             Media *media = [Media object];
             media.size = image.size;
             media.media = mediaFileName;
             media.thumbnail = thumbFileName;
             media.type = kMediaTypePhoto;
-            media.source = isReal;
-            self.userMediaBlock(media, YES);
+            media.source = source;
+            self.mediaBlock(media, YES);
         }
-        if (self.userMediaInfoBlock) {
-            self.userMediaInfoBlock( kMediaTypePhoto, thumbnailData, thumbFileName, mediaFileName, image.size, isReal, YES);
+        if (self.infoBlock) {
+            self.infoBlock( kMediaTypePhoto, thumbnailData, thumbFileName, mediaFileName, image.size, source, YES);
         }
-    }
-}
-
-- (void) handlePhotoCopy:(NSDictionary<NSString*, id>*)info url:(NSURL*)url source:(UIImagePickerControllerSourceType)sourceType
-{
-    BOOL isReal = (sourceType == UIImagePickerControllerSourceTypeCamera);
-    // Original image
-    UIImage *image = (UIImage *) [info objectForKey:UIImagePickerControllerEditedImage];
-    
-    // Original image data
-    NSData *imageData = UIImageJPEGRepresentation(image, kJPEGCompressionFull);
-    
-    // Thumbnail data
-    NSData *thumbnailData = compressedImageData(imageData, kThumbnailWidth);
-    
-    if (self.mediaBlock) {
-        self.mediaBlock(kMediaTypePhoto, thumbnailData, imageData, nil, isReal, YES);
-    }
-    else {
-        [S3File saveImageData:thumbnailData completedBlock:^(NSString *thumbnailFile, BOOL succeeded, NSError *error)
-         {
-             if (succeeded && !error) {
-                 [S3File saveImageData:imageData completedBlock:^(NSString *mediaFile, BOOL succeeded, NSError *error) {
-                     
-                     if (succeeded && !error) {
-                         if (self.userMediaInfoBlock) {
-                             self.userMediaInfoBlock( kMediaTypePhoto,
-                                                     thumbnailData,
-                                                     thumbnailFile,
-                                                     mediaFile,
-                                                     image.size,
-                                                     isReal, YES);
-                         }
-                         
-                         if (self.userMediaBlock) {
-                             Media *media = [Media object];
-                             media.size = image.size;
-                             media.media = mediaFile;
-                             media.thumbnail = thumbnailFile;
-                             media.type = kMediaTypePhoto;
-                             media.source = isReal;
-                             
-                             self.userMediaBlock(media, YES);
-                         }
-                     }
-                     else {
-                         NSLog(@"ERROR:%@", error.localizedDescription);
-                     }
-                 }];
-             }
-             else {
-                 NSLog(@"ERROR:%@", error.localizedDescription);
-             }
-         } progressBlock:nil];
     }
 }
 
 - (void) handleVideo:(NSDictionary<NSString*, id>*)info url:(NSURL*)url source:(UIImagePickerControllerSourceType)sourceType
 {
-    BOOL isReal = (sourceType == UIImagePickerControllerSourceTypeCamera);
+    SourceType source = (sourceType == UIImagePickerControllerSourceTypeCamera) ? kSourceTaken : kSourceUploaded;
+
     NSString *tempId = randomObjectId();
     NSURL *outputURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:tempId]];
     
@@ -329,12 +277,12 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     // Thumbnail Image data @ full compression
     NSData *thumbnailData = compressedImageData(UIImageJPEGRepresentation(thumbnailImage, kJPEGCompressionFull), kVideoThumbnailWidth);
 
-    if (self.mediaBlock)
+    if (self.dataBlock)
     {
         [self convertVideoToLowQuailtyWithInputURL:url outputURL:outputURL handler:^(AVAssetExportSession *exportSession) {
             if (exportSession.status == AVAssetExportSessionStatusCompleted) {
                 NSData *videoData = [NSData dataWithContentsOfURL:outputURL];
-                self.mediaBlock(kMediaTypeVideo, thumbnailData, nil, videoData, isReal, YES);
+                self.dataBlock(kMediaTypeVideo, thumbnailData, nil, videoData, source, YES);
                 [[NSFileManager defaultManager] removeItemAtURL:outputURL error:nil];
             }
         }];
@@ -347,25 +295,25 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
                     
                     [S3File saveMovieData:videoData completedBlock:^(NSString *mediaFile, BOOL succeeded, NSError *error) {
                         if (succeeded && !error) {
-                            if (self.userMediaInfoBlock) {
-                                self.userMediaInfoBlock(kMediaTypeVideo,
+                            if (self.infoBlock) {
+                                self.infoBlock(kMediaTypeVideo,
                                                         thumbnailData,
                                                         thumbnailFile,
                                                         mediaFile,
                                                         thumbnailImage.size,
-                                                        isReal,
+                                                        source,
                                                         YES);
                             }
                             
-                            if (self.userMediaBlock) {
+                            if (self.mediaBlock) {
                                 Media *media = [Media object];
                                 media.size = thumbnailImage.size;
                                 media.media = mediaFile;
                                 media.thumbnail = thumbnailFile;
                                 media.type = kMediaTypeVideo;
-                                media.source = isReal;
+                                media.source = source;
                                 
-                                self.userMediaBlock(media, YES);
+                                self.mediaBlock(media, YES);
                             }
                         }
                         else {

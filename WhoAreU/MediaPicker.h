@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 typedef void(^MediaInfoBlock)(MediaType mediaType,
                                          NSData* thumbnailData,
                                          NSString* thumbnail,
@@ -28,7 +27,7 @@ typedef void(^MediaBlock)(Media* media, BOOL picked);
 
 @interface MediaPicker : UIImagePickerController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-+ (void) pickMediaOnViewController:(UIViewController*)viewController withMediaInfoHandler:(MediaInfoBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withUserMediaHandler:(MediaBlock)handler;
++ (void) pickMediaOnViewController:(UIViewController*)viewController withMediaInfoHandler:(MediaInfoBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaHandler:(MediaDataBlock)handler;
 @end

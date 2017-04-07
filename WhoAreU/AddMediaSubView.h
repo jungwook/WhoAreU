@@ -8,6 +8,11 @@
 
 #import "WelcomeSubViewBase.h"
 
+@protocol DeletableMediaCellDelegate <NSObject>
+@required
+- (void) deleteUserMedia:(Media*)media;
+@end
+
 @interface AddMediaSubView : WelcomeSubViewBase <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end
