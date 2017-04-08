@@ -19,10 +19,7 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     BOOL empty = [self.nickname.text isEqualToString:@""];
-    if (!empty && self.nextBlock) {
-        [self.nickname resignFirstResponder];
-        self.nextBlock(self.nickname.text);
-    }
+    [self nextView:nil];
     return empty;
 }
 
@@ -35,10 +32,20 @@
 
 - (IBAction)nextView:(id)sender {
     BOOL empty = [self.nickname.text isEqualToString:@""];
+    
+    
     if (!empty && self.nextBlock) {
         [self.nickname resignFirstResponder];
         self.nextBlock(self.nickname.text);
     }
+}
+
+- (BOOL) nicknameExists
+{
+    PFQuery *query = [User query];
+    
+    [query whereKey:@"username" equalTo:self.nickname.text];
+    return YES;
 }
 
 @end

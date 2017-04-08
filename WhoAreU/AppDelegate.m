@@ -29,6 +29,17 @@
         configuration.localDatastoreEnabled = YES;
     }]];
     
+    PFObject *o = [PFObject objectWithClassName:@"TEST"];
+    o[@"foo"] = @"bar";
+    [o saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if (succeeded) {
+            NSLog(@"Saved");
+        }
+        else {
+            NSLog(@"Error saving");
+        }
+    }];
+    
     [self setupAWSDefaultACLs];
         
     return YES;
