@@ -88,12 +88,95 @@
     return [User currentUser];
 }
 
+- (NSString*) genderCode
+{
+    switch (self.gender) {
+        case kGenderTypeMale:
+            return @"M";
+        case kGenderTypeFemale:
+            return @"F";
+        case kGenderTypeUnknown:
+            return @"??";
+    }
+}
+
+- (UIColor*) genderColor
+{
+    switch (self.gender) {
+        case kGenderTypeMale:
+            return [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f];
+        case kGenderTypeFemale:
+            return [UIColor colorWithRed:240/255.f green:82/255.f blue:10/255.f alpha:1.0f];
+        case kGenderTypeUnknown:
+            return [UIColor colorWithRed:128/255.f green:128/255.f blue:128/255.f alpha:1.0f];
+    }
+}
+
+- (NSString *)genderTypeString
+{
+    switch (self.gender) {
+        case kGenderTypeMale:
+            return @"Male";
+        case kGenderTypeFemale:
+            return @"Female";
+        case kGenderTypeUnknown:
+            return @"Unknown";
+    }
+}
+
+- (void)setGenderTypeFromCode:(NSString *)genderCode
+{
+    if ([genderCode isEqualToString:@"M"]) {
+        self.gender = kGenderTypeMale;
+    }
+    else if ([genderCode isEqualToString:@"F"]) {
+        self.gender = kGenderTypeFemale;
+    }
+    else {
+        self.gender = kGenderTypeUnknown;
+    }
+}
+
+- (void)setGenderTypeFromString:(NSString *)gender
+{
+    id info = [User genderInfo];
+    
+    NSNumber *ret = info[gender];
+    if (ret) {
+        self.gender = [ret integerValue];
+    }
+    else {
+        self.gender = kGenderTypeUnknown;
+    }
+}
+
++ (NSDictionary*) genderInfo
+{
+    return @{
+             @"Male" : @(kGenderTypeMale),
+             @"Female" : @(kGenderTypeFemale),
+             };
+}
+
++ (NSArray *)genderCodes
+{
+    return @[
+             @"M",
+             @"F",
+             ];
+}
+
 + (NSArray *)genders
 {
     return @[
              @"Male",
              @"Female",
              ];
+}
+
+- (BOOL)isMe
+{
+    return ([self.objectId isEqualToString:[User me].objectId]);
 }
 
 + (NSArray*) ageGroups

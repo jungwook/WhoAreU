@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		120775081E9DD29000B02AF6 /* SignUp.m in Sources */ = {isa = PBXBuildFile; fileRef = 120775061E9DD29000B02AF6 /* SignUp.m */; };
+		120775091E9DD29000B02AF6 /* SignUp.xib in Resources */ = {isa = PBXBuildFile; fileRef = 120775071E9DD29000B02AF6 /* SignUp.xib */; };
+		1207750C1E9DD2AC00B02AF6 /* Tabs.m in Sources */ = {isa = PBXBuildFile; fileRef = 1207750B1E9DD2AC00B02AF6 /* Tabs.m */; };
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB91E934EFB000828BF /* AddAgeSubView.m */; };
@@ -39,7 +42,6 @@
 		122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D91E8B822B00F51FAE /* ObjectIdStore.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
-		126154101E8CCBB600F2AD4F /* Setup.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540F1E8CCBB600F2AD4F /* Setup.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 		12A95B8B1E92181B00DBD4A6 /* AddNicknameSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8A1E92181B00DBD4A6 /* AddNicknameSubView.xib */; };
 		12A95B8D1E92183A00DBD4A6 /* AddIntroductionsSubView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12A95B8C1E92183A00DBD4A6 /* AddIntroductionsSubView.xib */; };
@@ -70,6 +72,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		120775051E9DD29000B02AF6 /* SignUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignUp.h; sourceTree = "<group>"; };
+		120775061E9DD29000B02AF6 /* SignUp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignUp.m; sourceTree = "<group>"; };
+		120775071E9DD29000B02AF6 /* SignUp.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignUp.xib; sourceTree = "<group>"; };
+		1207750A1E9DD2AC00B02AF6 /* Tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tabs.h; sourceTree = "<group>"; };
+		1207750B1E9DD2AC00B02AF6 /* Tabs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tabs.m; sourceTree = "<group>"; };
 		12082F921E9376D700E8D051 /* ShadowLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowLabel.h; sourceTree = "<group>"; };
 		12082F931E9376D700E8D051 /* ShadowLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowLabel.m; sourceTree = "<group>"; };
 		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
@@ -113,8 +120,6 @@
 		126154081E8CBBEC00F2AD4F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		1261540A1E8CC85C00F2AD4F /* Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions.m; sourceTree = "<group>"; };
 		1261540C1E8CC87100F2AD4F /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
-		1261540E1E8CCBB600F2AD4F /* Setup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Setup.h; sourceTree = "<group>"; };
-		1261540F1E8CCBB600F2AD4F /* Setup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Setup.m; sourceTree = "<group>"; };
 		126154121E8CCC7900F2AD4F /* PhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoView.h; sourceTree = "<group>"; };
 		126154131E8CCC7900F2AD4F /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
 		12A95B8A1E92181B00DBD4A6 /* AddNicknameSubView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddNicknameSubView.xib; sourceTree = "<group>"; };
@@ -255,8 +260,11 @@
 		1261540D1E8CCB9B00F2AD4F /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				1261540E1E8CCBB600F2AD4F /* Setup.h */,
-				1261540F1E8CCBB600F2AD4F /* Setup.m */,
+				120775051E9DD29000B02AF6 /* SignUp.h */,
+				120775061E9DD29000B02AF6 /* SignUp.m */,
+				120775071E9DD29000B02AF6 /* SignUp.xib */,
+				1207750A1E9DD2AC00B02AF6 /* Tabs.h */,
+				1207750B1E9DD2AC00B02AF6 /* Tabs.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -287,10 +295,10 @@
 				12A95BA01E935D2000DBD4A6 /* AddMediaSubView.m */,
 				12A95BA21E948BED00DBD4A6 /* DeletableMediaCell.xib */,
 				12A95BA41E948D1300DBD4A6 /* AddMediaCell.xib */,
-				12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */,
-				12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */,
 				12A95B991E93586700DBD4A6 /* WelcomeSubViewBase.h */,
 				12A95B9A1E93586700DBD4A6 /* WelcomeSubViewBase.m */,
+				12A95B921E92188200DBD4A6 /* WelcomeAndSetup.h */,
+				12A95B931E92188200DBD4A6 /* WelcomeAndSetup.m */,
 			);
 			name = "Welcome and Setup";
 			sourceTree = "<group>";
@@ -368,6 +376,7 @@
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
 				12A95B8B1E92181B00DBD4A6 /* AddNicknameSubView.xib in Resources */,
 				12A95BA31E948BED00DBD4A6 /* DeletableMediaCell.xib in Resources */,
+				120775091E9DD29000B02AF6 /* SignUp.xib in Resources */,
 				12A95B8F1E92184500DBD4A6 /* AddAgeSubView.xib in Resources */,
 				12A95BA51E948D1300DBD4A6 /* AddMediaCell.xib in Resources */,
 			);
@@ -396,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1207750C1E9DD2AC00B02AF6 /* Tabs.m in Sources */,
 				12A95B941E92188200DBD4A6 /* WelcomeAndSetup.m in Sources */,
 				12A95B971E92380C00DBD4A6 /* AddNicknameSubView.m in Sources */,
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
@@ -408,12 +418,12 @@
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
 				12A95BA11E935D2000DBD4A6 /* AddMediaSubView.m in Sources */,
-				126154101E8CCBB600F2AD4F /* Setup.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
+				120775081E9DD29000B02AF6 /* SignUp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

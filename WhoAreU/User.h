@@ -18,6 +18,7 @@ typedef NS_OPTIONS(NSUInteger, GenderType)
 {
     kGenderTypeMale = 0,
     kGenderTypeFemale,
+    kGenderTypeUnknown,
 };
 
 typedef NS_OPTIONS(BOOL, MediaType)
@@ -53,13 +54,23 @@ typedef NS_OPTIONS(NSUInteger, SourceType)
 @property (retain) NSDate*      whereUdatedAt;
 @property (retain) NSString*    age;
 @property (retain) NSString*    desc;
-@property (retain) NSArray*     media;
+@property (retain) Media*       media;
 @property GenderType            gender;
 
 + (User*)me;
-+ (NSArray *)genders;
+- (BOOL)isMe;
 + (NSArray*) ageGroups;
 + (NSArray*) introductions;
+
+// Gender related
+- (void)        setGenderTypeFromString:(NSString*)gender;
+- (void)        setGenderTypeFromCode:(NSString *)genderCode;
+- (NSString*)   genderTypeString;
+- (NSString*)   genderCode;
+- (UIColor*)    genderColor;
++ (NSArray*)    genders;
++ (NSArray*)    genderCodes;
+
 
 @end
 

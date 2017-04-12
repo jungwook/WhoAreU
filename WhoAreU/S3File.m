@@ -29,7 +29,7 @@
 
 + (NSString*) s3bucket
 {
-    return @"withmekr";
+    return @"whoareu";
 }
 
 - (instancetype) init

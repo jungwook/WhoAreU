@@ -72,34 +72,35 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaInfoHandler:(MediaInfoBlock)handler
 {
     NSAssert(viewController != nil, @"View Controller cannot be nil");
-    UIViewController* vc = viewController;
-    [MediaPicker handleAlertOnViewController:vc
+    [MediaPicker handleAlertOnViewController:viewController
                               libraryHandler:^(UIAlertAction * _Nonnull action) {
-        [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary
+        [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary
                                                                   userMediaInfoBlock:handler]
                                      animated:YES
                                    completion:nil];
     }
                                cameraHandler:^(UIAlertAction * _Nonnull action) {
-        [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera
+        [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera
                                                                   userMediaInfoBlock:handler]
                                      animated:YES
                                    completion:nil];
-    } userMediaInfoBlock:handler mediaBlock:nil userMediaBlock:nil];
+    }
+                          userMediaInfoBlock:handler
+                                  mediaBlock:nil
+                              userMediaBlock:nil];
 }
 
 + (void) pickMediaOnViewController:(UIViewController *)viewController withUserMediaHandler:(MediaBlock)handler
 {
     NSAssert(viewController != nil, @"View Controller cannot be nil");
-    UIViewController* vc = viewController;
-    [MediaPicker handleAlertOnViewController:vc
+    [MediaPicker handleAlertOnViewController:viewController
                               libraryHandler:^(UIAlertAction * _Nonnull action) {
-                                  [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary userMediaBlock:handler]
+                                  [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary userMediaBlock:handler]
                                                                animated:YES
                                                              completion:nil];
                               }
                                cameraHandler:^(UIAlertAction * _Nonnull action) {
-                                   [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera userMediaBlock:handler]
+                                   [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera userMediaBlock:handler]
                                                                 animated:YES
                                                               completion:nil];
                                }
@@ -111,15 +112,14 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 + (void)pickMediaOnViewController:(UIViewController *)viewController withMediaHandler:(MediaDataBlock)handler
 {
     NSAssert(viewController != nil, @"View Controller cannot be nil");
-    UIViewController* vc = viewController;
-    [MediaPicker handleAlertOnViewController:vc
+    [MediaPicker handleAlertOnViewController:viewController
                               libraryHandler:^(UIAlertAction * _Nonnull action) {
-                                  [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary mediaBlock:handler]
+                                  [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary mediaBlock:handler]
                                                    animated:YES
                                                  completion:nil];
                               }
                                cameraHandler:^(UIAlertAction * _Nonnull action) {
-                                   [vc presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera mediaBlock:handler]
+                                   [viewController presentViewController:[MediaPicker mediaPickerWithSourceType:UIImagePickerControllerSourceTypeCamera mediaBlock:handler]
                                                     animated:YES
                                                   completion:nil];
                                }

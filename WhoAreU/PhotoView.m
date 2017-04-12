@@ -8,6 +8,9 @@
 
 #import "PhotoView.h"
 
+@interface PhotoView()
+@end
+
 @implementation PhotoView
 
 /*
@@ -18,10 +21,15 @@
 }
 */
 
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    NSLog(@"xxx %@", NSStringFromCGRect(self.frame));
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

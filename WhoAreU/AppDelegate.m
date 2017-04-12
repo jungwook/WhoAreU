@@ -24,7 +24,7 @@
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";
-        configuration.server = @"http://mondays.kr:1336/WhoAreU";
+        configuration.server = @"http://parse.kr:1336/WhoAreU";
         configuration.clientKey = @"whoareu";
         configuration.localDatastoreEnabled = YES;
     }]];
