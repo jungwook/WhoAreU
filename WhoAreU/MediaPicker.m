@@ -202,9 +202,9 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    NSString *mediaType = [info objectForKey: UIImagePickerControllerMediaType];
+    NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
     NSURL *url = (NSURL*)[info objectForKey:UIImagePickerControllerMediaURL];
     
     if (CFStringCompare ((CFStringRef) mediaType, kUTTypeImage, 0) == kCFCompareEqualTo) {

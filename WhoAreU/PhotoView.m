@@ -11,6 +11,7 @@
 
 @interface PhotoView()
 @property (strong, nonatomic) Media* media;
+@property (strong, nonatomic) UIActivityIndicatorView *activity;
 @end
 
 @implementation PhotoView
@@ -27,17 +28,27 @@
 {
     [super awakeFromNib];
     
-    self.clipsToBounds = YES;
+    self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    self.activity.frame = self.bounds;
+    [self addSubview:self.activity];
 }
 
 - (void)setMedia:(Media *)media
 {
+    [self.activity startAnimating];
     _media = media;
-    
-    [S3File getDataFromFile:self.media.type == kMediaTypePhoto ? self.media.media : self.media.thumbnail dataBlock:^(NSData *data) {
-        UIImage *photo = [UIImage imageWithData:data];
-        self.image = photo;
-    }];
+
+    if (self.media) {
+        [self.media fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            [S3File getDataFromFile:self.media.type == kMediaTypePhoto ? self.media.media : self.media.thumbnail dataBlock:^(NSData *data) {
+                UIImage *photo = [UIImage imageWithData:data];
+                self.image = photo;
+            }];
+        }];
+    }
+    else {
+        self.image = [UIImage imageNamed:@"avatar"];
+    }
 }
 
 - (void)setImage:(UIImage *)image
@@ -45,12 +56,19 @@
     _image = image;
     
     self.layer.contents = (id) image.CGImage;
-    self.layer.contentsGravity = kCAGravityResize;
+    self.layer.contentsGravity = kCAGravityResizeAspectFill;
+    
+    [self.activity stopAnimating];
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+    
+//    CGFloat l = MIN(CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+//    self.layer.cornerRadius = l / 2.0f;
+    self.layer.masksToBounds = YES;
+    self.activity.frame = self.bounds;
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

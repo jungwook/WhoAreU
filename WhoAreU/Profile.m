@@ -9,10 +9,13 @@
 #import "Profile.h"
 #import "PhotoView.h"
 #import "ListField.h"
+#import "MediaPicker.h"
 
 @interface Profile () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet PhotoView *photoImageView;
+@property (weak, nonatomic) IBOutlet UILabel *nicknameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nickname;
+@property (weak, nonatomic) IBOutlet UILabel *sinceLabel;
 @property (weak, nonatomic) IBOutlet ListField *age;
 @property (weak, nonatomic) IBOutlet ListField *desc;
 @property (weak, nonatomic) IBOutlet ListField *gender;
@@ -28,9 +31,7 @@
     self.nickname.delegate = self;
     
     [self.me fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        [self.me.media fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            [self setupUserDetails];
-        }];
+        [self setupUserDetails];
     }];
 }
 
@@ -43,6 +44,11 @@
 
 - (IBAction)editingDidEnd:(id)sender {
     self.me.nickname = self.nickname.text;
+    self.nicknameLabel.text = self.nickname.text;
+}
+
+- (IBAction)saveUserDetails:(id)sender {
+    [self.me saveInBackground];
 }
 
 - (void)setupUserDetails
@@ -61,13 +67,58 @@
     self.desc.text = self.me.desc;
     self.gender.text = self.me.genderTypeString;
     self.nickname.text = self.me.nickname;
+    self.nicknameLabel.text = self.me.nickname;
+    self.sinceLabel.text = [NSString stringWithFormat:@"member since %@", [NSDateFormatter localizedStringFromDate:self.me.createdAt dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle]];
     
     [self.photoImageView setMedia:self.me.media];
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+- (BOOL) photoExists
 {
-    view.backgroundColor = [UIColor colorWithRed:1.0 green:0.5 blue:0 alpha:1.0];
+    return self.me.media;
+}
+
+- (IBAction)editPhoto:(id)sender {
+    void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
+        self.me.media = nil;
+        [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            NSLog(@"User:%@", self.me);
+        }];
+        self.photoImageView.image = [UIImage imageNamed:@"avatar"];
+    };
+    void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
+        [MediaPicker pickMediaOnViewController:self withUserMediaHandler:^(Media *media, BOOL picked) {
+            if (picked) {
+                [self.photoImageView setMedia:media];
+                self.me.media = media;
+                [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    NSLog(@"User:%@", self.me);
+                }];
+            }
+        }];
+    };
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    if (self.photoExists) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"Remove Photo"
+                                                  style:UIAlertActionStyleDestructive
+                                                handler:removeAction]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Update Photo"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:updateAction]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                  style:UIAlertActionStyleCancel
+                                                handler:nil]];
+    }
+    else {
+        [alert addAction:[UIAlertAction actionWithTitle:@"Add Photo"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:updateAction]];
+    }
+    
+    [self presentViewController:alert animated:YES completion:nil];
+
 }
 
 - (void)didReceiveMemoryWarning {

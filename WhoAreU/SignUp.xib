@@ -102,6 +102,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                         <real key="value" value="4"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="image" keyPath="image" value="avatar"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7he-DS-OSU">
@@ -163,10 +164,14 @@
                 <outlet property="information" destination="qXp-zO-99E" id="MHO-BG-cet"/>
                 <outlet property="nickname" destination="U4H-ba-bKk" id="ApB-SA-P7f"/>
                 <outlet property="pane" destination="F7U-Xh-4qU" id="f9d-ss-T3A"/>
+                <outlet property="photoImageView" destination="crs-hr-E4S" id="XLG-Ur-R86"/>
                 <outlet property="space" destination="63p-QM-kFt" id="Rs8-HC-x48"/>
                 <outlet property="withMe" destination="V97-Lc-MYX" id="z3A-QX-lJR"/>
             </connections>
             <point key="canvasLocation" x="394" y="-71"/>
         </viewController>
     </objects>
+    <resources>
+        <image name="avatar" width="200" height="200"/>
+    </resources>
 </document>
