@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PhotoView : UIImageView
-
+@interface PhotoView : UIView
+@property (strong, nonatomic) IBInspectable UIImage* image;
+- (void) setMedia:(Media*)media;
 @end

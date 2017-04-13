@@ -40,6 +40,16 @@
 		122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		122262D71E8B81FC00F51FAE /* S3File.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D61E8B81FC00F51FAE /* S3File.m */; };
 		122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D91E8B822B00F51FAE /* ObjectIdStore.m */; };
+		123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */; };
+		123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */; };
+		123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1431E9E0C9600ED0547 /* FloatingDrawerViewController.m */; };
+		123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1451E9E0C9600ED0547 /* NavigationController.m */; };
+		123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF14B1E9E0D2400ED0547 /* Menus.m */; };
+		123AF1511E9E0F5300ED0547 /* Menu.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF14E1E9E0F5300ED0547 /* Menu.m */; };
+		123AF1521E9E0F5300ED0547 /* Menu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 123AF14F1E9E0F5300ED0547 /* Menu.xib */; };
+		123AF1531E9E0F5300ED0547 /* MenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 123AF1501E9E0F5300ED0547 /* MenuCell.xib */; };
+		123AF1561E9E11B400ED0547 /* ToggleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1551E9E11B400ED0547 /* ToggleButton.m */; };
+		123AF1591E9F0DA300ED0547 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1581E9F0DA300ED0547 /* Profile.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
@@ -116,6 +126,25 @@
 		122262D61E8B81FC00F51FAE /* S3File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = S3File.m; sourceTree = "<group>"; };
 		122262D81E8B822B00F51FAE /* ObjectIdStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdStore.h; sourceTree = "<group>"; };
 		122262D91E8B822B00F51FAE /* ObjectIdStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectIdStore.m; sourceTree = "<group>"; };
+		123AF13D1E9E0C9600ED0547 /* FloatingDrawerAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerAnimation.h; sourceTree = "<group>"; };
+		123AF13E1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerSpringAnimator.h; sourceTree = "<group>"; };
+		123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingDrawerSpringAnimator.m; sourceTree = "<group>"; };
+		123AF1401E9E0C9600ED0547 /* FloatingDrawerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerView.h; sourceTree = "<group>"; };
+		123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingDrawerView.m; sourceTree = "<group>"; };
+		123AF1421E9E0C9600ED0547 /* FloatingDrawerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerViewController.h; sourceTree = "<group>"; };
+		123AF1431E9E0C9600ED0547 /* FloatingDrawerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingDrawerViewController.m; sourceTree = "<group>"; };
+		123AF1441E9E0C9600ED0547 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
+		123AF1451E9E0C9600ED0547 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
+		123AF14A1E9E0D2400ED0547 /* Menus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menus.h; sourceTree = "<group>"; };
+		123AF14B1E9E0D2400ED0547 /* Menus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Menus.m; sourceTree = "<group>"; };
+		123AF14D1E9E0F5300ED0547 /* Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu.h; sourceTree = "<group>"; };
+		123AF14E1E9E0F5300ED0547 /* Menu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Menu.m; sourceTree = "<group>"; };
+		123AF14F1E9E0F5300ED0547 /* Menu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Menu.xib; sourceTree = "<group>"; };
+		123AF1501E9E0F5300ED0547 /* MenuCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuCell.xib; sourceTree = "<group>"; };
+		123AF1541E9E11B400ED0547 /* ToggleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleButton.h; sourceTree = "<group>"; };
+		123AF1551E9E11B400ED0547 /* ToggleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleButton.m; sourceTree = "<group>"; };
+		123AF1571E9F0DA300ED0547 /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
+		123AF1581E9F0DA300ED0547 /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		126154081E8CBBEC00F2AD4F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		1261540A1E8CC85C00F2AD4F /* Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions.m; sourceTree = "<group>"; };
@@ -191,6 +220,9 @@
 				126154111E8CCC6500F2AD4F /* Views */,
 				1261540D1E8CCB9B00F2AD4F /* View Controllers */,
 				126154061E8CBBAD00F2AD4F /* Engine */,
+				123AF13C1E9E0C7700ED0547 /* Menu system */,
+				123AF14A1E9E0D2400ED0547 /* Menus.h */,
+				123AF14B1E9E0D2400ED0547 /* Menus.m */,
 				1222627D1E8B6E8000F51FAE /* AppDelegate.h */,
 				1222627E1E8B6E8000F51FAE /* AppDelegate.m */,
 				122262801E8B6E8000F51FAE /* ViewController.h */,
@@ -240,6 +272,28 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		123AF13C1E9E0C7700ED0547 /* Menu system */ = {
+			isa = PBXGroup;
+			children = (
+				123AF13D1E9E0C9600ED0547 /* FloatingDrawerAnimation.h */,
+				123AF13E1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.h */,
+				123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */,
+				123AF1401E9E0C9600ED0547 /* FloatingDrawerView.h */,
+				123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */,
+				123AF1421E9E0C9600ED0547 /* FloatingDrawerViewController.h */,
+				123AF1431E9E0C9600ED0547 /* FloatingDrawerViewController.m */,
+				123AF1441E9E0C9600ED0547 /* NavigationController.h */,
+				123AF1451E9E0C9600ED0547 /* NavigationController.m */,
+				123AF14D1E9E0F5300ED0547 /* Menu.h */,
+				123AF14E1E9E0F5300ED0547 /* Menu.m */,
+				123AF1541E9E11B400ED0547 /* ToggleButton.h */,
+				123AF1551E9E11B400ED0547 /* ToggleButton.m */,
+				123AF14F1E9E0F5300ED0547 /* Menu.xib */,
+				123AF1501E9E0F5300ED0547 /* MenuCell.xib */,
+			);
+			name = "Menu system";
+			sourceTree = "<group>";
+		};
 		126154061E8CBBAD00F2AD4F /* Engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -265,6 +319,8 @@
 				120775071E9DD29000B02AF6 /* SignUp.xib */,
 				1207750A1E9DD2AC00B02AF6 /* Tabs.h */,
 				1207750B1E9DD2AC00B02AF6 /* Tabs.m */,
+				123AF1571E9F0DA300ED0547 /* Profile.h */,
+				123AF1581E9F0DA300ED0547 /* Profile.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -373,7 +429,9 @@
 				12A95B8D1E92183A00DBD4A6 /* AddIntroductionsSubView.xib in Resources */,
 				1222628A1E8B6E8000F51FAE /* LaunchScreen.storyboard in Resources */,
 				122262871E8B6E8000F51FAE /* Assets.xcassets in Resources */,
+				123AF1521E9E0F5300ED0547 /* Menu.xib in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
+				123AF1531E9E0F5300ED0547 /* MenuCell.xib in Resources */,
 				12A95B8B1E92181B00DBD4A6 /* AddNicknameSubView.xib in Resources */,
 				12A95BA31E948BED00DBD4A6 /* DeletableMediaCell.xib in Resources */,
 				120775091E9DD29000B02AF6 /* SignUp.xib in Resources */,
@@ -413,17 +471,25 @@
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
 				12A95B9E1E93590600DBD4A6 /* AddIntroductionsSubView.m in Sources */,
+				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
+				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
+				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
+				123AF1591E9F0DA300ED0547 /* Profile.m in Sources */,
 				12144DBA1E934EFB000828BF /* AddAgeSubView.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
+				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
 				12A95BA11E935D2000DBD4A6 /* AddMediaSubView.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
+				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 				120775081E9DD29000B02AF6 /* SignUp.m in Sources */,
+				123AF1561E9E11B400ED0547 /* ToggleButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

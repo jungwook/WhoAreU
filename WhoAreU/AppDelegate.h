@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Menus.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+@property (weak, nonatomic) Menus *menuController;
 
 @end
 

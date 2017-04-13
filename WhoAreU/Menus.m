@@ -1,25 +1,41 @@
 //
-//  Tabs.m
+//  Menus.m
 //  WhoAreU
 //
 //  Created by 한정욱 on 2017. 4. 12..
 //  Copyright © 2017년 SMARTLY CO. All rights reserved.
 //
 
-#import "Tabs.h"
+#import "Menus.h"
+#import "AppDelegate.h"
 #import "SignUp.h"
 #import "ObjectIdStore.h"
 #import "S3File.h"
+#import "Menu.h"
+#import "FloatingDrawerSpringAnimator.h"
 
-@interface Tabs ()
+@interface Menus ()
 
 @end
 
-@implementation Tabs
+@implementation Menus
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
+    self.view.backgroundColor = kAppColor;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    AppDelegate * appDelegate = (id) [[UIApplication sharedApplication] delegate];
+    appDelegate.menuController = self;
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -27,9 +43,25 @@
     [self checkLoginStatusAndProceed];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void) selectScreenWithID:(NSString *)screen
+{
+    UINavigationController *nav = self.screens[screen][@"screen"];
+    NSString* title = self.screens[screen][@"title"];
+    if (nav) {
+        self.centerViewController = nav;
+        [self.centerViewController setTitle:title];
+        [self toggleMenu];
+    }
+}
+
+- (void) toggleMenu
+{
+    [self toggleDrawerWithSide:FloatingDrawerSideLeft animated:YES completion:nil];
+}
+
+- (void) toggleMenuWithScreenID:(NSString *)screen
+{
+    [self selectScreenWithID:screen];
 }
 
 - (void)checkLoginStatusAndProceed
@@ -39,6 +71,7 @@
     
     VoidBlock initializationHandler = ^(void) {
         NSLog(@"User %@ logged in", [User me]);
+        [self initializeMainViewControllerToScreenId:@"Profile"];
     };
     
     if (user) {
@@ -151,6 +184,55 @@
         NSLog(@"CURRENT INSTALLATION: Installation already has user. No need to set");
     }
 }
+
+- (void) initializeMainViewControllerToScreenId:(id)screenId
+{
+    if ([self initializeViewControllers]) {
+        NSLog(@"All systems go...");
+        
+        UIViewController *center = self.screens[screenId][@"screen"];
+        NSString* title = self.screens[screenId][@"title"];
+        Menu *menu = [[[NSBundle mainBundle] loadNibNamed:@"Menu" owner:self options:nil] firstObject];
+        menu.menuController = self;
+        
+        self.leftViewController = menu;
+        self.centerViewController = center ? center : [self.storyboard instantiateViewControllerWithIdentifier:screenId];
+        [self.centerViewController setTitle:title ? title : @"No title"];
+        self.animator = [[FloatingDrawerSpringAnimator alloc] init];
+    }
+}
+
+- (id) menuItemWithViewController:(UIViewController*)viewController title:(id)title iconName:(id)iconName badge:(NSUInteger)count
+{
+    return @{
+             @"screen"  : viewController,
+             @"title"   : title,
+             @"menu"    : title,
+             @"icon"    : iconName,
+             @"badge"   : @(count)
+             };
+}
+
+#define menuStoryBoardItem(__X__,__icon__) __X__ : [self menuItemWithViewController:[self.storyboard instantiateViewControllerWithIdentifier:__X__] title:__X__ iconName:__icon__ badge:0]
+#define menuNibItem(__X__,__icon__) __X__ : [self menuItemWithViewController:[[[NSBundle mainBundle] loadNibNamed:__X__ owner:self options:nil] firstObject] title:__X__ iconName:__icon__ badge:0]
+
+- (BOOL)initializeViewControllers
+{
+    self.screens = @{
+                     menuStoryBoardItem(@"Profile", @"settings"),
+                     menuStoryBoardItem(@"VC", @"settings"),
+                     };
+    
+    static BOOL init = true;
+    [self.screens enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if (!obj) {
+            init = false;
+        }
+    }];
+    
+    return init;
+}
+
 
 /*
 #pragma mark - Navigation

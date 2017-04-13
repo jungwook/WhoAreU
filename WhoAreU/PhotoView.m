@@ -7,8 +7,10 @@
 //
 
 #import "PhotoView.h"
+#import "S3File.h"
 
 @interface PhotoView()
+@property (strong, nonatomic) Media* media;
 @end
 
 @implementation PhotoView
@@ -25,6 +27,25 @@
 {
     [super awakeFromNib];
     
+    self.clipsToBounds = YES;
+}
+
+- (void)setMedia:(Media *)media
+{
+    _media = media;
+    
+    [S3File getDataFromFile:self.media.type == kMediaTypePhoto ? self.media.media : self.media.thumbnail dataBlock:^(NSData *data) {
+        UIImage *photo = [UIImage imageWithData:data];
+        self.image = photo;
+    }];
+}
+
+- (void)setImage:(UIImage *)image
+{
+    _image = image;
+    
+    self.layer.contents = (id) image.CGImage;
+    self.layer.contentsGravity = kCAGravityResize;
 }
 
 - (void)layoutSubviews
