@@ -35,11 +35,9 @@
     }];
 }
 
-- (IBAction)updateUser:(id)sender {
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.photoImageView.parent = self;
 }
 
 - (IBAction)editingDidEnd:(id)sender {
@@ -80,7 +78,7 @@
 
 - (IBAction)editPhoto:(id)sender
 {
-    [self.photoImageView updateMediaOnParentViewController:self];
+    [self.photoImageView updateMedia];
 }
 
 - (void)didReceiveMemoryWarning {

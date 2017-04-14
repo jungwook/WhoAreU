@@ -9,6 +9,7 @@
 #import "PhotoView.h"
 #import "MediaPicker.h"
 #import "S3File.h"
+#import "Preview.h"
 
 @interface PhotoView()
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
@@ -35,7 +36,6 @@
 
 - (void)setMedia:(Media *)media
 {
-    [self.activity startAnimating];
     _media = media;
 
     if (self.media) {
@@ -43,12 +43,14 @@
             [S3File getDataFromFile:self.media.type == kMediaTypePhoto ? self.media.media : self.media.thumbnail dataBlock:^(NSData *data) {
                 UIImage *photo = [UIImage imageWithData:data];
                 self.image = photo;
+                [self.activity stopAnimating];
             }];
         }];
     }
     else {
         self.image = [UIImage imageNamed:@"avatar"];
     }
+    [self.activity stopAnimating];
 }
 
 - (void)setImage:(UIImage *)image
@@ -57,8 +59,6 @@
     
     self.layer.contents = (id) image.CGImage;
     self.layer.contentsGravity = kCAGravityResizeAspectFill;
-    
-    [self.activity stopAnimating];
 }
 
 - (void)layoutSubviews
@@ -76,10 +76,24 @@
     UITouch *touch = [touches anyObject];
     if ([self hitTest:[touch locationInView:self] withEvent:nil] == self) {
         NSLog(@"Entering photo picker!");
+        [self previewPhoto];
     }
 }
 
-- (void)updateMediaOnParentViewController:(UIViewController *)parent
+- (void) previewPhoto
+{
+    if (self.image) {
+        Preview *preview = [[Preview alloc] initWithImage:self.image];
+        preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self.parent presentViewController:preview animated:YES completion:nil];
+    }
+    else {
+        NSLog(@"No image set");
+    }
+}
+
+- (void)updateMedia
 {
     void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
         self.me.media = nil;
@@ -87,9 +101,10 @@
             NSLog(@"User:%@", self.me);
         }];
         self.image = [UIImage imageNamed:@"avatar"];
+        [self.activity stopAnimating];
     };
     void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
-        [MediaPicker pickMediaOnViewController:parent withUserMediaHandler:^(Media *media, BOOL picked) {
+        [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
             if (picked) {
                 [self setMedia:media];
                 self.me.media = media;
@@ -97,6 +112,7 @@
                     NSLog(@"User:%@", self.me);
                 }];
             }
+            [self.activity stopAnimating];
         }];
     };
     void (^cancelAction)(UIAlertAction * action) = ^(UIAlertAction* action) {
@@ -125,7 +141,7 @@
                                                 handler:cancelAction]];
     }
     [self.activity startAnimating];
-    [parent presentViewController:alert animated:YES completion:nil];
+    [self.parent presentViewController:alert animated:YES completion:nil];
 }
 
 - (User*) me

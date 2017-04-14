@@ -48,6 +48,7 @@
 		123AF1531E9E0F5300ED0547 /* MenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 123AF1501E9E0F5300ED0547 /* MenuCell.xib */; };
 		123AF1561E9E11B400ED0547 /* ToggleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1551E9E11B400ED0547 /* ToggleButton.m */; };
 		123AF1591E9F0DA300ED0547 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1581E9F0DA300ED0547 /* Profile.m */; };
+		123AF15C1EA07DF300ED0547 /* Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15B1EA07DF300ED0547 /* Preview.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
@@ -128,6 +129,8 @@
 		123AF1551E9E11B400ED0547 /* ToggleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleButton.m; sourceTree = "<group>"; };
 		123AF1571E9F0DA300ED0547 /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
 		123AF1581E9F0DA300ED0547 /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
+		123AF15A1EA07DF300ED0547 /* Preview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preview.h; sourceTree = "<group>"; };
+		123AF15B1EA07DF300ED0547 /* Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preview.m; sourceTree = "<group>"; };
 		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		126154081E8CBBEC00F2AD4F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		1261540A1E8CC85C00F2AD4F /* Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions.m; sourceTree = "<group>"; };
@@ -294,6 +297,8 @@
 			children = (
 				126154121E8CCC7900F2AD4F /* PhotoView.h */,
 				126154131E8CCC7900F2AD4F /* PhotoView.m */,
+				123AF15A1EA07DF300ED0547 /* Preview.h */,
+				123AF15B1EA07DF300ED0547 /* Preview.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -399,6 +404,7 @@
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
 				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
 				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
