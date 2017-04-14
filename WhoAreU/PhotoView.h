@@ -10,5 +10,7 @@
 
 @interface PhotoView : UIView
 @property (strong, nonatomic) IBInspectable UIImage* image;
-- (void) setMedia:(Media*)media;
+@property (strong, nonatomic) Media* media;
+
+- (void) updateMediaOnParentViewController:(UIViewController*)parent;
 @end

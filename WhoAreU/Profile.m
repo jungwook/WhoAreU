@@ -78,47 +78,9 @@
     return self.me.media;
 }
 
-- (IBAction)editPhoto:(id)sender {
-    void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
-        self.me.media = nil;
-        [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-            NSLog(@"User:%@", self.me);
-        }];
-        self.photoImageView.image = [UIImage imageNamed:@"avatar"];
-    };
-    void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
-        [MediaPicker pickMediaOnViewController:self withUserMediaHandler:^(Media *media, BOOL picked) {
-            if (picked) {
-                [self.photoImageView setMedia:media];
-                self.me.media = media;
-                [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                    NSLog(@"User:%@", self.me);
-                }];
-            }
-        }];
-    };
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    if (self.photoExists) {
-        [alert addAction:[UIAlertAction actionWithTitle:@"Remove Photo"
-                                                  style:UIAlertActionStyleDestructive
-                                                handler:removeAction]];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Update Photo"
-                                                  style:UIAlertActionStyleDefault
-                                                handler:updateAction]];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
-                                                  style:UIAlertActionStyleCancel
-                                                handler:nil]];
-    }
-    else {
-        [alert addAction:[UIAlertAction actionWithTitle:@"Add Photo"
-                                                  style:UIAlertActionStyleDefault
-                                                handler:updateAction]];
-    }
-    
-    [self presentViewController:alert animated:YES completion:nil];
-
+- (IBAction)editPhoto:(id)sender
+{
+    [self.photoImageView updateMediaOnParentViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {

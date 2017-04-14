@@ -7,10 +7,10 @@
 //
 
 #import "PhotoView.h"
+#import "MediaPicker.h"
 #import "S3File.h"
 
 @interface PhotoView()
-@property (strong, nonatomic) Media* media;
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
 @end
 
@@ -78,5 +78,65 @@
         NSLog(@"Entering photo picker!");
     }
 }
+
+- (void)updateMediaOnParentViewController:(UIViewController *)parent
+{
+    void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
+        self.me.media = nil;
+        [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            NSLog(@"User:%@", self.me);
+        }];
+        self.image = [UIImage imageNamed:@"avatar"];
+    };
+    void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
+        [MediaPicker pickMediaOnViewController:parent withUserMediaHandler:^(Media *media, BOOL picked) {
+            if (picked) {
+                [self setMedia:media];
+                self.me.media = media;
+                [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    NSLog(@"User:%@", self.me);
+                }];
+            }
+        }];
+    };
+    void (^cancelAction)(UIAlertAction * action) = ^(UIAlertAction* action) {
+        [self.activity stopAnimating];
+    };
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    if (self.me.media) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"Remove Photo"
+                                                  style:UIAlertActionStyleDestructive
+                                                handler:removeAction]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Update Photo"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:updateAction]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                  style:UIAlertActionStyleCancel
+                                                handler:cancelAction]];
+    }
+    else {
+        [alert addAction:[UIAlertAction actionWithTitle:@"Add Photo"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:updateAction]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                  style:UIAlertActionStyleCancel
+                                                handler:cancelAction]];
+    }
+    [self.activity startAnimating];
+    [parent presentViewController:alert animated:YES completion:nil];
+}
+
+- (User*) me
+{
+    static User *me = nil;
+    if (!me) {
+        me = [User me];
+    }
+    return me;
+}
+
+
 
 @end
