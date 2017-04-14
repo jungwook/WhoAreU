@@ -32,6 +32,7 @@
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
+    self.layer.masksToBounds = YES;
 }
 
 - (void)setMedia:(Media *)media
@@ -65,9 +66,6 @@
 {
     [super layoutSubviews];
     
-//    CGFloat l = MIN(CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
-//    self.layer.cornerRadius = l / 2.0f;
-    self.layer.masksToBounds = YES;
     self.activity.frame = self.bounds;
 }
 
@@ -75,21 +73,15 @@
 {
     UITouch *touch = [touches anyObject];
     if ([self hitTest:[touch locationInView:self] withEvent:nil] == self) {
-        NSLog(@"Entering photo picker!");
-        [self previewPhoto];
-    }
-}
-
-- (void) previewPhoto
-{
-    if (self.image) {
-        Preview *preview = [[Preview alloc] initWithImage:self.image];
-        preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
-        preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [self.parent presentViewController:preview animated:YES completion:nil];
-    }
-    else {
-        NSLog(@"No image set");
+        if (self.image && self.parent) {
+            Preview *preview = [[Preview alloc] initWithImage:self.image];
+            preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
+            preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+            [self.parent presentViewController:preview animated:YES completion:nil];
+        }
+        else {
+            NSLog(@"No image or no parent view controller set");
+        }
     }
 }
 

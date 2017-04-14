@@ -10,5 +10,4 @@
 
 @interface Preview : UIViewController
 - (instancetype)initWithImage:(UIImage*)image;
-+ (void) previewImage:(UIImage *)image;
 @end

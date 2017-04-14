@@ -48,11 +48,6 @@
 
 @implementation Preview
 
-+ (void)previewImage:(UIImage *)image
-{
-    
-}
-
 - (instancetype)initWithImage:(UIImage*)image
 {
     self = [super init];
