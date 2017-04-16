@@ -71,7 +71,8 @@
     
     VoidBlock initializationHandler = ^(void) {
         NSLog(@"User %@ logged in", [User me]);
-        [self initializeMainViewControllerToScreenId:@"Profile"];
+//        [self initializeMainViewControllerToScreenId:@"Profile"];
+        [self initializeMainViewControllerToScreenId:@"Chats"];
     };
     
     if (user) {
@@ -219,7 +220,8 @@
 - (BOOL)initializeViewControllers
 {
     self.screens = @{
-                     menuStoryBoardItem(@"Profile", @"settings"),
+                     menuStoryBoardItem(@"Profile", @"profile"),
+                     menuStoryBoardItem(@"Chats", @"Chats"),
                      menuStoryBoardItem(@"VC", @"settings"),
                      };
     

@@ -340,6 +340,43 @@
             </objects>
             <point key="canvasLocation" x="242" y="-1582"/>
         </scene>
+        <!--Chats-->
+        <scene sceneID="gDe-DW-wRg">
+            <objects>
+                <viewController id="VkT-8H-gGg" customClass="Chat" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="RNz-Zd-5Bx"/>
+                        <viewControllerLayoutGuide type="bottom" id="RaV-KH-R3a"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="A21-1j-GZZ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Chats" id="JhY-eJ-01B">
+                        <barButtonItem key="leftBarButtonItem" image="list" id="d6z-pl-0Ai" customClass="ToggleButton"/>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="83W-9Q-kK6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="951" y="-784"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Nxk-FE-f08">
+            <objects>
+                <navigationController storyboardIdentifier="Chats" id="1Zk-ws-I1h" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Zyq-0V-FCd">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="VkT-8H-gGg" kind="relationship" relationship="rootViewController" id="Muj-do-5Vg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D4c-Dm-ecs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="951" y="-1582"/>
+        </scene>
         <!--Settings-->
         <scene sceneID="QCl-Z4-Grd">
             <objects>
@@ -354,7 +391,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Settings" id="gda-BJ-V0u">
-                        <barButtonItem key="leftBarButtonItem" image="list" id="4aP-rZ-U2v" customClass="ToggleButton"/>
+                        <barButtonItem key="leftBarButtonItem" image="list" id="zRf-VE-jOp" customClass="ToggleButton"/>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bud-Q8-Szi" userLabel="First Responder" sceneMemberID="firstResponder"/>
