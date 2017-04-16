@@ -14,5 +14,5 @@ typedef void(^FloatEventBlock)(CGFloat value);
 @interface InputBar : UIView
 @property (copy, nonatomic) KeyboardEventBlock keyboardEvent;
 @property (copy, nonatomic) FloatEventBlock heightChangeEvent;
-@property CGFloat height;
+@property CGFloat height, baseLine;
 @end

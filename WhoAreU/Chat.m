@@ -8,10 +8,12 @@
 
 #import "Chat.h"
 #import "InputBar.h"
+#import "ChatView.h"
 
 @interface Chat ()
 @property (strong, nonatomic) InputBar *inputBar;
-@property CGFloat baseLine;
+@property (strong, nonatomic) ChatView *chatView;
+//@property CGFloat baseLine;
 @end
 
 @implementation Chat
@@ -26,34 +28,58 @@
 - (void) initializeInputPane
 {
     CGFloat h = CGRectGetHeight(self.view.bounds);
-    CGFloat w = CGRectGetWidth(self.view.bounds);
     __weak typeof(self) weakSelf = self;
-    
+
+    // add chatView
+    self.chatView = [ChatView new];
+    [self.view addSubview:self.chatView];
+
+    // add inputBar
     self.inputBar = [InputBar new];
+    self.inputBar.baseLine = h;
+
+    [self.view addSubview:self.inputBar];
+    
     self.inputBar.keyboardEvent = ^(CGFloat duration, UIViewAnimationOptions options, CGRect keyboardFrame) {
-        
         CGFloat height = weakSelf.inputBar.height;
+        weakSelf.inputBar.baseLine = CGRectGetMinY(keyboardFrame);
+        CGFloat bl = weakSelf.inputBar.baseLine - height;
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.baseLine = keyboardFrame.origin.y;
             [UIView animateWithDuration:duration delay:0.0f options:options animations:^{
-                [weakSelf.inputBar setFrame:CGRectMake(0, weakSelf.baseLine-height, w, height)];
+                [weakSelf setFramesTo:bl barHeight:height];
             } completion:nil];
         });
     };
-    self.inputBar.heightChangeEvent = ^(CGFloat height){
+    self.inputBar.heightChangeEvent = ^(CGFloat height) {
+        CGFloat bl = weakSelf.inputBar.baseLine - height;
         weakSelf.inputBar.height = height;
-        [weakSelf.inputBar setFrame:CGRectMake(0, weakSelf.baseLine - height, w, height)];
+        [weakSelf setFramesTo:bl barHeight:height];
     };
-    self.baseLine = h;
-    self.inputBar.frame = CGRectMake(0, self.baseLine - 52, w, 52);
-    [self.view addSubview:self.inputBar];
+    
+    CGFloat height = self.inputBar.height;
+    CGFloat bl = h - height;
+    
+    [self setFramesTo:bl barHeight:height];
 }
 
-- (void)viewDidLoad {
+- (void) setFramesTo:(CGFloat)baseLine barHeight:(CGFloat)height
+{
+    CGFloat w = CGRectGetWidth(self.view.bounds);
+
+    self.inputBar.frame = CGRectMake(0,
+                                     baseLine,
+                                     w,
+                                     height);
+    self.chatView.frame = CGRectMake(0,
+                                     0,
+                                     w,
+                                     baseLine);
+}
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
@@ -86,7 +112,5 @@
     // Pass the selected object to the new view controller.
 }
 */
-
-
 
 @end

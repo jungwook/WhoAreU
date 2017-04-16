@@ -176,7 +176,8 @@ CGRect rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
                                       h-LEFTBUTSIZE, SENDBUTSIZE, LEFTBUTSIZE-2*offset)];
 }
 
-- (void)textViewDidChange:(UITextView *)textView{
+- (void)textViewDidChange:(UITextView *)textView
+{
     static CGRect previousRect;
     
     UITextPosition* pos = textView.endOfDocument;
