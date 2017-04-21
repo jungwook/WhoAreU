@@ -10,9 +10,6 @@
 #import "S3File.h"
 #import "AppDelegate.h"
 
-#define kThumbnailWidth 50
-#define kVideoThumbnailWidth 320
-
 @import MobileCoreServices;
 
 @interface MediaPicker ()
@@ -22,50 +19,6 @@
 @end
 
 @implementation MediaPicker
-
-NSString* randomObjectId()
-{
-    int length = 8;
-    char *base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    
-    NSString *code = @"";
-    
-    for (int i=0; i<length; i++) {
-        int rand = arc4random_uniform(36);
-        code = [code stringByAppendingString:[NSString stringWithFormat:@"%c", base62chars[rand]]];
-    }
-    
-    return code;
-}
-
-CALayer* drawImageOnLayer(UIImage *image, CGSize size)
-{
-    CALayer *layer = [CALayer layer];
-    [layer setBounds:CGRectMake(0, 0, size.width, size.height)];
-    [layer setContents:(id)image.CGImage];
-    [layer setContentsGravity:kCAGravityResizeAspect];
-    [layer setMasksToBounds:YES];
-    return layer;
-}
-
-UIImage* scaleImage(UIImage* image, CGSize size) {
-    
-    UIGraphicsBeginImageContextWithOptions(size, false, 0.0);
-    [drawImageOnLayer(image,size) renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *smallImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return smallImage;
-}
-
-NSData* compressedImageData(NSData* data, CGFloat width)
-{
-    UIImage *image = [UIImage imageWithData:data];
-    const CGFloat thumbnailWidth = width;
-    CGFloat thumbnailHeight = image.size.width ? thumbnailWidth * image.size.height / image.size.width : 200;
-    image = scaleImage(image, CGSizeMake(thumbnailWidth, thumbnailHeight));
-    return UIImageJPEGRepresentation(image, kJPEGCompressionMedium);
-}
 
 typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 

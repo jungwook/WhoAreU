@@ -17,14 +17,6 @@
 
 @implementation PhotoView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
 - (void)awakeFromNib
 {
     [super awakeFromNib];
@@ -33,15 +25,37 @@
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
     self.layer.masksToBounds = YES;
+    self.image = [UIImage imageNamed:@"avatar"];
+    
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+}
+                               
+- (void)tapped:(id)sender
+{
+    if (self.media && self.parent) {
+        Preview *preview = [[Preview alloc] initWithMedia:self.media];
+        preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self.parent presentViewController:preview animated:YES completion:nil];
+    }
+    else {
+        NSLog(@"No image or no parent view controller set");
+    }
 }
 
 - (void)setMedia:(Media *)media
 {
     _media = media;
 
+    [self.activity startAnimating];
     if (self.media) {
         [self.media fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            [S3File getDataFromFile:self.media.type == kMediaTypePhoto ? self.media.media : self.media.thumbnail dataBlock:^(NSData *data) {
+            
+            CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
+            
+            NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
+            
+            [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
                 UIImage *photo = [UIImage imageWithData:data];
                 self.image = photo;
                 [self.activity stopAnimating];
@@ -69,21 +83,12 @@
     self.activity.frame = self.bounds;
 }
 
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [touches anyObject];
-    if ([self hitTest:[touch locationInView:self] withEvent:nil] == self) {
-        if (self.image && self.parent) {
-            Preview *preview = [[Preview alloc] initWithImage:self.image];
-            preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
-            preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-            [self.parent presentViewController:preview animated:YES completion:nil];
-        }
-        else {
-            NSLog(@"No image or no parent view controller set");
-        }
-    }
-}
+//- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [touches anyObject];
+//    if ([self hitTest:[touch locationInView:self] withEvent:nil] == self) {
+//    }
+//}
 
 - (void)updateMedia
 {

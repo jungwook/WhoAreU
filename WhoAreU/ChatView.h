@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ChatView : UITableView <UITableViewDelegate, UITableViewDataSource>
+@protocol ChatViewDataSource;
 
+
+@interface ChatView : UITableView <UITableViewDelegate, UITableViewDataSource>
+@property (nonatomic, weak) id<ChatViewDataSource> chatDataSource;
+@end
+
+@protocol ChatViewDataSource <NSObject>
+- (NSMutableArray*)chats;
 @end

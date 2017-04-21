@@ -24,10 +24,24 @@
     if (self) {
         self.delegate = self;
         self.dataSource = self;
-        self.backgroundColor = [UIColor groupTableViewBackgroundColor];
         [self registerClass:[UITableViewCell class] forCellReuseIdentifier:@"RowCell"];
     }
     return self;
+}
+
+- (NSArray*) chats
+{
+    static BOOL dataSourceReady = NO;
+    
+    if (dataSourceReady) {
+        return [self.chatDataSource chats];
+    }
+    
+    if (self.chatDataSource && [self.chatDataSource respondsToSelector:@selector(chats)]) {
+        dataSourceReady = YES;
+        return [self.chatDataSource chats];
+    }
+    return nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -37,7 +51,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 100;
+    return self.chats.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

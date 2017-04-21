@@ -9,17 +9,6 @@
 #ifndef WhoAreU_pch
 #define WhoAreU_pch
 
-#define __LF NSLog(@"%s", __FUNCTION__);
-
-#define kJPEGCompressionLow 0.2f
-#define kJPEGCompressionMedium 0.4f
-#define kJPEGCompressionDefault 0.6f
-#define kJPEGCompressionFull 1.0f
-
-#define kAppColor [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f]
-#define appScreen [UIScreen mainScreen]
-#define appWindow [UIApplication sharedApplication].keyWindow
-
 @import AVKit;
 @import AVFoundation;
 @import Parse;
@@ -30,6 +19,8 @@
 @import AWSCore;
 @import AWSS3;
 
+#import "BaseFunctions.h"
+#import "ObjectIdStore.h"
 #import "User.h"
 #import "Extensions.h"
 

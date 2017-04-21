@@ -12,6 +12,8 @@
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		1215C5A11EA395CB00BA509E /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A01EA395CB00BA509E /* ChatView.m */; };
+		1215C5A71EA5C43800BA509E /* Nearby.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A61EA5C43800BA509E /* Nearby.m */; };
+		1215C5AA1EA6F88000BA509E /* Compass.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A91EA6F88000BA509E /* Compass.m */; };
 		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
@@ -55,6 +57,8 @@
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
+		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
+		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -82,6 +86,10 @@
 		12144DB61E934CEA000828BF /* ListField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListField.m; sourceTree = "<group>"; };
 		1215C59F1EA395CB00BA509E /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
 		1215C5A01EA395CB00BA509E /* ChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatView.m; sourceTree = "<group>"; };
+		1215C5A51EA5C43800BA509E /* Nearby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nearby.h; sourceTree = "<group>"; };
+		1215C5A61EA5C43800BA509E /* Nearby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nearby.m; sourceTree = "<group>"; };
+		1215C5A81EA6F88000BA509E /* Compass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compass.h; sourceTree = "<group>"; };
+		1215C5A91EA6F88000BA509E /* Compass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Compass.m; sourceTree = "<group>"; };
 		121E15B31E95FE59009CCF51 /* MediaPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPicker.h; sourceTree = "<group>"; };
 		121E15B41E95FE59009CCF51 /* MediaPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPicker.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,6 +154,10 @@
 		1261540C1E8CC87100F2AD4F /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
 		126154121E8CCC7900F2AD4F /* PhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoView.h; sourceTree = "<group>"; };
 		126154131E8CCC7900F2AD4F /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
+		1289C39C1EA7956000A69146 /* IndentedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndentedLabel.h; sourceTree = "<group>"; };
+		1289C39D1EA7956000A69146 /* IndentedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndentedLabel.m; sourceTree = "<group>"; };
+		1289C39F1EA99F8300A69146 /* BaseFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseFunctions.m; sourceTree = "<group>"; };
+		1289C3A11EA99F9500A69146 /* BaseFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseFunctions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +235,8 @@
 				122262D91E8B822B00F51FAE /* ObjectIdStore.m */,
 				1222627B1E8B6E8000F51FAE /* main.m */,
 				122262B21E8B76EC00F51FAE /* WhoAreU.pch */,
+				1289C39F1EA99F8300A69146 /* BaseFunctions.m */,
+				1289C3A11EA99F9500A69146 /* BaseFunctions.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -299,6 +313,8 @@
 				123AF1581E9F0DA300ED0547 /* Profile.m */,
 				123AF15D1EA1AF7500ED0547 /* Chat.h */,
 				123AF15E1EA1AF7500ED0547 /* Chat.m */,
+				1215C5A51EA5C43800BA509E /* Nearby.h */,
+				1215C5A61EA5C43800BA509E /* Nearby.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -306,6 +322,8 @@
 		126154111E8CCC6500F2AD4F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1289C39C1EA7956000A69146 /* IndentedLabel.h */,
+				1289C39D1EA7956000A69146 /* IndentedLabel.m */,
 				126154121E8CCC7900F2AD4F /* PhotoView.h */,
 				126154131E8CCC7900F2AD4F /* PhotoView.m */,
 				123AF15A1EA07DF300ED0547 /* Preview.h */,
@@ -314,6 +332,8 @@
 				123AF1611EA1C6AF00ED0547 /* InputBar.m */,
 				1215C59F1EA395CB00BA509E /* ChatView.h */,
 				1215C5A01EA395CB00BA509E /* ChatView.m */,
+				1215C5A81EA6F88000BA509E /* Compass.h */,
+				1215C5A91EA6F88000BA509E /* Compass.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -426,15 +446,19 @@
 				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
 				123AF1591E9F0DA300ED0547 /* Profile.m in Sources */,
+				1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
+				1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				123AF1621EA1C6AF00ED0547 /* InputBar.m in Sources */,
+				1215C5AA1EA6F88000BA509E /* Compass.m in Sources */,
 				123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
@@ -488,6 +512,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEBUG_ACTIVITY_MODE = "";
+				"DEBUG_ACTIVITY_MODE[sdk=iphonesimulator*]" = disable;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -537,6 +563,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEBUG_ACTIVITY_MODE = "";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

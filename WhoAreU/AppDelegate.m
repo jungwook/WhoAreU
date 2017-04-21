@@ -18,9 +18,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setupAWSCredentials];
 
-    // register subclasses like below
+    // register subclasses
     [User registerSubclass];
     [Media registerSubclass];
+    [Message registerSubclass];
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";
@@ -29,18 +30,9 @@
         configuration.localDatastoreEnabled = YES;
     }]];
     
-    PFObject *o = [PFObject objectWithClassName:@"TEST"];
-    o[@"foo"] = @"bar";
-    [o saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if (succeeded) {
-            NSLog(@"Saved");
-        }
-        else {
-            NSLog(@"Error saving");
-        }
-    }];
-    
     [self setupAWSDefaultACLs];
+    
+//    [SimulatedUsers createUsers];
         
     return YES;
 }

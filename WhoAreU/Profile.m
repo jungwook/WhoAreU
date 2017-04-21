@@ -27,17 +27,25 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+    }
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.photoImageView.parent = self;
     self.me = [User me];
     self.nickname.delegate = self;
     
     [self.me fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         [self setupUserDetails];
     }];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.photoImageView.parent = self;
 }
 
 - (IBAction)editingDidEnd:(id)sender {
@@ -51,6 +59,7 @@
 
 - (void)setupUserDetails
 {
+    __LF
     [self.age setPickerForAgeGroupsWithHandler:^(id item) {
         self.me.age = item;
     }];

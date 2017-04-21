@@ -143,16 +143,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     [self addSubview:self.textView];
 }
 
-CGRect rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
-{
-    CGRect rect = CGRectIntegral([string boundingRectWithSize:CGSizeMake(maxWidth, MAXFLOAT)
-                                                      options:NSStringDrawingUsesLineFragmentOrigin
-                                                   attributes:@{
-                                                                NSFontAttributeName: font,
-                                                                } context:nil]);
-    return rect;
-}
-
 - (void)layoutSubviews
 {
     const CGFloat offset = 4;

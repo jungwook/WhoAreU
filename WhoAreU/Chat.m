@@ -10,9 +10,10 @@
 #import "InputBar.h"
 #import "ChatView.h"
 
-@interface Chat ()
+@interface Chat () <ChatViewDataSource>
 @property (strong, nonatomic) InputBar *inputBar;
 @property (strong, nonatomic) ChatView *chatView;
+@property (strong, nonatomic) NSMutableArray *chats;
 //@property CGFloat baseLine;
 @end
 
@@ -22,6 +23,7 @@
 {
     [super awakeFromNib];
     
+    self.chats = [NSMutableArray new];
     [self initializeInputPane];
 }
 
@@ -32,6 +34,7 @@
 
     // add chatView
     self.chatView = [ChatView new];
+    self.chatView.chatDataSource = self;
     [self.view addSubview:self.chatView];
 
     // add inputBar

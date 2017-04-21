@@ -14,6 +14,10 @@ typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);
 typedef void(^StringBlock)(NSString* string);
 
+@class User;
+@class MessageItem;
+@class Media;
+
 typedef NS_OPTIONS(NSUInteger, GenderType)
 {
     kGenderTypeMale = 0,
@@ -33,6 +37,25 @@ typedef NS_OPTIONS(NSUInteger, SourceType)
     kSourceTaken,
 };
 
+typedef NS_OPTIONS(NSUInteger, MessageType)
+{
+    kMessageTypeUnknown = 0,
+    kMessageTypeText,
+    kMessageTypeMedia,
+};
+
+#pragma mark Message
+
+@interface Message : PFObject <PFSubclassing>
+@property (retain) User *fromUser;
+@property (retain) User *toUser;
+@property (retain) NSString* text;
+@property (retain) Media* media;
+@property MessageType type;
+@end
+
+#pragma mark Media
+
 @interface Media : PFObject <PFSubclassing>
 @property (retain) NSString* userId;
 @property (retain) NSString* comment;
@@ -48,6 +71,8 @@ typedef NS_OPTIONS(NSUInteger, SourceType)
 - (void) thumbnailLoaded:(ImageBlock)block;
 @end
 
+#pragma mark User
+
 @interface User : PFUser <PFSubclassing>
 @property (retain) NSString*    nickname;
 @property (retain) PFGeoPoint*  where;
@@ -56,6 +81,7 @@ typedef NS_OPTIONS(NSUInteger, SourceType)
 @property (retain) NSString*    desc;
 @property (retain) Media*       media;
 @property GenderType            gender;
+@property BOOL                  simulated;
 
 + (User*)me;
 - (BOOL)isMe;
@@ -73,5 +99,10 @@ typedef NS_OPTIONS(NSUInteger, SourceType)
 
 
 @end
+
+@interface SimulatedUsers : NSObject
++ (void) createUsers;
+@end
+
 
 
