@@ -54,11 +54,13 @@
 		123AF15C1EA07DF300ED0547 /* Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15B1EA07DF300ED0547 /* Preview.m */; };
 		123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15E1EA1AF7500ED0547 /* Chat.m */; };
 		123AF1621EA1C6AF00ED0547 /* InputBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1611EA1C6AF00ED0547 /* InputBar.m */; };
+		1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
 		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
+		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -148,6 +150,8 @@
 		123AF15E1EA1AF7500ED0547 /* Chat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chat.m; sourceTree = "<group>"; };
 		123AF1601EA1C6AF00ED0547 /* InputBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputBar.h; sourceTree = "<group>"; };
 		123AF1611EA1C6AF00ED0547 /* InputBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputBar.m; sourceTree = "<group>"; };
+		1249DD491EAC46CA00E9E39F /* MediaCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCollection.h; sourceTree = "<group>"; };
+		1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaCollection.m; sourceTree = "<group>"; };
 		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		126154081E8CBBEC00F2AD4F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		1261540A1E8CC85C00F2AD4F /* Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Extensions.m; sourceTree = "<group>"; };
@@ -158,6 +162,8 @@
 		1289C39D1EA7956000A69146 /* IndentedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndentedLabel.m; sourceTree = "<group>"; };
 		1289C39F1EA99F8300A69146 /* BaseFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseFunctions.m; sourceTree = "<group>"; };
 		1289C3A11EA99F9500A69146 /* BaseFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseFunctions.h; sourceTree = "<group>"; };
+		12B796091EAA2C970041AE6C /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
+		12B7960A1EAA2C970041AE6C /* Engine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Engine.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -299,6 +305,8 @@
 				12082F931E9376D700E8D051 /* ShadowLabel.m */,
 				121E15B31E95FE59009CCF51 /* MediaPicker.h */,
 				121E15B41E95FE59009CCF51 /* MediaPicker.m */,
+				12B796091EAA2C970041AE6C /* Engine.h */,
+				12B7960A1EAA2C970041AE6C /* Engine.m */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -334,6 +342,8 @@
 				1215C5A01EA395CB00BA509E /* ChatView.m */,
 				1215C5A81EA6F88000BA509E /* Compass.h */,
 				1215C5A91EA6F88000BA509E /* Compass.m */,
+				1249DD491EAC46CA00E9E39F /* MediaCollection.h */,
+				1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -444,6 +454,7 @@
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
 				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
 				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
+				1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
 				123AF1591E9F0DA300ED0547 /* Profile.m in Sources */,
 				1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */,
@@ -452,6 +463,7 @@
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
+				12B7960B1EAA2C970041AE6C /* Engine.m in Sources */,
 				1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,

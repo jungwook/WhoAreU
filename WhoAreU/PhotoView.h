@@ -13,5 +13,6 @@
 @property (strong, nonatomic) Media* media;
 @property (weak, nonatomic) UIViewController* parent;
 
+- (void) clear;
 - (void) updateMedia;
 @end

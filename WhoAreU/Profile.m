@@ -10,6 +10,7 @@
 #import "PhotoView.h"
 #import "ListField.h"
 #import "MediaPicker.h"
+#import "MediaCollection.h"
 
 @interface Profile () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet PhotoView *photoImageView;
@@ -19,7 +20,9 @@
 @property (weak, nonatomic) IBOutlet ListField *age;
 @property (weak, nonatomic) IBOutlet ListField *desc;
 @property (weak, nonatomic) IBOutlet ListField *gender;
+@property (weak, nonatomic) IBOutlet MediaCollection *mediaCollection;
 @property (weak, nonatomic) User *me;
+
 @end
 
 @implementation Profile
@@ -42,6 +45,7 @@
     self.photoImageView.parent = self;
     self.me = [User me];
     self.nickname.delegate = self;
+    self.mediaCollection.parent = self;
     
     [self.me fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         [self setupUserDetails];
@@ -72,11 +76,11 @@
     
     self.age.text = self.me.age;
     self.desc.text = self.me.desc;
+    self.mediaCollection.user = self.me;
     self.gender.text = self.me.genderTypeString;
     self.nickname.text = self.me.nickname;
     self.nicknameLabel.text = self.me.nickname;
     self.sinceLabel.text = [NSString stringWithFormat:@"member since %@", [NSDateFormatter localizedStringFromDate:self.me.createdAt dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle]];
-    
     [self.photoImageView setMedia:self.me.media];
 }
 

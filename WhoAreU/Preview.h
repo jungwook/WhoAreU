@@ -9,7 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface Preview : UIViewController
-- (instancetype)initWithImage:(UIImage*)image;
-- (instancetype)initWithVideoURL:(NSString*)url;
 - (instancetype)initWithMedia:(Media*)media;
 @end

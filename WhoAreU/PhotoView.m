@@ -17,10 +17,17 @@
 
 @implementation PhotoView
 
-- (void)awakeFromNib
+- (instancetype)init
 {
-    [super awakeFromNib];
-    
+    self = [super init];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
+- (void)initialize
+{
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
@@ -28,6 +35,12 @@
     self.image = [UIImage imageNamed:@"avatar"];
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self initialize];
 }
                                
 - (void)tapped:(id)sender
@@ -66,6 +79,12 @@
         self.image = [UIImage imageNamed:@"avatar"];
     }
     [self.activity stopAnimating];
+}
+
+- (void)clear
+{
+    self.image = [UIImage imageNamed:@"avatar"];
+    [self.activity startAnimating];
 }
 
 - (void)setImage:(UIImage *)image

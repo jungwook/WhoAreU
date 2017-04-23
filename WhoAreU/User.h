@@ -80,6 +80,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (retain) NSString*    age;
 @property (retain) NSString*    desc;
 @property (retain) Media*       media;
+@property (retain) NSArray<Media*> *photos;
 @property GenderType            gender;
 @property BOOL                  simulated;
 
@@ -102,6 +103,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 
 @interface SimulatedUsers : NSObject
 + (void) createUsers;
++ (void) resetUsers;
 @end
 
 

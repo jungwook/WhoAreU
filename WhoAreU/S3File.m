@@ -40,6 +40,7 @@
         NSURL* systemPath = [applicationPath URLByAppendingPathComponent:@"Engine"];
         self.cachePath = [systemPath URLByAppendingPathComponent:@"MediaCache"];
         self.cache = [NSMutableDictionary dictionaryWithContentsOfURL:self.cachePath];
+//        self.cache = [NSMutableDictionary dictionary];
         if (!self.cache) {
             self.cache = [NSMutableDictionary dictionary];
         }

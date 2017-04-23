@@ -93,7 +93,7 @@
 #pragma mark user
 
 @implementation User
-@dynamic nickname, where, whereUdatedAt, age, desc, media, gender, simulated;
+@dynamic nickname, where, whereUdatedAt, age, desc, media, photos, gender, simulated;
 
 + (User *)me
 {
@@ -254,9 +254,16 @@
     }];
 }
 
++ (void) resetMedia
+{
+    
+}
+
 - (void) createUsers
 {
-    NSArray *names = @[@"가리온", @"가은", @"강다이", @"고루나", @"고운비", @"그레", @"그리미", @"글샘", @"기찬", @"길한", @"나나", @"나도람", @"나슬", @"난새", @"난한벼리", @"내누리", @"누니", @"늘새찬", @"늘품", @"늘해찬", @"다보라", @"다소나", @"다솜", @"다슴", @"다올", @"다조은", @"달래울", @"달비슬", @"대누리", @"드레", @"말그미", @"모도리", @"무아", @"미리내", @"미슬기", @"바다", @"바로", @"바우", @"밝음이", @"별아", @"보다나", @"봄이", @"비치", @"빛들", @"빛새온", @"빛찬온", @"사나래", @"새라", @"새로나", @"새미라", @"새하", @"샘나", @"소담", @"소란", @"솔다우니", @"슬미", @"아늘", @"아로미", @"아름이", @"아림", @"아음", @"애리", @"여슬", @"영아름", @"예달", @"온비", @"정다와", @"정아라미", @"조은", @"지예", @"진아", @"차니", @"찬샘", @"찬아람", @"참이", @"초은", @"파라", @"파랑", @"푸르나", @"푸르내", @"풀잎", @"하나", @"하나슬", @"하리", @"하은", @"한진이", @"한비", @"한아름", @"해나", @"해슬아", @"희라"];
+//    NSArray *names = @[@"가리온", @"가은", @"강다이", @"고루나", @"고운비", @"그레", @"그리미", @"글샘", @"기찬", @"길한", @"나나", @"나도람", @"나슬", @"난새", @"난한벼리", @"내누리", @"누니", @"늘새찬", @"늘품", @"늘해찬", @"다보라", @"다소나", @"다솜", @"다슴", @"다올", @"다조은", @"달래울", @"달비슬", @"대누리", @"드레", @"말그미", @"모도리", @"무아", @"미리내", @"미슬기", @"바다", @"바로", @"바우", @"밝음이", @"별아", @"보다나", @"봄이", @"비치", @"빛들", @"빛새온", @"빛찬온", @"사나래", @"새라", @"새로나", @"새미라", @"새하", @"샘나", @"소담", @"소란", @"솔다우니", @"슬미", @"아늘", @"아로미", @"아름이", @"아림", @"아음", @"애리", @"여슬", @"영아름", @"예달", @"온비", @"정다와", @"정아라미", @"조은", @"지예", @"진아", @"차니", @"찬샘", @"찬아람", @"참이", @"초은", @"파라", @"파랑", @"푸르나", @"푸르내", @"풀잎", @"하나", @"하나슬", @"하리", @"하은", @"한진이", @"한비", @"한아름", @"해나", @"해슬아", @"희라"];
+    
+    NSArray *names = @[ @"정아라미", @"조은", @"지예", @"진아", @"차니", @"찬샘", @"찬아람", @"참이", @"초은", @"파라", @"파랑", @"푸르나", @"푸르내", @"풀잎", @"하나", @"하나슬", @"하리", @"하은", @"한진이", @"한비", @"한아름", @"해나", @"해슬아", @"희라"];
     
     int i = 1;
     for (NSString *name in names) {
@@ -297,43 +304,11 @@
             NSLog(@"SETTING UP PROFILE IMAGE FOR %@", name);
             
             NSString* imageName = [NSString stringWithFormat:@"image%d", idx];
-            UIImage *image = [UIImage imageNamed:imageName];
-            
-            CALayer *layer = [CALayer layer];
-            UIGraphicsBeginImageContextWithOptions(CGSizeMake(image.size.width, image.size.width), false, 0.0);
-            layer.frame = CGRectMake(0, 0, image.size.width, image.size.width);
-            layer.contents = (id) image.CGImage;
-            layer.contentsGravity = kCAGravityBottom;
-            layer.masksToBounds = YES;
-            [layer renderInContext:UIGraphicsGetCurrentContext()];
-            UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            UIImage *originalPhoto = scaleImage(newImage, CGSizeMake(1024, 1024));
-            
-            NSData *largeData = UIImageJPEGRepresentation(originalPhoto, kJPEGCompressionMedium);
-            NSData *tnData = compressedImageData(largeData, kThumbnailWidth);
-            
-            Media *media = [Media object];
-            media.size = originalPhoto.size;
-            media.type = kMediaTypePhoto;
-            media.source = kSourceTaken;
-            
-            media.media = [S3File saveImageData:tnData completedBlock:^(NSString *thumbnailFile, BOOL succeeded, NSError *error) {
-                if (error) {
-                    NSLog(@"ERROR:%@", error.localizedDescription);
-                }
-            } progressBlock:nil];
-            
-            media.thumbnail = [S3File saveImageData:largeData completedBlock:^(NSString *mediaFile, BOOL succeeded, NSError *error) {
-                if (error) {
-                    NSLog(@"ERROR:%@", error.localizedDescription);
-                }
-            }];
-            
-            [media save];
-            NSLog(@"Media Saved");
+            Media *media = [self mediaFromImage:[UIImage imageNamed:imageName] size:CGSizeMake(1024, 1024)];
             loggedIn.media = media;
+            [loggedIn addObjectsFromArray:[self createPhotos] forKey:@"photos"];
+            
+            NSLog(@"User:%@", loggedIn);
             [loggedIn save];
             NSLog(@"User Saved");
         }
@@ -343,6 +318,65 @@
     }
 }
 
+- (NSArray<Media*>*) createPhotos
+{
+    NSUInteger count = arc4random()%10+1;
+    
+    NSLog(@"Creating %ld photos", count);
+    NSMutableArray<Media*> *photos = [NSMutableArray array];
+    for (int i =0; i<count; i++) {
+        NSUInteger index = arc4random()%103+1;
+        UIImage *photo = [UIImage imageNamed:[NSString stringWithFormat:@"image%ld", index]];
+        [photos addObject:[self mediaFromImage:photo size:CGSizeMake(512, 512)]];
+    }
+    
+    NSLog(@"Returning %ld photos array", count);
+    return photos;
+}
+
+- (Media*) mediaFromImage:(UIImage*)original size:(CGSize) size
+{
+    UIImage *image = [self resizeAndPositionImage:original];
+    UIImage *photo = scaleImage(image, size);
+    
+    NSData *largeData = UIImageJPEGRepresentation(photo, kJPEGCompressionMedium);
+    NSData *thumbnailData = compressedImageData(largeData, kThumbnailWidth);
+    
+    Media *media = [Media object];
+    media.size = photo.size;
+    media.type = kMediaTypePhoto;
+    media.source = kSourceTaken;
+    
+    media.thumbnail = [S3File saveImageData:thumbnailData completedBlock:^(NSString *thumbnailFile, BOOL succeeded, NSError *error) {
+        if (error) {
+            NSLog(@"ERROR:%@", error.localizedDescription);
+        }
+    } progressBlock:nil];
+    
+    media.media = [S3File saveImageData:largeData completedBlock:^(NSString *mediaFile, BOOL succeeded, NSError *error) {
+        if (error) {
+            NSLog(@"ERROR:%@", error.localizedDescription);
+        }
+    }];
+    
+    [media saveInBackground];
+    return media;
+}
+
+- (UIImage*) resizeAndPositionImage:(UIImage*)image
+{
+    CALayer *layer = [CALayer layer];
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(image.size.width, image.size.width), false, 0.0);
+    layer.frame = CGRectMake(0, 0, image.size.width, image.size.width);
+    layer.contents = (id) image.CGImage;
+    layer.contentsGravity = kCAGravityBottom;
+    layer.masksToBounds = YES;
+    [layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return newImage;
+}
 
 @end
 

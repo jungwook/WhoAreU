@@ -20,6 +20,9 @@
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 
 
+#define POINT_FROM_CLLOCATION(__X__) [PFGeoPoint geoPointWithLocation:__X__]
+#define POINT_FROM_COORDINATES(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
+#define SIMULATOR_LOCATION [PFGeoPoint geoPointWithLatitude:37.515791f longitude:127.027807f]
 
 #define kAppColor [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f]
 #define appScreen [UIScreen mainScreen]
@@ -43,5 +46,8 @@ CGFloat     ampAtIndex(NSUInteger index, NSData* data);
 void        setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity);
 CGFloat     widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLayout *flowLayout, CGFloat cpr);
 UIView*     viewWithTag(UIView *view, NSInteger tag);
+PFGeoPoint* pointFromCLLocation(CLLocation* location);
+PFGeoPoint* pointFromCoordinates(CLLocationCoordinate2D  coordinates);
+
 
 #endif /* BaseFunctions_h */

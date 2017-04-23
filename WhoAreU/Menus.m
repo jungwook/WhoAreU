@@ -71,7 +71,11 @@
     
     VoidBlock initializationHandler = ^(void) {
         NSLog(@"User %@ logged in", [User me]);
-//        [self initializeMainViewControllerToScreenId:@"Profile"];
+        
+        // User logged in so ready to initialize systems.
+        [Engine initializeSystems];
+        
+        // Initialize Tabs.
         [self initializeMainViewControllerToScreenId:@"Tabs"];
     };
     

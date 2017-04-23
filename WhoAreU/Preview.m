@@ -232,7 +232,10 @@
                 
                 [self.scrollView addGestureRecognizer:doubleTap];
                 [self.scrollView addGestureRecognizer:singleTap];
-                [S3File getDataFromFile:self.media.media dataBlock:^(NSData *data) {
+                NSLog(@"Media:%@", media);
+                NSLog(@"File:%@", media.media);
+                [S3File getDataFromFile:media.media dataBlock:^(NSData *data) {
+                    NSLog(@"Retrieved Data:%ld", data.length);
                     UIImage *image = [UIImage imageWithData:data];
                     NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
                     NSDictionary *views = @{@"imageView":self.imageView};

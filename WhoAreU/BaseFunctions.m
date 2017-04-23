@@ -202,4 +202,13 @@ UIView* viewWithTag(UIView *view, NSInteger tag)
     return retView;
 }
 
+PFGeoPoint* pointFromCLLocation(CLLocation* location)
+{
+    return [PFGeoPoint geoPointWithLocation:location];
+}
+
+PFGeoPoint* pointFromCoordinates(CLLocationCoordinate2D  coordinates)
+{
+    return [PFGeoPoint geoPointWithLatitude:coordinates.latitude longitude:coordinates.longitude];
+}
 

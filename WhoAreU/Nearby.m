@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet IndentedLabel *age;
 @property (weak, nonatomic) IBOutlet PhotoView *photoView;
 @property (weak, nonatomic) IBOutlet Compass *compass;
+@property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) UIViewController* parent;
 @end
 
@@ -25,12 +26,16 @@
 
 -(void)setUser:(User *)user
 {
+    [self.photoView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.desc;
     self.compass.heading = 45.0f;
     self.photoView.parent = self.parent;
     self.photoView.media = user.media;
     self.age.text = user.age;
+    
+    self.compass.heading = heading([Engine where], user.where);
+    self.distance.text = distanceString([[Engine where] distanceInKilometersTo:user.where]);
 }
 
 @end
@@ -79,7 +84,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    __LF
     UserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
 
     cell.parent = self;
