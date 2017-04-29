@@ -18,6 +18,7 @@
 @import Bolts;
 @import AWSCore;
 @import AWSS3;
+@import UserNotifications;
 
 #import "BaseFunctions.h"
 #import "ObjectIdStore.h"

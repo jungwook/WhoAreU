@@ -12,11 +12,307 @@
 
 #pragma mark Message
 
+@implementation Installation
+@dynamic user, credits, initialFreeCredits, openChatCredits;
+
+- (NSUInteger)initialFreeCredits
+{
+    return 1000;
+}
+
+- (NSUInteger)openChatCredits
+{
+    return 250;
+}
+
++ (void)payForChatOnViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock
+{
+    Installation *install = [Installation currentInstallation];
+    
+    void(^buyhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
+        NSLog(@"Buy more credits");
+        
+        UIViewController *vc = [viewController.storyboard instantiateViewControllerWithIdentifier:@"Credits"];
+        // other vc initializations;
+        vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        
+        [viewController presentViewController:vc animated:YES completion:nil];
+    };
+    void(^okhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
+        
+        install.credits -= install.openChatCredits;
+        [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            if (succeeded) {
+                if (actionBlock) {
+                    actionBlock();
+                    // Example ... [self performSegueWithIdentifier:@"Chat" sender:user];
+                }
+            }
+        }];
+    };
+    BOOL enoughCredits = install.credits > install.openChatCredits;
+    
+    NSString *message = enoughCredits ?  [NSString stringWithFormat:@"You have a total of %ld credits.\nTo continue %ld credits will be charged. Do you want to continue?", install.credits, install.openChatCredits] : [NSString stringWithFormat:@"You need %ld credits to open a new chat!\n\nYou currently have a total of %ld credits. Would you like to buy more credits?", install.openChatCredits, install.credits];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Proceed" style:UIAlertActionStyleDefault handler:enoughCredits ? okhandler : buyhandler];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Initiate Chat" message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    
+    [viewController presentViewController:alert animated:YES completion:nil];
+}
+
+@end
+
+
+@implementation NSMutableDictionary(Dictionary)
+
+- (void)setObjectId:(NSString *)objectId
+{
+    if (objectId) {
+        [self setObject:objectId forKey:@"objectId"];
+    }
+}
+
+- (NSString *)objectId
+{
+    return [self objectForKey:@"objectId"];
+}
+
+- (NSDate *)createdAt
+{
+    return [self objectForKey:@"createdAt"];
+}
+
+- (void)setCreatedAt:(NSDate *)createdAt
+{
+    if (createdAt) {
+        [self setObject:createdAt forKey:@"createdAt"];
+    }
+}
+
+- (NSDate *)updatedAt
+{
+    return [self objectForKey:@"updatedAt"];
+}
+
+- (void)setUpdatedAt:(NSDate *)updatedAt
+{
+    if (updatedAt) {
+        [self setObject:updatedAt forKey:@"updatedAt"];
+    }
+}
+
+- (NSString *)fromUserId
+{
+    return [self objectForKey:@"fromUserId"];
+}
+
+- (void)setFromUserId:(NSString *)fromUserId
+{
+    if (fromUserId) {
+        [self setObject:fromUserId forKey:@"fromUserId"];
+    }
+}
+
+- (NSString *)toUserId
+{
+    return [self objectForKey:@"toUserId"];
+}
+
+-(void)setToUserId:(NSString *)toUserId
+{
+    if (toUserId) {
+        [self setObject:toUserId forKey:@"toUserId"];
+    }
+}
+
+- (NSString *)message
+{
+    return [self objectForKey:@"message"];
+}
+
+- (void)setMessage:(NSString *)message
+{
+    if (message) {
+        [self setObject:message forKey:@"message"];
+    }
+}
+
+- (Media *)media
+{
+    return [[self objectForKey:@"media"] object];
+}
+
+- (void)setMedia:(Media *)media
+{
+    if (media) {
+        [self setObject:media.dictionary forKey:@"media"];
+//        [self setObject:@"Media Message" forKey:@"message"];
+    }
+}
+
+- (MessageType)messageType
+{
+    return [[self objectForKey:@"messageType"] integerValue];
+}
+
+- (void)setMessageType:(MessageType)messageType
+{
+    [self setObject:@(messageType) forKey:@"messageType"];
+}
+
+- (BOOL)read
+{
+    return [[self objectForKey:@"read"] integerValue];
+}
+
+- (void)setRead:(BOOL)read
+{
+    [self setObject:@(read) forKey:@"read"];
+}
+
+- (NSString *)userId
+{
+    return [self objectForKey:@"updatedAt"];
+}
+
+- (void)setUserId:(NSString *)userId
+{
+    if (userId)
+        [self setObject:userId forKey:@"userId"];
+}
+
+- (NSString *)comment
+{
+    return [self objectForKey:@"comment"];
+}
+
+- (void)setComment:(NSString *)comment
+{
+    if (comment)
+        [self setObject:comment forKey:@"comment"];
+}
+
+- (NSString *)thumbnail
+{
+    return [self objectForKey:@"thumbnail"];
+}
+
+- (void)setThumbnail:(NSString *)thumbnail
+{
+    if (thumbnail)
+        [self setObject:thumbnail forKey:@"thumbnail"];
+}
+
+- (NSString *)mediaFile
+{
+    return [self objectForKey:@"mediaFile"];
+}
+
+- (void)setMediaFile:(NSString *)media
+{
+    if (media)
+        [self setObject:media forKey:@"mediaFile"];
+}
+
+- (MediaType)mediaType
+{
+    return [[self objectForKey:@"mediaType"] integerValue];
+}
+
+- (void)setMediaType:(MediaType)type
+{
+    [self setObject:@(type) forKey:@"mediaType"];
+}
+
+- (BOOL)source
+{
+    return [[self objectForKey:@"source"] boolValue];
+}
+
+-(void)setSource:(BOOL)source
+{
+    [self setObject:@(source) forKey:@"source"];
+}
+
+- (CGSize)size
+{
+    return CGSizeFromString([self objectForKey:@"size"]);
+}
+
+- (void)setSize:(CGSize)size
+{
+    [self setObject:NSStringFromCGSize(size) forKey:@"size"];
+}
+
+- (Media *)mediaObject
+{
+    Media *media = [Media object];
+    
+    return media;
+}
+
+- (Message *)messageObject
+{
+    Message *message = [Message object];
+    return message;
+}
+
+@end
+
 @implementation Message
-@dynamic fromUser, toUser, text, media, type;
+@dynamic fromUser, toUser, message, media, type, read;
 
 + (NSString *)parseClassName {
     return @"Message";
+}
+
++ (instancetype)media:(Media *)media toUser:(User *)user
+{
+    Message *message = [Message new];
+    
+    message.fromUser = [User me];
+    message.toUser = user;
+    message.media = media;
+    message.type = kMessageTypeMedia;
+    message.message = (media.type == kMediaTypePhoto) ? @"new photo message" : @"new video message";
+    message.read = NO;
+    
+    return message;
+}
+
++ (instancetype)message:(NSString *)text toUser:(User*)user
+{
+    Message *message = [Message new];
+    
+    message.fromUser = [User me];
+    message.toUser = user;
+    message.message = text;
+    message.type = kMessageTypeText;
+    message.read = NO;
+    
+    return message;
+}
+
+- (MessageDic*) dictionary
+{
+    MessageDic *d = [MessageDic new];
+    
+    d.objectId = self.objectId;
+    d.createdAt = self.createdAt;
+    d.updatedAt = self.updatedAt;
+    d.fromUserId = self.fromUser.objectId;
+    d.toUserId = self.toUser.objectId;
+    d.message = self.message;
+    d.media = self.media;
+    d.messageType = self.type;
+    d.read = self.read;
+    
+    return d;
 }
 
 @end
@@ -28,6 +324,24 @@
 
 + (NSString *)parseClassName {
     return @"Media";
+}
+
+- (MediaDic*) dictionary
+{
+    MediaDic *d = [MediaDic new];
+    
+    d.objectId = self.objectId;
+    d.createdAt = self.createdAt;
+    d.updatedAt = self.updatedAt;
+    d.userId = self.userId;
+    d.comment = self.comment;
+    d.thumbnail = self.thumbnail;
+    d.mediaFile = self.media;
+    d.mediaType = self.type;
+    d.size = self.size;
+    d.source = self.source;
+    
+    return d;
 }
 
 - (void)setSize:(CGSize)mediaSize
@@ -337,10 +651,10 @@
 - (Media*) mediaFromImage:(UIImage*)original size:(CGSize) size
 {
     UIImage *image = [self resizeAndPositionImage:original];
-    UIImage *photo = scaleImage(image, size);
+    UIImage *photo = __scaleImage(image, size);
     
     NSData *largeData = UIImageJPEGRepresentation(photo, kJPEGCompressionMedium);
-    NSData *thumbnailData = compressedImageData(largeData, kThumbnailWidth);
+    NSData *thumbnailData = __compressedImageData(largeData, kThumbnailWidth);
     
     Media *media = [Media object];
     media.size = photo.size;

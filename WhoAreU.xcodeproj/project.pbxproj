@@ -11,7 +11,7 @@
 		120775091E9DD29000B02AF6 /* SignUp.xib in Resources */ = {isa = PBXBuildFile; fileRef = 120775071E9DD29000B02AF6 /* SignUp.xib */; };
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
-		1215C5A11EA395CB00BA509E /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A01EA395CB00BA509E /* ChatView.m */; };
+		1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215085B1EAF180E00EAA5E1 /* Tabs.m */; };
 		1215C5A71EA5C43800BA509E /* Nearby.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A61EA5C43800BA509E /* Nearby.m */; };
 		1215C5AA1EA6F88000BA509E /* Compass.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A91EA6F88000BA509E /* Compass.m */; };
 		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
@@ -41,6 +41,10 @@
 		122262D21E8B7E6900F51FAE /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 122262CE1E8B7E6900F51FAE /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		122262D71E8B81FC00F51FAE /* S3File.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D61E8B81FC00F51FAE /* S3File.m */; };
 		122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262D91E8B822B00F51FAE /* ObjectIdStore.m */; };
+		1225F0171EAF2881002763A0 /* UserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F0161EAF2881002763A0 /* UserProfile.m */; };
+		1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F0191EB02B1E002763A0 /* ModalAnimator.m */; };
+		1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01B1EB02B1E002763A0 /* ModalViewController.m */; };
+		1225F0201EB07491002763A0 /* Credits.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01F1EB07491002763A0 /* Credits.m */; };
 		123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */; };
 		123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */; };
 		123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1431E9E0C9600ED0547 /* FloatingDrawerViewController.m */; };
@@ -53,7 +57,6 @@
 		123AF1591E9F0DA300ED0547 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1581E9F0DA300ED0547 /* Profile.m */; };
 		123AF15C1EA07DF300ED0547 /* Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15B1EA07DF300ED0547 /* Preview.m */; };
 		123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15E1EA1AF7500ED0547 /* Chat.m */; };
-		123AF1621EA1C6AF00ED0547 /* InputBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1611EA1C6AF00ED0547 /* InputBar.m */; };
 		1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
@@ -61,6 +64,8 @@
 		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
 		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
 		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
+		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
+		12F96D561EB453620054DA6C /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12F96D551EB453620054DA6C /* ChatView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -86,8 +91,8 @@
 		12082F931E9376D700E8D051 /* ShadowLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowLabel.m; sourceTree = "<group>"; };
 		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
 		12144DB61E934CEA000828BF /* ListField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListField.m; sourceTree = "<group>"; };
-		1215C59F1EA395CB00BA509E /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
-		1215C5A01EA395CB00BA509E /* ChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatView.m; sourceTree = "<group>"; };
+		1215085A1EAF180E00EAA5E1 /* Tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tabs.h; sourceTree = "<group>"; };
+		1215085B1EAF180E00EAA5E1 /* Tabs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tabs.m; sourceTree = "<group>"; };
 		1215C5A51EA5C43800BA509E /* Nearby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nearby.h; sourceTree = "<group>"; };
 		1215C5A61EA5C43800BA509E /* Nearby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nearby.m; sourceTree = "<group>"; };
 		1215C5A81EA6F88000BA509E /* Compass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compass.h; sourceTree = "<group>"; };
@@ -125,6 +130,14 @@
 		122262D61E8B81FC00F51FAE /* S3File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = S3File.m; sourceTree = "<group>"; };
 		122262D81E8B822B00F51FAE /* ObjectIdStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdStore.h; sourceTree = "<group>"; };
 		122262D91E8B822B00F51FAE /* ObjectIdStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectIdStore.m; sourceTree = "<group>"; };
+		1225F0151EAF2881002763A0 /* UserProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfile.h; sourceTree = "<group>"; };
+		1225F0161EAF2881002763A0 /* UserProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfile.m; sourceTree = "<group>"; };
+		1225F0181EB02B1E002763A0 /* ModalAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalAnimator.h; sourceTree = "<group>"; };
+		1225F0191EB02B1E002763A0 /* ModalAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalAnimator.m; sourceTree = "<group>"; };
+		1225F01A1EB02B1E002763A0 /* ModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalViewController.h; sourceTree = "<group>"; };
+		1225F01B1EB02B1E002763A0 /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
+		1225F01E1EB07491002763A0 /* Credits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credits.h; sourceTree = "<group>"; };
+		1225F01F1EB07491002763A0 /* Credits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Credits.m; sourceTree = "<group>"; };
 		123AF13D1E9E0C9600ED0547 /* FloatingDrawerAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerAnimation.h; sourceTree = "<group>"; };
 		123AF13E1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerSpringAnimator.h; sourceTree = "<group>"; };
 		123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingDrawerSpringAnimator.m; sourceTree = "<group>"; };
@@ -148,8 +161,6 @@
 		123AF15B1EA07DF300ED0547 /* Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preview.m; sourceTree = "<group>"; };
 		123AF15D1EA1AF7500ED0547 /* Chat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chat.h; sourceTree = "<group>"; };
 		123AF15E1EA1AF7500ED0547 /* Chat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chat.m; sourceTree = "<group>"; };
-		123AF1601EA1C6AF00ED0547 /* InputBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputBar.h; sourceTree = "<group>"; };
-		123AF1611EA1C6AF00ED0547 /* InputBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputBar.m; sourceTree = "<group>"; };
 		1249DD491EAC46CA00E9E39F /* MediaCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCollection.h; sourceTree = "<group>"; };
 		1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaCollection.m; sourceTree = "<group>"; };
 		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
@@ -164,6 +175,10 @@
 		1289C3A11EA99F9500A69146 /* BaseFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseFunctions.h; sourceTree = "<group>"; };
 		12B796091EAA2C970041AE6C /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		12B7960A1EAA2C970041AE6C /* Engine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Engine.m; sourceTree = "<group>"; };
+		12F96D511EB2C2E10054DA6C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		12F96D531EB2D3910054DA6C /* WhoAreU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhoAreU.entitlements; sourceTree = "<group>"; };
+		12F96D541EB453620054DA6C /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
+		12F96D551EB453620054DA6C /* ChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */,
 				122262BE1E8B79B900F51FAE /* AudioToolbox.framework in Frameworks */,
 				122262BF1E8B79B900F51FAE /* CFNetwork.framework in Frameworks */,
 				122262C01E8B79B900F51FAE /* CoreGraphics.framework in Frameworks */,
@@ -213,6 +229,7 @@
 		122262791E8B6E8000F51FAE /* WhoAreU */ = {
 			isa = PBXGroup;
 			children = (
+				12F96D531EB2D3910054DA6C /* WhoAreU.entitlements */,
 				126154111E8CCC6500F2AD4F /* Views */,
 				1261540D1E8CCB9B00F2AD4F /* View Controllers */,
 				126154061E8CBBAD00F2AD4F /* Engine */,
@@ -250,6 +267,7 @@
 		122262911E8B6E8D00F51FAE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				12F96D511EB2C2E10054DA6C /* UserNotifications.framework */,
 				122262CD1E8B7E6900F51FAE /* AWSCore.framework */,
 				122262CE1E8B7E6900F51FAE /* AWSS3.framework */,
 				122262B31E8B79B900F51FAE /* AudioToolbox.framework */,
@@ -314,6 +332,10 @@
 		1261540D1E8CCB9B00F2AD4F /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				1225F0181EB02B1E002763A0 /* ModalAnimator.h */,
+				1225F0191EB02B1E002763A0 /* ModalAnimator.m */,
+				1225F01A1EB02B1E002763A0 /* ModalViewController.h */,
+				1225F01B1EB02B1E002763A0 /* ModalViewController.m */,
 				120775051E9DD29000B02AF6 /* SignUp.h */,
 				120775061E9DD29000B02AF6 /* SignUp.m */,
 				120775071E9DD29000B02AF6 /* SignUp.xib */,
@@ -323,6 +345,12 @@
 				123AF15E1EA1AF7500ED0547 /* Chat.m */,
 				1215C5A51EA5C43800BA509E /* Nearby.h */,
 				1215C5A61EA5C43800BA509E /* Nearby.m */,
+				1215085A1EAF180E00EAA5E1 /* Tabs.h */,
+				1215085B1EAF180E00EAA5E1 /* Tabs.m */,
+				1225F0151EAF2881002763A0 /* UserProfile.h */,
+				1225F0161EAF2881002763A0 /* UserProfile.m */,
+				1225F01E1EB07491002763A0 /* Credits.h */,
+				1225F01F1EB07491002763A0 /* Credits.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -336,10 +364,8 @@
 				126154131E8CCC7900F2AD4F /* PhotoView.m */,
 				123AF15A1EA07DF300ED0547 /* Preview.h */,
 				123AF15B1EA07DF300ED0547 /* Preview.m */,
-				123AF1601EA1C6AF00ED0547 /* InputBar.h */,
-				123AF1611EA1C6AF00ED0547 /* InputBar.m */,
-				1215C59F1EA395CB00BA509E /* ChatView.h */,
-				1215C5A01EA395CB00BA509E /* ChatView.m */,
+				12F96D541EB453620054DA6C /* ChatView.h */,
+				12F96D551EB453620054DA6C /* ChatView.m */,
 				1215C5A81EA6F88000BA509E /* Compass.h */,
 				1215C5A91EA6F88000BA509E /* Compass.m */,
 				1249DD491EAC46CA00E9E39F /* MediaCollection.h */,
@@ -385,6 +411,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 						};
@@ -446,7 +475,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1215C5A11EA395CB00BA509E /* ChatView.m in Sources */,
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
@@ -455,9 +483,12 @@
 				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
 				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
 				1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */,
+				1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */,
 				126154091E8CBBEC00F2AD4F /* User.m in Sources */,
 				123AF1591E9F0DA300ED0547 /* Profile.m in Sources */,
 				1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */,
+				1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */,
+				12F96D561EB453620054DA6C /* ChatView.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
@@ -466,10 +497,12 @@
 				12B7960B1EAA2C970041AE6C /* Engine.m in Sources */,
 				1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
+				1225F0201EB07491002763A0 /* Credits.m in Sources */,
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
-				123AF1621EA1C6AF00ED0547 /* InputBar.m in Sources */,
+				1225F0171EAF2881002763A0 /* UserProfile.m in Sources */,
+				1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */,
 				1215C5AA1EA6F88000BA509E /* Compass.m in Sources */,
 				123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
@@ -600,6 +633,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WhoAreU/WhoAreU.entitlements;
 				DEVELOPMENT_TEAM = A52TMCAM33;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -620,6 +654,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WhoAreU/WhoAreU.entitlements;
 				DEVELOPMENT_TEAM = A52TMCAM33;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

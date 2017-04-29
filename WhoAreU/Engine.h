@@ -7,8 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#define kNOTIFICATION_NEW_MESSAGE @"NewMessageNotification"
 
 @interface Engine : NSObject
 + (PFGeoPoint*) where;
 + (void) initializeSystems;
++ (NSArray*) chatUsers;
++ (void) send:(id)message toUser:(User*)user;
++ (NSArray*) messagesFromUser:(User*)user;
 @end

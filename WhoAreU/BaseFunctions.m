@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "BaseFunctions.h"
 
-CALayer* drawImageOnLayer(UIImage *image, CGSize size)
+CALayer* __drawImageOnLayer(UIImage *image, CGSize size)
 {
     CALayer *layer = [CALayer layer];
     [layer setBounds:CGRectMake(0, 0, size.width, size.height)];
@@ -19,39 +19,33 @@ CALayer* drawImageOnLayer(UIImage *image, CGSize size)
     return layer;
 }
 
-UIImage* scaleImage(UIImage* image, CGSize size) {
+UIImage* __scaleImage(UIImage* image, CGSize size) {
     
     UIGraphicsBeginImageContextWithOptions(size, false, 0.0);
-    [drawImageOnLayer(image,size) renderInContext:UIGraphicsGetCurrentContext()];
+    [__drawImageOnLayer(image,size) renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *smallImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     return smallImage;
 }
 
-void drawImage(UIImage *image, UIView* view)
+void __drawImage(UIImage *image, UIView* view)
 {
     [view.layer setContents:(id)image.CGImage];
     [view.layer setContentsGravity:kCAGravityResizeAspectFill];
     [view.layer setMasksToBounds:YES];
 }
 
-void circleizeView(UIView* view, CGFloat percent)
+void __circleizeView(UIView* view, CGFloat percent)
 {
     view.layer.cornerRadius = view.frame.size.height * percent;
-    view.layer.masksToBounds = YES;
-}
-
-void roundCorner(UIView* view)
-{
-    view.layer.cornerRadius = 2.0f;
     view.layer.masksToBounds = YES;
 }
 
 #define degreesToRadians(x) (M_PI * x / 180.0)
 #define radiansToDegrees(x) (x * 180.0 / M_PI)
 
-float heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
+float __heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
 {
     float fLat = degreesToRadians(fromLoc.latitude);
     float fLng = degreesToRadians(fromLoc.longitude);
@@ -67,7 +61,7 @@ float heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
     }
 }
 
-float headingRadians(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
+float __headingRad(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
 {
     float fLat = degreesToRadians(fromLoc.latitude);
     float fLng = degreesToRadians(fromLoc.longitude);
@@ -77,54 +71,26 @@ float headingRadians(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
     return atan2(sin(tLng-fLng)*cos(tLat), cos(fLat)*sin(tLat)-sin(fLat)*cos(tLat)*cos(tLng-fLng));
 }
 
-float Heading(User* from, User* to)
+float __headingUsers(User* from, User* to)
 {
     PFGeoPoint *fromLoc = from.where;
     PFGeoPoint *toLoc = to.where;
     if (from != to && (fromLoc.latitude == toLoc.latitude && fromLoc.longitude == toLoc.longitude)) {
         printf("SAME LOCATION FOR:%s - %s\n", [from.nickname UTF8String], [to.nickname UTF8String]);
     }
-    return heading(fromLoc, toLoc);
+    return __heading(fromLoc, toLoc);
 }
 
-CGRect hiveToFrame(CGPoint hive, CGFloat radius, CGFloat inset, CGPoint center)
-{
-    const int offx[] = { 1, -1, -2, -1, 1, 2};
-    const int offy[] = { 1, 1, 0, -1, -1, 0};
-    
-    int level = hive.x;
-    int quad = hive.y;
-    
-    int sx = level, sy = -level;
-    
-    for (int i=0; i<quad; i++) {
-        int side = (int) i / (level);
-        int ox = offx[side];
-        int oy = offy[side];
-        
-        sx += ox;
-        sy += oy;
-    }
-    
-    const CGFloat f = 2-inset/radius;
-    const CGFloat f2 = f*1.154;
-    
-    CGFloat x = center.x+(sx-0.5f)*radius;
-    CGFloat y = center.y+(sy-0.5f)*radius*1.5*1.154;
-    
-    return CGRectMake(x, y, f*radius, f2*radius);
-}
-
-NSData* compressedImageData(NSData* data, CGFloat width)
+NSData* __compressedImageData(NSData* data, CGFloat width)
 {
     UIImage *image = [UIImage imageWithData:data];
     const CGFloat thumbnailWidth = width;
     CGFloat thumbnailHeight = image.size.width ? thumbnailWidth * image.size.height / image.size.width : 200;
-    image = scaleImage(image, CGSizeMake(thumbnailWidth, thumbnailHeight));
+    image = __scaleImage(image, CGSizeMake(thumbnailWidth, thumbnailHeight));
     return UIImageJPEGRepresentation(image, kJPEGCompressionMedium);
 }
 
-CGRect rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
+CGRect __rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
 {
     CGRect rect = CGRectIntegral([string boundingRectWithSize:CGSizeMake(maxWidth, MAXFLOAT)
                                                       options:NSStringDrawingUsesLineFragmentOrigin
@@ -136,7 +102,7 @@ CGRect rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
 
 
 
-NSString* randomObjectId()
+NSString* __randomObjectId()
 {
     int length = 8;
     char *base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -151,7 +117,38 @@ NSString* randomObjectId()
     return code;
 }
 
-NSString* distanceString(double distance)
+NSString* __headingString(double heading)
+{
+    if (heading >= -22.5 && heading < 22.5) {
+        return @"N";
+    }
+    else if (heading >= 22.5 && heading < 67.5) {
+        return @"NE";
+    }
+    else if (heading >= 67.5 && heading < 112.5) {
+        return @"E";
+    }
+    else if (heading >= 112.5 && heading < 157.5) {
+        return @"SE";
+    }
+    else if (heading >= 157.5 && heading < 202.5) {
+        return @"S";
+    }
+    else if (heading >= 202.5 && heading < 247.5) {
+        return @"SW";
+    }
+    else if (heading >= 247.5 && heading < 292.5) {
+        return @"W";
+    }
+    else if (heading >= 292.5 && heading < 337.5) {
+        return @"NW";
+    }
+    else
+        return @"N";
+}
+
+
+NSString* __distanceString(double distance)
 {
     if (distance > 500) {
         return [NSString stringWithFormat:@"멀어요"];
@@ -164,7 +161,7 @@ NSString* distanceString(double distance)
     }
 }
 
-CGFloat ampAtIndex(NSUInteger index, NSData* data)
+CGFloat __ampAtIndex(NSUInteger index, NSData* data)
 {
     static int c = 0;
     
@@ -177,7 +174,7 @@ CGFloat ampAtIndex(NSUInteger index, NSData* data)
     return ret;
 }
 
-void setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity)
+void __setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity)
 {
     view.layer.shadowColor = [UIColor colorWithWhite:0.0f alpha:1.0f].CGColor;
     view.layer.shadowOffset = CGSizeZero;
@@ -185,12 +182,12 @@ void setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity)
     view.layer.shadowOpacity = opacity;
 }
 
-CGFloat widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLayout *flowLayout, CGFloat cpr)
+CGFloat __widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLayout *flowLayout, CGFloat cpr)
 {
     return (CGRectGetWidth(cv.bounds) - flowLayout.sectionInset.left - flowLayout.sectionInset.right - flowLayout.minimumInteritemSpacing * (cpr - 1))/cpr;
 }
 
-UIView* viewWithTag(UIView *view, NSInteger tag)
+UIView* __viewWithTag(UIView *view, NSInteger tag)
 {
     __block UIView *retView = nil;
     [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -202,12 +199,12 @@ UIView* viewWithTag(UIView *view, NSInteger tag)
     return retView;
 }
 
-PFGeoPoint* pointFromCLLocation(CLLocation* location)
+PFGeoPoint* __pointFromCLLocation(CLLocation* location)
 {
     return [PFGeoPoint geoPointWithLocation:location];
 }
 
-PFGeoPoint* pointFromCoordinates(CLLocationCoordinate2D  coordinates)
+PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates)
 {
     return [PFGeoPoint geoPointWithLatitude:coordinates.latitude longitude:coordinates.longitude];
 }

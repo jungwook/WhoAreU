@@ -7,13 +7,14 @@
 //
 
 #import "Chat.h"
-#import "InputBar.h"
 #import "ChatView.h"
 
 @interface Chat () <ChatViewDataSource>
-@property (strong, nonatomic) InputBar *inputBar;
 @property (strong, nonatomic) ChatView *chatView;
 @property (strong, nonatomic) NSMutableArray *chats;
+@property (strong, nonatomic) StringBlock sendTextAction;
+@property (strong, nonatomic) MediaBlock sendMediaAction;
+
 //@property CGFloat baseLine;
 @end
 
@@ -24,65 +25,46 @@
     [super awakeFromNib];
     
     self.chats = [NSMutableArray new];
+    
     [self initializeInputPane];
+}
+
+- (MediaBlock) sendMediaAction {
+    return ^(Media *media) {
+        NSLog(@"Sending %@", media);
+        Message* message = [Message media:media toUser:self.user];
+        [self.chats addObject:message.dictionary];
+        [self.chatView reloadData];
+    };
+}
+
+- (StringBlock) sendTextAction {
+    return ^(NSString *string) {
+        NSLog(@"[Sending %@]", string);
+        Message* message = [Message message:string toUser:self.user];
+        [self.chats addObject:message.dictionary];
+        [self.chatView reloadData];
+    };
 }
 
 - (void) initializeInputPane
 {
-    CGFloat h = CGRectGetHeight(self.view.bounds);
-    __weak typeof(self) weakSelf = self;
-
-    // add chatView
-    self.chatView = [ChatView new];
-    self.chatView.chatDataSource = self;
-    [self.view addSubview:self.chatView];
-
     // add inputBar
-    self.inputBar = [InputBar new];
-    self.inputBar.baseLine = h;
+    self.chatView = [[ChatView alloc] initWithFrame:self.view.bounds];
 
-    [self.view addSubview:self.inputBar];
+    [self.view addSubview:self.chatView];
     
-    self.inputBar.keyboardEvent = ^(CGFloat duration, UIViewAnimationOptions options, CGRect keyboardFrame) {
-        CGFloat height = weakSelf.inputBar.height;
-        weakSelf.inputBar.baseLine = CGRectGetMinY(keyboardFrame);
-        CGFloat bl = weakSelf.inputBar.baseLine - height;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:duration delay:0.0f options:options animations:^{
-                [weakSelf setFramesTo:bl barHeight:height];
-            } completion:nil];
-        });
-    };
-    self.inputBar.heightChangeEvent = ^(CGFloat height) {
-        CGFloat bl = weakSelf.inputBar.baseLine - height;
-        weakSelf.inputBar.height = height;
-        [weakSelf setFramesTo:bl barHeight:height];
-    };
-    
-    CGFloat height = self.inputBar.height;
-    CGFloat bl = h - height;
-    
-    [self setFramesTo:bl barHeight:height];
+    self.chatView.parent = self;
+    self.chatView.dataSource = self;
+    self.chatView.sendTextAction = self.sendTextAction;
+    self.chatView.sendMediaAction = self.sendMediaAction;
 }
 
-- (void) setFramesTo:(CGFloat)baseLine barHeight:(CGFloat)height
-{
-    CGFloat w = CGRectGetWidth(self.view.bounds);
-
-    self.inputBar.frame = CGRectMake(0,
-                                     baseLine,
-                                     w,
-                                     height);
-    self.chatView.frame = CGRectMake(0,
-                                     0,
-                                     w,
-                                     baseLine);
-}
-
-- (void)viewDidLoad
+-(void) viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -92,18 +74,6 @@
 
 - (void)tappedOutside:(id)sender {
     [self.view endEditing:YES];
-}
-
-
-- (CGFloat) appropriateLineHeightForMessage:(NSString*)message
-{
-    CGFloat width = [[[UIApplication sharedApplication] keyWindow] bounds].size.width * 0.7f;
-    
-    const CGFloat inset = 10;
-    NSString *string = [message stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-    UIFont *font = [UIFont systemFontOfSize:17 weight:UIFontWeightRegular];
-    CGRect frame = rectForString(string, font, width);
-    return frame.size.height+inset*2.5;
 }
 
 /*

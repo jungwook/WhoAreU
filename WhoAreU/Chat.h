@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Chat : UIViewController 
-
+@interface Chat : UIViewController
+@property (nonatomic, strong) User *user;
 @end

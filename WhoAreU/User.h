@@ -8,15 +8,19 @@
 
 #import <Parse/Parse.h>
 
+@class User;
+@class Media;
+@class Message;
+
 typedef void(^BOOLBlock)(BOOL value);
 typedef void(^VoidBlock)(void);
+typedef void(^UserBlock)(User* user);
 typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);
 typedef void(^StringBlock)(NSString* string);
-
-@class User;
-@class MessageItem;
-@class Media;
+typedef void(^MediaBlock)(Media *media);
+typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions options, CGRect keyboardFrame);
+typedef void(^FloatEventBlock)(CGFloat value);
 
 typedef NS_OPTIONS(NSUInteger, GenderType)
 {
@@ -44,14 +48,59 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
     kMessageTypeMedia,
 };
 
+#pragma mark Installation
+
+@interface Installation : PFInstallation <PFSubclassing>
+@property (retain) User *user;
+@property NSUInteger credits;
+@property (readonly) NSUInteger initialFreeCredits;
+@property (readonly) NSUInteger openChatCredits;
+
++ (void) payForChatOnViewController:(UIViewController*)viewController action:(VoidBlock)actionBlock;
+@end
+
+
 #pragma mark Message
+
+#define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
+
+
+typedef NSMutableDictionary MessageDic;
+typedef NSMutableDictionary MediaDic;
+
+@interface NSMutableDictionary(Dictionary)
+@property (nonatomic, assign) NSString* objectId;
+@property (nonatomic, assign) NSDate*   createdAt;
+@property (nonatomic, assign) NSDate*   updatedAt;
+@property (nonatomic, assign) NSString* userId;
+@property (nonatomic, assign) NSString* comment;
+@property (nonatomic, assign) NSString* thumbnail;
+@property (nonatomic, assign) NSString* mediaFile;
+@property MediaType mediaType;
+@property CGSize size;
+@property BOOL source;
+
+@property (nonatomic, assign) NSString* fromUserId;
+@property (nonatomic, assign) NSString* toUserId;
+@property (nonatomic, assign) NSString* message;
+@property (nonatomic, assign) Media*    media;
+@property MessageType messageType;
+@property BOOL read;
+
+- (Media*) mediaObject;
+- (Message*) messageObject;
+@end
 
 @interface Message : PFObject <PFSubclassing>
 @property (retain) User *fromUser;
 @property (retain) User *toUser;
-@property (retain) NSString* text;
+@property (retain) NSString* message;
 @property (retain) Media* media;
 @property MessageType type;
+@property BOOL read;
+- (MessageDic*) dictionary;
++ (instancetype) message:(NSString *)text toUser:(User*)user;
++ (instancetype) media:(Media *)media toUser:(User*)user;
 @end
 
 #pragma mark Media
@@ -69,6 +118,8 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 - (void) saved:(VoidBlock)handler;
 - (void) imageLoaded:(ImageBlock)block;
 - (void) thumbnailLoaded:(ImageBlock)block;
+
+-(MediaDic*) dictionary;
 @end
 
 #pragma mark User
@@ -97,7 +148,6 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 - (UIColor*)    genderColor;
 + (NSArray*)    genders;
 + (NSArray*)    genderCodes;
-
 
 @end
 

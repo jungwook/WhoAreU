@@ -29,25 +29,24 @@
 #define appWindow [UIApplication sharedApplication].keyWindow
 
 
-CALayer*    drawImageOnLayer(UIImage *image, CGSize size);
-UIImage*    scaleImage(UIImage* image, CGSize size);
-void        drawImage(UIImage *image, UIView* view);
-void        circleizeView(UIView* view, CGFloat percent);
-void        roundCorner(UIView* view);
-float       heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
-float       headingRadians(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
-float       Heading(PFUser* from, PFUser* to);
-CGRect      hiveToFrame(CGPoint hive, CGFloat radius, CGFloat inset, CGPoint center);
-CGRect      rectForString(NSString *string, UIFont *font, CGFloat maxWidth);
-NSData*     compressedImageData(NSData* data, CGFloat width);
-NSString*   randomObjectId();
-NSString*   distanceString(double distance);
-CGFloat     ampAtIndex(NSUInteger index, NSData* data);
-void        setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity);
-CGFloat     widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLayout *flowLayout, CGFloat cpr);
-UIView*     viewWithTag(UIView *view, NSInteger tag);
-PFGeoPoint* pointFromCLLocation(CLLocation* location);
-PFGeoPoint* pointFromCoordinates(CLLocationCoordinate2D  coordinates);
+CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
+UIImage*    __scaleImage(UIImage* image, CGSize size);
+void        __drawImage(UIImage *image, UIView* view);
+void        __circleizeView(UIView* view, CGFloat percent);
+float       __heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
+float       __headingRad(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
+float       __headingUsers(PFUser* from, PFUser* to);
+CGRect      __rectForString(NSString *string, UIFont *font, CGFloat maxWidth);
+NSData*     __compressedImageData(NSData* data, CGFloat width);
+NSString*   __randomObjectId();
+NSString*   __distanceString(double distance);
+NSString*   __headingString(double heading);
+CGFloat     __ampAtIndex(NSUInteger index, NSData* data);
+void        __setShadowOnView(UIView* view, CGFloat radius, CGFloat opacity);
+CGFloat     __widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLayout *flowLayout, CGFloat cpr);
+UIView*     __viewWithTag(UIView *view, NSInteger tag);
+PFGeoPoint* __pointFromCLLocation(CLLocation* location);
+PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
 
 
 #endif /* BaseFunctions_h */

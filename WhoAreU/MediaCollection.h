@@ -11,4 +11,5 @@
 @interface MediaCollection : UICollectionView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 @property (nonatomic, weak) User* user;
 @property (nonatomic, weak) UIViewController* parent;
+- (void) addMedia;
 @end

@@ -70,7 +70,7 @@
     User *user = [User me];
     
     VoidBlock initializationHandler = ^(void) {
-        NSLog(@"User %@ logged in", [User me]);
+        NSLog(@"User Logged in %@", [User me]);
         
         // User logged in so ready to initialize systems.
         [Engine initializeSystems];
@@ -81,6 +81,8 @@
     
     if (user) {
         [user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            Installation *install = [Installation currentInstallation];
+            NSLog(@"%@", install);
             initializationHandler();
         }];
     }
@@ -179,11 +181,14 @@
 
 - (void) subscribeToChannelCurrentUser
 {
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (!currentInstallation[@"user"]) {
-        currentInstallation[@"user"] = [User me];
-        [currentInstallation saveInBackground];
-        NSLog(@"CURRENT INSTALLATION: saving user to Installation");
+    Installation *install = [Installation currentInstallation];
+    
+    if (!install.user) {
+        install.user = [User me];
+        install.credits = install.initialFreeCredits;
+        NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
+        NSLog(@"Adding %ld free credits", install.credits);
+        [install saveInBackground];
     }
     else {
         NSLog(@"CURRENT INSTALLATION: Installation already has user. No need to set");

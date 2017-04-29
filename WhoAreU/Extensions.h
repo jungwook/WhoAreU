@@ -11,10 +11,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIView(RoundCorners)
+@interface UIView(Extras)
 @property (nonatomic) IBInspectable CGFloat radius;
 @property (nonatomic) IBInspectable UIColor *borderColor;
 @property (nonatomic) IBInspectable CGFloat borderWidth;
+@property (nonatomic) IBInspectable CGFloat shadowRadius;
 @end
 
 @interface UILabel(Shadow)

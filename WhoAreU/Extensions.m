@@ -9,8 +9,8 @@
 #import <objc/runtime.h>
 #import "Extensions.h"
 
-@implementation UIView(RoundCorners)
-@dynamic radius, borderColor;
+@implementation UIView(Extras)
+@dynamic radius, borderColor, shadowRadius;
 
 -(void) setRadius:(CGFloat)radius
 {
@@ -35,6 +35,22 @@
 - (void)setBorderWidth:(CGFloat)borderWidth
 {
     self.layer.borderWidth = borderWidth;
+}
+
+- (void)setShadowRadius:(CGFloat)shadowRadius
+{
+    if (shadowRadius > 0) {
+        self.layer.shadowColor = [UIColor colorWithWhite:0.0f alpha:1.0f].CGColor;
+        self.layer.shadowOffset = CGSizeZero;
+        self.layer.shadowRadius = shadowRadius;
+        self.layer.shadowOpacity = 0.4f;
+    }
+    else {
+        self.layer.shadowColor = nil;
+        self.layer.shadowOffset = CGSizeZero;
+        self.layer.shadowRadius = 0.0f;
+        self.layer.shadowOpacity = 0.0f;
+    }
 }
 
 - (CGFloat)borderWidth

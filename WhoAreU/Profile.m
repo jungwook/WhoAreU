@@ -21,7 +21,6 @@
 @property (weak, nonatomic) IBOutlet ListField *desc;
 @property (weak, nonatomic) IBOutlet ListField *gender;
 @property (weak, nonatomic) IBOutlet MediaCollection *mediaCollection;
-@property (weak, nonatomic) User *me;
 
 @end
 
@@ -30,26 +29,37 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    __LF
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
+        __LF
     }
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.photoImageView.parent = self;
-    self.me = [User me];
-    self.nickname.delegate = self;
-    self.mediaCollection.parent = self;
-    
+- (void)setMe:(User *)me
+{
+    __LF
+    _me = me;
     [self.me fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         [self setupUserDetails];
     }];
+}
+
+- (void)viewDidLoad
+{
+    __LF
+    [super viewDidLoad];
+
+    self.photoImageView.parent = self;
+    self.nickname.delegate = self;
+    self.mediaCollection.parent = self;
+
+    self.me = [User me];
 }
 
 - (IBAction)editingDidEnd:(id)sender {
@@ -99,51 +109,81 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    __LF
+    
+    switch (section) {
+        case 0:
+            return nil;
+            break;
+            
+        case 1: {
+            return [self headerViewWithTitle:@"Photos & Videos" action:@selector(addMoreMedia:)];
+        }
+            break;
+            
+        case 2: {
+            return [self headerViewWithTitle:@"Credits" action:@selector(chargeCredits:)];
+        }
+            break;
+            
+        default:
+            return nil;
+            break;
+    }
+}
+
+- (void) chargeCredits:(id)sender
+{
+    __LF
+}
+
+- (void) addMoreMedia:(id)sender
+{
+    [self.mediaCollection addMedia];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section>=1)
+        return 50;
+    else
+        return 0;
+}
+
+- (UIView*) headerViewWithTitle:(NSString*)title action:(SEL)action
+{
+    CGFloat w = CGRectGetWidth(self.view.bounds);
+    CGFloat h = 50.0f, height = 22.0f, labelHeight = 30.0f;
+    CGFloat o = 10.0f;
+    UIView *v = [UIView new];
+    UILabel *titleLabel = [UILabel new];
+    titleLabel.frame = CGRectMake(o,
+                                  h-labelHeight,
+                                  w,
+                                  labelHeight);
+    titleLabel.text = title;
+    titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+    
+    UIButton *addMoreButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [addMoreButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
+    [addMoreButton addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+    addMoreButton.frame = CGRectMake(w-o-height,
+                                     h-height-o,
+                                     height,
+                                     height);
+    addMoreButton.tintColor = [UIColor whiteColor];
+    addMoreButton.backgroundColor = [UIColor blackColor];
+    addMoreButton.radius = height/2.0f;
+    
+    [v addSubview:titleLabel];
+    [v addSubview:addMoreButton];
+    return v;
+}
+
+
 #pragma mark - Table view data source
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -23,11 +23,11 @@ typedef void(^MediaDataBlock)(MediaType mediaType,
                                      SourceType source,
                                      BOOL picked);
 
-typedef void(^MediaBlock)(Media* media, BOOL picked);
+typedef void(^MediaBoolBlock)(Media* media, BOOL picked);
 
 @interface MediaPicker : UIImagePickerController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-+ (void) pickMediaOnViewController:(UIViewController*)viewController withUserMediaHandler:(MediaBlock)handler;
++ (void) pickMediaOnViewController:(UIViewController*)viewController withUserMediaHandler:(MediaBoolBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaInfoHandler:(MediaInfoBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaHandler:(MediaDataBlock)handler;
 @end

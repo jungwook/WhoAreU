@@ -15,13 +15,17 @@
 @implementation AppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    self.engine = [Engine new];
+    
     [self setupAWSCredentials];
 
     // register subclasses
     [User registerSubclass];
     [Media registerSubclass];
     [Message registerSubclass];
+    [Installation registerSubclass];
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";
@@ -31,7 +35,7 @@
     }]];
     
     [self setupAWSDefaultACLs];
-    
+    [self registerForNotifications:application launchOptions:launchOptions];
 //    [SimulatedUsers createUsers];
     
     return YES;
@@ -84,6 +88,129 @@
     [AWSLogger defaultLogger].logLevel = AWSLogLevelError;
 }
 
+- (void)registerForNotifications:(UIApplication*)application launchOptions:(id)launchOptions
+{
+    __LF
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 10000
+    NSLog(@"SYSTEM IS GREATER THAN 10.0");
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    center.delegate = self;
+    [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error)
+     {
+         if( !error )
+         {
+             [application registerForRemoteNotifications];  // required to get the app to do anything at all about push notifications
+             NSLog( @"Push registration successfull." );
+         }
+         else
+         {
+             NSLog( @"Push registration FAILED" );
+             NSLog( @"ERROR: %@ - %@", error.localizedFailureReason, error.localizedDescription );
+             NSLog( @"SUGGESTIONS: %@ - %@", error.localizedRecoveryOptions, error.localizedRecoverySuggestion );
+         }
+     }];
+#else
+    NSLog(@"SYSTEM IS LESS THAN 10.0");
+    [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil]];
+    [application registerForRemoteNotifications];
+    
+    NSDictionary *payload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (payload) {
+        NSLog(@"PAYLOAD:%@", payload);
+    }
+    
+    if( launchOptions != nil )
+    {
+        NSLog( @"registerForPushWithOptions:" );
+    }
+#endif
+}
 
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    __LF
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackground];
+    
+    [PFPush subscribeToChannelInBackground:@"" block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"ParseStarterProject successfully subscribed to push notifications on the broadcast channel.");
+//            [self.system fetchOutstandingBullets];
+        } else {
+            NSLog(@"ParseStarterProject failed to subscribe to push notifications on the broadcast channel.");
+        }
+    }];
+}
 
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    __LF
+    if (error.code == 3010) {
+        NSLog(@"Push notifications are not supported in the iOS Simulator.");
+        
+        // simulator settings... 
+    } else {
+        // show some alert or otherwise handle the failure to register.
+    NSLog(@"application:didFailToRegisterForRemoteNotificationsWithError: %@", error);
+    }
+}
+
+-(void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    // iOS 10 will handle notifications through other methods
+    
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO( @"10.0" ) )
+    {
+        NSLog( @"iOS version >= 10. Let NotificationCenter handle this one." );
+        // set a member variable to tell the new delegate that this is background
+        return;
+    }
+    
+    NSLog( @"HANDLE PUSH, didReceiveRemoteNotification: %@", userInfo );
+    
+    // custom code to handle notification content
+
+    switch (application.applicationState) {
+        case UIApplicationStateActive:
+            //    [self.system treatPushNotificationWith:userInfo];
+            NSLog( @"Notification in FOREGROUND" );
+            completionHandler( UIBackgroundFetchResultNewData );
+            break;
+        case UIApplicationStateInactive:
+            //    [self.system treatPushNotificationWith:userInfo];
+            NSLog( @"Notification in INACTIVE" );
+            completionHandler( UIBackgroundFetchResultNewData );
+            break;
+            
+        case UIApplicationStateBackground:
+            //    [self.system treatPushNotificationWith:userInfo];
+            NSLog( @"'Notification in BACKGROUND" );
+            completionHandler( UIBackgroundFetchResultNewData );
+            break;
+    }
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    [self application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+    }];
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+    NSLog( @"Handle push from foreground" );
+    // custom code to handle push while app is in the foreground
+    NSLog(@"%@", notification.request.content.userInfo);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)())completionHandler
+{
+    NSLog( @"Handle push from background or closed" );
+    // if you set a member variable in didReceiveRemoteNotification, you  will know if this is from closed or background
+    NSLog(@"%@", response.notification.request.content.userInfo);
+}
 @end

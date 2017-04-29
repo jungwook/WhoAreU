@@ -10,6 +10,8 @@
 #import "PhotoView.h"
 #import "Compass.h"
 #import "IndentedLabel.h"
+#import "UserProfile.h"
+#import "Chat.h"
 
 @interface UserCell : UITableViewCell
 @property (weak, nonatomic) User *user;
@@ -20,22 +22,33 @@
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) UIViewController* parent;
+@property (nonatomic) CGFloat heading;
+@property (copy, nonatomic) UserBlock doChatBlock;
 @end
 
 @implementation UserCell
 
 -(void)setUser:(User *)user
 {
+    _user = user;
+    
     [self.photoView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.desc;
-    self.compass.heading = 45.0f;
     self.photoView.parent = self.parent;
     self.photoView.media = user.media;
     self.age.text = user.age;
     
-    self.compass.heading = heading([Engine where], user.where);
-    self.distance.text = distanceString([[Engine where] distanceInKilometersTo:user.where]);
+    self.compass.heading = __heading([Engine where], user.where);
+    self.heading = self.compass.heading;
+    self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);    
+}
+
+- (IBAction)doChat:(id)sender {
+    __LF
+    if (self.doChatBlock) {
+        self.doChatBlock(self.user);
+    }
 }
 
 @end
@@ -60,6 +73,7 @@
 - (void) reloadUsers
 {
     PFQuery *query = [User query];
+    [query whereKeyDoesNotExist:@"simulated"];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         self.users = objects;
         [self.tableView reloadData];
@@ -88,13 +102,31 @@
 
     cell.parent = self;
     cell.user = [self.users objectAtIndex:indexPath.row];
+    cell.doChatBlock = ^(User *user) {
+        // actions
+        [Installation payForChatOnViewController:self action:^{
+            [self performSegueWithIdentifier:@"Chat" sender:user];
+        }];
+    };
     
     return cell;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    return [tableView dequeueReusableCellWithIdentifier:@"Header"];
+    if ([segue.identifier isEqualToString:@"UserProfile"]) {
+        UserCell *cell = sender;
+        UserProfile *vc = segue.destinationViewController;
+        vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        vc.user = cell.user;
+    }
+    else if ([segue.identifier isEqualToString:@"Chat"]) {
+        // other preparations.
+        Chat *chat = segue.destinationViewController;
+        chat.hidesBottomBarWhenPushed = YES;
+        chat.user = sender;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface Profile : UITableViewController
-
+@property (weak, nonatomic) User *me;
 @end

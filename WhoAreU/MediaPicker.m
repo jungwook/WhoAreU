@@ -14,7 +14,7 @@
 
 @interface MediaPicker ()
 @property (nonatomic, copy) MediaInfoBlock infoBlock;
-@property (nonatomic, copy) MediaBlock mediaBlock;
+@property (nonatomic, copy) MediaBoolBlock mediaBlock;
 @property (nonatomic, copy) MediaDataBlock dataBlock;
 @end
 
@@ -43,7 +43,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
                               userMediaBlock:nil];
 }
 
-+ (void) pickMediaOnViewController:(UIViewController *)viewController withUserMediaHandler:(MediaBlock)handler
++ (void) pickMediaOnViewController:(UIViewController *)viewController withUserMediaHandler:(MediaBoolBlock)handler
 {
     NSAssert(viewController != nil, @"View Controller cannot be nil");
     [MediaPicker handleAlertOnViewController:viewController
@@ -86,7 +86,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     return [[MediaPicker alloc] initWithSourceType:sourceType userMediaInfoBlock:block];
 }
 
-+ (instancetype) mediaPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaBlock:(MediaBlock)block
++ (instancetype) mediaPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaBlock:(MediaBoolBlock)block
 {
     return [[MediaPicker alloc] initWithSourceType:sourceType userMediaBlock:block];
 }
@@ -106,7 +106,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     return self;
 }
 
-- (instancetype) initWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaBlock:(MediaBlock)block
+- (instancetype) initWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaBlock:(MediaBoolBlock)block
 {
     self = [super init];
     if (self) {
@@ -126,7 +126,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 
 - (void) selfInitializersWithSourceType:(UIImagePickerControllerSourceType)sourceType
                      userMediaInfoBlock:(MediaInfoBlock)infoBlock
-                         userMediaBlock:(MediaBlock)mediaBlock
+                         userMediaBlock:(MediaBoolBlock)mediaBlock
                              mediaBlock:(MediaDataBlock)dataBlock
 {
     self.delegate = self;
@@ -181,7 +181,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     NSData *imageData = UIImageJPEGRepresentation(image, kJPEGCompressionFull);
     
     // Thumbnail data
-    NSData *thumbnailData = compressedImageData(imageData, kThumbnailWidth);
+    NSData *thumbnailData = __compressedImageData(imageData, kThumbnailWidth);
     
     if (self.dataBlock) {
         self.dataBlock(kMediaTypePhoto, thumbnailData, imageData, nil, source, YES);
@@ -218,7 +218,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
 {
     SourceType source = (sourceType == UIImagePickerControllerSourceTypeCamera) ? kSourceTaken : kSourceUploaded;
 
-    NSString *tempId = randomObjectId();
+    NSString *tempId = __randomObjectId();
     NSURL *outputURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:tempId]];
     
     // Video Asset
@@ -228,7 +228,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
     UIImage *thumbnailImage = [self thumbnailFromVideoAsset:asset source:sourceType];
     
     // Thumbnail Image data @ full compression
-    NSData *thumbnailData = compressedImageData(UIImageJPEGRepresentation(thumbnailImage, kJPEGCompressionFull), kVideoThumbnailWidth);
+    NSData *thumbnailData = __compressedImageData(UIImageJPEGRepresentation(thumbnailImage, kJPEGCompressionFull), kVideoThumbnailWidth);
 
     if (self.dataBlock)
     {
@@ -307,7 +307,7 @@ typedef void(^ActionHandlers)(UIAlertAction * _Nonnull action);
                        cameraHandler:(ActionHandlers)camera
                   userMediaInfoBlock:(MediaInfoBlock)mediaInfoBlock
                           mediaBlock:(MediaDataBlock)mediaBlock
-                      userMediaBlock:(MediaBlock)userMediaBlock
+                      userMediaBlock:(MediaBoolBlock)userMediaBlock
 
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
