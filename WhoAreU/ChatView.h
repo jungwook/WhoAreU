@@ -15,7 +15,7 @@
 #define TEXTVIEWHEIGHT 48
 
 #define CHATMAXWIDTH 200
-#define MEDIASIZE 220
+#define MEDIASIZE 160
 
 @protocol ChatViewDataSource;
 

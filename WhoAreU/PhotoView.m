@@ -13,6 +13,7 @@
 
 @interface PhotoView()
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
+@property BOOL hasMedia;
 @end
 
 @implementation PhotoView
@@ -28,6 +29,7 @@
 
 - (void)initialize
 {
+    self.hasMedia = NO;
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
@@ -45,7 +47,7 @@
                                
 - (void)tapped:(id)sender
 {
-    if (self.media && self.parent) {
+    if (self.hasMedia && self.parent) {
         Preview *preview = [[Preview alloc] initWithMedia:self.media];
         preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
         preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -60,10 +62,9 @@
 {
     _media = media;
 
-    [self.activity startAnimating];
     if (self.media) {
-        [self.media fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            
+        [self.activity startAnimating];
+        [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
             
             NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
@@ -71,15 +72,31 @@
             [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
                 UIImage *photo = [UIImage imageWithData:data];
                 self.image = photo;
+                self.hasMedia = YES;
                 [self.activity stopAnimating];
             }];
         }];
     }
     else {
         self.image = [UIImage imageNamed:@"avatar"];
+        self.hasMedia = NO;
     }
-    [self.activity stopAnimating];
 }
+
+- (void)setMediaDic:(MediaDic *)mediaDic
+{
+    Media* media = [Media new];
+    media.media = mediaDic.mediaFile;
+    media.thumbnail = mediaDic.thumbnail;
+    media.type = mediaDic.mediaType;
+    media.userId = mediaDic.userId;
+    media.comment = mediaDic.comment;
+    media.source = mediaDic.source;
+    media.size = mediaDic.size;
+
+    [self setMedia:media];
+}
+
 
 - (void)clear
 {

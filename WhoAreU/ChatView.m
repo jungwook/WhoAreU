@@ -9,6 +9,7 @@
 #import "ChatView.h"
 #import "MediaPicker.h"
 #import "PhotoView.h"
+#import "Balloon.h"
 
 #define chatFont [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold]
 
@@ -16,7 +17,8 @@
 @property (weak, nonatomic) MessageDic *message;
 @property (strong, nonatomic) UILabel *messageLabel;
 @property (strong, nonatomic) PhotoView *photoView;
-@property (strong, nonatomic) UIView *balloon;
+@property (strong, nonatomic) Balloon *balloon;
+@property (weak, nonatomic) UIViewController *parent;
 @property BOOL isMine;
 @end
 
@@ -26,7 +28,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.balloon = [UIView new];
+        self.balloon = [Balloon new];
         self.balloon.backgroundColor = [UIColor brownColor];
         
         self.messageLabel = [UILabel new];
@@ -34,6 +36,7 @@
         self.messageLabel.font = chatFont;
         
         self.photoView = [PhotoView new];
+        self.photoView.backgroundColor = [UIColor whiteColor];
         
         [self addSubview:self.balloon];
         [self.balloon addSubview:self.messageLabel];
@@ -42,16 +45,27 @@
     return self;
 }
 
+- (UIViewController *)parent
+{
+    return self.photoView.parent;
+}
+
+- (void)setParent:(UIViewController *)parent
+{
+    self.photoView.parent = parent;
+}
+
 - (void)setMessage:(MessageDic*)message
 {
     _message = message;
     
     NSLog(@"M:%@", message);
     self.isMine = [self.message.fromUserId isEqualToString:[User me].objectId];
+    self.balloon.isMine = self.isMine;
     
     switch (self.message.messageType) {
         case kMessageTypeMedia:
-            self.photoView.media = message.media;
+            self.photoView.mediaDic = message.media;
             self.messageLabel.alpha = 0.0f;
             self.photoView.alpha = 1.0f;
             break;
@@ -81,16 +95,18 @@
             CGFloat w = CGRectGetWidth(rect);
             CGFloat h = CGRectGetHeight(rect);
             
-            CGFloat balloonWidth = w+2*INSET;
+            CGFloat balloonWidth = w+2*INSET+6;
             CGFloat balloonOffset = self.isMine ? W-balloonWidth-rightOffset : leftOffset;
             self.balloon.frame = CGRectMake(balloonOffset, INSET, balloonWidth, h+INSET);
-            self.messageLabel.frame = CGRectMake(INSET, 0, w, h + INSET);
+            self.messageLabel.frame = CGRectMake(self.isMine ? INSET : INSET+6, 0, w, h + INSET);
         }
             break;
             
         case kMessageTypeMedia: {
+            MediaDic *dic = self.message.media;
             CGFloat balloonOffset = self.isMine ? W-MEDIASIZE-rightOffset : leftOffset;
-            self.balloon.frame = CGRectMake(balloonOffset, INSET, MEDIASIZE, MEDIASIZE+INSET);
+            CGFloat h = MEDIASIZE * dic.size.height / dic.size.width;
+            self.balloon.frame = CGRectMake(balloonOffset, INSET, MEDIASIZE, h+INSET);
             self.photoView.frame = self.balloon.bounds;
         }
             break;
@@ -369,6 +385,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     
     cell.backgroundColor = [UIColor redColor];
     cell.message = [self.chats objectAtIndex:indexPath.row];
+    cell.parent = self.parent;
     return cell;
 }
 
@@ -381,8 +398,11 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
             return CGRectGetHeight(rect)+3*INSET;
         }
             break;
-        case kMessageTypeMedia:
-            return MEDIASIZE+3*INSET;
+        case kMessageTypeMedia: {
+            MediaDic *md = m.media;
+            CGFloat h = MEDIASIZE * md.size.height / md.size.width;
+            return h+3*INSET;
+        }
             
         default:
             return 44;

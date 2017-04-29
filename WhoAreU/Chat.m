@@ -33,6 +33,7 @@
     return ^(Media *media) {
         NSLog(@"Sending %@", media);
         Message* message = [Message media:media toUser:self.user];
+        NSLog(@"MM:%@", message);
         [self.chats addObject:message.dictionary];
         [self.chatView reloadData];
     };

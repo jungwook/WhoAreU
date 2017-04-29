@@ -83,12 +83,10 @@ typedef NSMutableDictionary MediaDic;
 @property (nonatomic, assign) NSString* fromUserId;
 @property (nonatomic, assign) NSString* toUserId;
 @property (nonatomic, assign) NSString* message;
-@property (nonatomic, assign) Media*    media;
+@property (nonatomic, assign) MediaDic*    media;
 @property MessageType messageType;
 @property BOOL read;
 
-- (Media*) mediaObject;
-- (Message*) messageObject;
 @end
 
 @interface Message : PFObject <PFSubclassing>

@@ -142,15 +142,15 @@
     }
 }
 
-- (Media *)media
+- (MediaDic *)media
 {
-    return [[self objectForKey:@"media"] object];
+    return [self objectForKey:@"media"];
 }
 
-- (void)setMedia:(Media *)media
+- (void)setMedia:(MediaDic *)media
 {
     if (media) {
-        [self setObject:media.dictionary forKey:@"media"];
+        [self setObject:media forKey:@"media"];
 //        [self setObject:@"Media Message" forKey:@"message"];
     }
 }
@@ -249,19 +249,6 @@
     [self setObject:NSStringFromCGSize(size) forKey:@"size"];
 }
 
-- (Media *)mediaObject
-{
-    Media *media = [Media object];
-    
-    return media;
-}
-
-- (Message *)messageObject
-{
-    Message *message = [Message object];
-    return message;
-}
-
 @end
 
 @implementation Message
@@ -308,7 +295,7 @@
     d.fromUserId = self.fromUser.objectId;
     d.toUserId = self.toUser.objectId;
     d.message = self.message;
-    d.media = self.media;
+    d.media = self.media.dictionary;
     d.messageType = self.type;
     d.read = self.read;
     

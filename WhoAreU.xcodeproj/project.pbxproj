@@ -63,6 +63,7 @@
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
 		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
+		12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A213441EB47DBD00DF79B0 /* Balloon.m */; };
 		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
 		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
 		12F96D561EB453620054DA6C /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12F96D551EB453620054DA6C /* ChatView.m */; };
@@ -173,6 +174,8 @@
 		1289C39D1EA7956000A69146 /* IndentedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndentedLabel.m; sourceTree = "<group>"; };
 		1289C39F1EA99F8300A69146 /* BaseFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseFunctions.m; sourceTree = "<group>"; };
 		1289C3A11EA99F9500A69146 /* BaseFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseFunctions.h; sourceTree = "<group>"; };
+		12A213431EB47DBD00DF79B0 /* Balloon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Balloon.h; sourceTree = "<group>"; };
+		12A213441EB47DBD00DF79B0 /* Balloon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Balloon.m; sourceTree = "<group>"; };
 		12B796091EAA2C970041AE6C /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		12B7960A1EAA2C970041AE6C /* Engine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Engine.m; sourceTree = "<group>"; };
 		12F96D511EB2C2E10054DA6C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -364,6 +367,8 @@
 				126154131E8CCC7900F2AD4F /* PhotoView.m */,
 				123AF15A1EA07DF300ED0547 /* Preview.h */,
 				123AF15B1EA07DF300ED0547 /* Preview.m */,
+				12A213431EB47DBD00DF79B0 /* Balloon.h */,
+				12A213441EB47DBD00DF79B0 /* Balloon.m */,
 				12F96D541EB453620054DA6C /* ChatView.h */,
 				12F96D551EB453620054DA6C /* ChatView.m */,
 				1215C5A81EA6F88000BA509E /* Compass.h */,
@@ -499,6 +504,7 @@
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
 				1225F0201EB07491002763A0 /* Credits.m in Sources */,
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
+				12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				1225F0171EAF2881002763A0 /* UserProfile.m in Sources */,
