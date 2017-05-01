@@ -17,16 +17,10 @@
 #define CHATMAXWIDTH 200
 #define MEDIASIZE 160
 
-@protocol ChatViewDataSource;
-
 @interface ChatView : UIView <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) UIViewController *parent;
 @property (copy, nonatomic) StringBlock sendTextAction;
 @property (copy, nonatomic) MediaBlock sendMediaAction;
-@property (nonatomic, weak) id<ChatViewDataSource> dataSource;
+@property (nonatomic, strong) User *user;
 -(void) reloadData;
-@end
-
-@protocol ChatViewDataSource <NSObject>
-- (NSMutableArray*)chats;
 @end

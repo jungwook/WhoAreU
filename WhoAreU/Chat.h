@@ -10,4 +10,6 @@
 
 @interface Chat : UIViewController
 @property (nonatomic, strong) User *user;
+
+- (NSArray *)chats;
 @end

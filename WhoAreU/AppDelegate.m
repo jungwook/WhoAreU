@@ -127,7 +127,8 @@
 #endif
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
     __LF
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
@@ -136,23 +137,20 @@
     [PFPush subscribeToChannelInBackground:@"" block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"ParseStarterProject successfully subscribed to push notifications on the broadcast channel.");
-//            [self.system fetchOutstandingBullets];
+            [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
         } else {
             NSLog(@"ParseStarterProject failed to subscribe to push notifications on the broadcast channel.");
         }
     }];
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
     __LF
-    if (error.code == 3010) {
-        NSLog(@"Push notifications are not supported in the iOS Simulator.");
-        
-        // simulator settings... 
-    } else {
-        // show some alert or otherwise handle the failure to register.
-    NSLog(@"application:didFailToRegisterForRemoteNotificationsWithError: %@", error);
-    }
+    NSLog(@"Push notifications are not supported in the iOS Simulator.");
+    NSLog(@"Error:%@", error.localizedDescription);
+    
+    [[Engine new] setSimulatorStatus:kSimulatorStatusSimulator];
 }
 
 -(void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
@@ -174,17 +172,20 @@
         case UIApplicationStateActive:
             //    [self.system treatPushNotificationWith:userInfo];
             NSLog( @"Notification in FOREGROUND" );
+            [self handleUserInfo:userInfo];
             completionHandler( UIBackgroundFetchResultNewData );
             break;
         case UIApplicationStateInactive:
             //    [self.system treatPushNotificationWith:userInfo];
             NSLog( @"Notification in INACTIVE" );
+            [self handleUserInfo:userInfo];
             completionHandler( UIBackgroundFetchResultNewData );
             break;
             
         case UIApplicationStateBackground:
             //    [self.system treatPushNotificationWith:userInfo];
             NSLog( @"'Notification in BACKGROUND" );
+            [self handleUserInfo:userInfo];
             completionHandler( UIBackgroundFetchResultNewData );
             break;
     }
@@ -201,16 +202,31 @@
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
     NSLog( @"Handle push from foreground" );
-    // custom code to handle push while app is in the foreground
     NSLog(@"%@", notification.request.content.userInfo);
+    
+    completionHandler(UNNotificationPresentationOptionSound);
+    [self handleUserInfo:notification.request.content.userInfo];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler
 {
-    NSLog( @"Handle push from background or closed" );
-    // if you set a member variable in didReceiveRemoteNotification, you  will know if this is from closed or background
+    NSLog(@"Handle push from background or closed" );
     NSLog(@"%@", response.notification.request.content.userInfo);
+    [self handleUserInfo:response.notification.request.content.userInfo];
+    completionHandler();
 }
+
+- (void) handleUserInfo:(id)userInfo
+{
+    id messageId = [userInfo objectForKey:@"messageId"];
+    id messageType = [userInfo objectForKey:@"pushType"];
+    
+    if ([messageType isEqualToString:@"pushTypeMessage"]) {
+        [Engine loadMessage:messageId];
+    }
+}
+
+
 @end

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="g15-HN-NsY">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="g15-HN-NsY">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -933,6 +933,12 @@
                                                 <action selector="doChat:" destination="iiu-bb-Q4U" eventType="touchUpInside" id="HYZ-cX-zRZ"/>
                                             </connections>
                                         </button>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e1e-dW-Oam">
+                                            <rect key="frame" x="158" y="24" width="26.333333333333343" height="12"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="EUq-tM-2mv" firstAttribute="centerY" secondItem="1D3-F2-9d7" secondAttribute="centerY" id="2CJ-lY-ivY"/>
@@ -944,10 +950,12 @@
                                         <constraint firstItem="9yR-QF-frz" firstAttribute="top" secondItem="d03-Hv-NMx" secondAttribute="bottom" constant="-2" id="Iq7-3F-8OY"/>
                                         <constraint firstItem="9yR-QF-frz" firstAttribute="leading" secondItem="1D3-F2-9d7" secondAttribute="trailing" constant="8" id="Mgo-GH-9Hi"/>
                                         <constraint firstItem="1D3-F2-9d7" firstAttribute="centerY" secondItem="kj2-Z6-aMP" secondAttribute="centerY" id="QeJ-Hk-UpN"/>
+                                        <constraint firstItem="e1e-dW-Oam" firstAttribute="centerY" secondItem="1D3-F2-9d7" secondAttribute="centerY" id="deQ-KQ-AcO"/>
                                         <constraint firstItem="9gz-ny-1z4" firstAttribute="top" secondItem="yyr-SF-O2v" secondAttribute="bottom" constant="2" id="jla-cO-Qy2"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="EUq-tM-2mv" secondAttribute="trailing" constant="7" id="qZK-hZ-WA5"/>
                                         <constraint firstItem="pLM-qa-QJj" firstAttribute="centerY" secondItem="1D3-F2-9d7" secondAttribute="centerY" id="qbT-T1-r88"/>
                                         <constraint firstAttribute="leadingMargin" secondItem="1D3-F2-9d7" secondAttribute="leading" constant="-8" id="rkR-WM-ldZ"/>
+                                        <constraint firstItem="e1e-dW-Oam" firstAttribute="leading" secondItem="d03-Hv-NMx" secondAttribute="trailing" constant="20" id="wjW-A9-D75"/>
                                         <constraint firstItem="EUq-tM-2mv" firstAttribute="leading" secondItem="yyr-SF-O2v" secondAttribute="trailing" constant="12" id="yph-kQ-l8M"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -958,6 +966,7 @@
                                     <outlet property="distance" destination="9gz-ny-1z4" id="bI1-mo-hRx"/>
                                     <outlet property="nickname" destination="d03-Hv-NMx" id="SqD-uM-8hv"/>
                                     <outlet property="photoView" destination="1D3-F2-9d7" id="Lg1-hP-UjZ"/>
+                                    <outlet property="userId" destination="e1e-dW-Oam" id="3H4-xI-6hf"/>
                                     <segue destination="eJU-dv-X89" kind="presentation" identifier="UserProfile" modalPresentationStyle="overCurrentContext" id="rua-oM-MsL"/>
                                 </connections>
                             </tableViewCell>

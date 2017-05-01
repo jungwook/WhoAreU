@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet PhotoView *photoView;
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
+@property (weak, nonatomic) IBOutlet UILabel *userId;
 @property (weak, nonatomic) UIViewController* parent;
 @property (nonatomic) CGFloat heading;
 @property (copy, nonatomic) UserBlock doChatBlock;
@@ -38,7 +39,7 @@
     self.photoView.parent = self.parent;
     self.photoView.media = user.media;
     self.age.text = user.age;
-    
+    self.userId.text = user.objectId;
     self.compass.heading = __heading([Engine where], user.where);
     self.heading = self.compass.heading;
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);    

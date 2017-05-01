@@ -77,12 +77,13 @@
         
         // Initialize Tabs.
         [self initializeMainViewControllerToScreenId:@"Tabs"];
+        
+        // Subscribe to channel user
+        [self subscribeToChannelCurrentUser];
     };
     
     if (user) {
         [user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            Installation *install = [Installation currentInstallation];
-            NSLog(@"%@", install);
             initializationHandler();
         }];
     }
@@ -182,8 +183,8 @@
 - (void) subscribeToChannelCurrentUser
 {
     Installation *install = [Installation currentInstallation];
-    
-    if (!install.user) {
+    BOOL sameUser = [install.user.objectId isEqualToString:[User me].objectId];
+    if (!sameUser) {
         install.user = [User me];
         install.credits = install.initialFreeCredits;
         NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
@@ -191,7 +192,7 @@
         [install saveInBackground];
     }
     else {
-        NSLog(@"CURRENT INSTALLATION: Installation already has user. No need to set");
+        NSLog(@"CURRENT INSTALLATION: Installation is already set to current user. No need to update");
     }
 }
 

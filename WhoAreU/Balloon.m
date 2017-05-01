@@ -37,7 +37,7 @@
     _isMine = isMine;
     
     self.backgroundColor = isMine ?
-    [UIColor colorWithRed:100/255.f green:167/255.f blue:229/255.f alpha:1] :
+    kAppColor :
     [UIColor colorWithRed:110/255.f green:200/255.f blue:41/255.f alpha:1];
 }
 

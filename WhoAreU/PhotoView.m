@@ -101,7 +101,6 @@
 - (void)clear
 {
     self.image = [UIImage imageNamed:@"avatar"];
-    [self.activity startAnimating];
 }
 
 - (void)setImage:(UIImage *)image

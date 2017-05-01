@@ -24,7 +24,7 @@
 @property (weak, nonatomic) User *me;
 
 // Operating System related
-@property (nonatomic) BOOL simulator;
+@property (nonatomic, strong) NSTimer *timeKeeper;
 
 // Other structures
 @property (nonatomic, strong) NSMutableDictionary *chats;
@@ -48,6 +48,7 @@
     self = [super init];
     if (self) {
         self.lock = [NSObject new];
+        self.simulatorStatus = kSimulatorStatusUnknown;
     }
     return self;
 }
@@ -59,15 +60,155 @@
 
 - (void)initializeSystems
 {
+    // set me to [User me]. This assumes we've logged on already.
+    self.me = [User me];
+
     [self initFilesystemAndDataStructures];
     [self initLocationServices];
+    [self setInitialized:YES];
+    
+    // Fetching outstanding messages just in case.
+    [self fetchOutstandingMessages];
 }
+
+- (void)setSimulatorStatus:(SimulatorStatus)simulatorStatus
+{
+    _simulatorStatus = simulatorStatus;
+    
+    switch (simulatorStatus) {
+        case kSimulatorStatusUnknown:
+            NSLog(@"System is Unknown");
+            break;
+            
+        case kSimulatorStatusDevice:
+            NSLog(@"System is a Device");
+            break;
+            
+        case kSimulatorStatusSimulator:
+            NSLog(@"System is a Simulator");
+            break;
+            
+        default:
+            break;
+    }
+}
+
+//#define RESET_CHAT_FILE
 
 - (void) initFilesystemAndDataStructures
 {
     self.chatFilePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHAT_FILE_PATH];
+    
+#ifndef RESET_CHAT_FILE
     self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatFilePath];
+#endif
+    
+    if (!self.chats) {
+        self.chats = [NSMutableDictionary dictionary];
+    }
+    
     NSLog(@"CHATS Loaded with %ld chatrooms.", self.chats.allKeys.count);
+    
+    self.timeKeeper = [NSTimer scheduledTimerWithTimeInterval:SIMULATOR_FETCH_INTERVAL target:self selector:@selector(timeKeep) userInfo:nil repeats:YES];
+}
+
+- (void) timeKeep
+{
+    if (self.simulatorStatus == kSimulatorStatusSimulator && self.initialized) {
+        [self fetchOutstandingMessages];
+    }
+}
+
++ (void) loadMessage:(id)messageId
+{
+    NSLog(@"===========================================");
+    Message *message = [Message objectWithoutDataWithObjectId:messageId];
+    
+    [message fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        if (!error) {
+            if (message.media) {
+                [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                    if (!error) {
+                        [[Engine new] readAndAddMessageToSystem:message];
+                    }
+                    else {
+                        NSLog(@"ERROR:%@", error.localizedDescription);
+                    }
+                }];
+            }
+            else {
+                [[Engine new] readAndAddMessageToSystem:message];
+            }
+        }
+        else {
+            NSLog(@"ERROR:%@", error.localizedDescription);
+        }
+    }];
+}
+
+- (void) readAndAddMessageToSystem:(Message*)message
+{
+    [message fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        User *fromUser = message.fromUser;
+        
+        message.read = YES;
+        [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            if (succeeded) {
+                [self addToUser:fromUser message:message.dictionary push:NO];
+            }
+            else {
+                NSLog(@"ERROR:%@", error.localizedDescription);
+            }
+        }];
+    }];
+}
+
+- (void) addToUser:(User*)user message:(MessageDic*)dictionary push:(BOOL)push
+{
+    NSMutableArray *messages = [self messagesFromUser:user];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", dictionary.objectId];
+    NSArray *filter = [messages filteredArrayUsingPredicate:predicate];
+    
+    if (filter.count > 0) {
+        NSLog(@"============================================");
+        NSLog(@"ERROR:Cannot have multiple entries of message:%@", dictionary.objectId);
+    }
+    else {
+        [messages addObject:dictionary];
+        [self postNewMessageNotification:dictionary];
+        [Engine save];
+        if (push) {
+            [Engine sendPushMessage:dictionary.message messageId:dictionary.objectId toUserId:user.objectId];
+        }
+    }
+}
+
+- (void) postNewMessageNotification:(MessageDic*)dictionary
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:dictionary];
+}
+
++ (void) fetchOutstandingMessages
+{
+    [[Engine new] fetchOutstandingMessages];
+}
+
+- (void) fetchOutstandingMessages
+{
+    NSLog(@"Fetching Outstanding Messages For User:%@", [User me]);
+    
+    PFQuery *query = [Message query];
+    
+    [query whereKey:@"toUser" equalTo:[User me]];
+    [query whereKey:@"read" equalTo:@(NO)];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
+        NSLog(@"Found %ld messages", messages.count);
+        [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self readAndAddMessageToSystem:message];
+        }];
+    }];
 }
 
 + (NSArray *)chatUsers
@@ -77,50 +218,49 @@
 
 + (NSArray *)messagesFromUser:(User *)user
 {
+    Engine *engine = [Engine new];
+
     NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];
-    return [[[Engine new].chats objectForKey:user.objectId] sortedArrayUsingDescriptors:@[sd]];
+    
+    NSMutableArray *messages = [engine messagesFromUser:user];
+    return [messages sortedArrayUsingDescriptors:@[sd]];
 }
 
-+ (void)send:(id)message toUser:(User*)user
+- (NSMutableArray*) messagesFromUser:(User*)user
 {
-    Engine *engine = [Engine new];
-    NSMutableArray *messages = [engine.chats objectForKey:user.objectId];
+    NSMutableArray *messages = [self.chats objectForKey:user.objectId];
+    
     if (!messages) {
         messages = [NSMutableArray array];
-        [engine.chats setObject:messages forKey:user.objectId];
+        [self.chats setObject:messages forKey:user.objectId];
     }
+    return messages;
+}
+
++ (void)send:(id)msgToSend toUser:(User*)user
+{
+    Engine *engine = [Engine new];
     
-    Message *msg = [Message object];
-    msg.fromUser = [User me];
-    msg.toUser = user;
-    if ([message isKindOfClass:[Media class]]) {
-        msg.media = message;
-        msg.type = kMessageTypeMedia;
+    Message *message = nil;
+    if ([msgToSend isKindOfClass:[Media class]]) {
+        message = [Message media:msgToSend toUser:user];
     }
-    if ([message isKindOfClass:[NSString class]]) {
-        msg.message = message;
-        msg.type = kMessageTypeText;
+    if ([msgToSend isKindOfClass:[NSString class]]) {
+        message = [Message message:msgToSend toUser:user];
     }
-    msg.read = NO;
-    
-    MessageDic *dictionary = msg.dictionary;
-    [messages addObject:dictionary];
-    [engine saveChatsFile];
-    [msg saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+    message.read = NO;
+
+    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if (error) {
             NSLog(@"ERROR:%@", [error localizedDescription]);
         }
         else {
-            // send push
-            [engine sendPushMessage:dictionary.message messageId:dictionary.objectId toUserId:user.objectId];
-            
-            // send local notification
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:dictionary];
+            [engine addToUser:user message:message.dictionary push:YES];
         }
     }];
 }
 
-- (void) sendPushMessage:textToSend messageId:(id)messageId toUserId:(id)userId
++ (void) sendPushMessage:(NSString*)textToSend messageId:(id)messageId toUserId:(id)userId
 {
     const NSInteger maxLength = 100;
     NSUInteger length = [textToSend length];
@@ -129,22 +269,27 @@
         textToSend = [textToSend stringByAppendingString:@"..."];
     }
     
-    [PFCloud callFunctionInBackground:@"sendPushToUser"
-                       withParameters:@{
-                                        @"recipientId": userId,
-                                        @"senderId":    [User me].objectId,
-                                        @"message":     textToSend,
-                                        @"messageId":   messageId,
-                                        @"pushType":    @"pushTypeMessage"
-                                        }
-                                block:^(NSString *success, NSError *error) {
-                                    if (!error) {
-                                        
-                                    }
-                                    else {
-                                        NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-                                    }
-                                }];
+    id params = @{
+                  @"recipientId": userId,
+                  @"senderId":    [User me].objectId,
+                  @"message":     textToSend,
+                  @"messageId":   messageId,
+                  @"pushType":    @"pushTypeMessage"
+                  };
+    
+    [PFCloud callFunctionInBackground:@"sendPushToUser" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"PUSH SENT:%@", object);
+        }
+    }];
+}
+
++ (void) save
+{
+    [[Engine new] saveChatsFile];
 }
 
 - (void)saveChatsFile
@@ -168,26 +313,9 @@
     return POINT_FROM_CLLOCATION(self.currentLocation);
 }
 
-- (void)setSimulator:(BOOL)simulator
-{
-    _simulator = simulator;
-    
-    self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];
-}
-
 - (void) initLocationServices
 {
-    // set simulator flag
-    
-#ifdef TARGET_OS_SIMULATOR
-    self.simulator = YES;
-    NSLog(@"Working with simulator");
-#else
-    self.simulator = NO;
-    NSLog(@"Working with real device");
-#endif
-
-    self.me = [User me];
+    // Initializing location services.
     
     NSLog(@"Initializing Location Services");
     
@@ -229,8 +357,16 @@
     __LF
     
     CLLocation* location = [locations lastObject];
-    if (!self.simulator) {
-        self.currentLocation = location;
+    switch (self.simulatorStatus) {
+        case kSimulatorStatusDevice:
+            self.currentLocation = location;
+            break;
+            
+        case kSimulatorStatusSimulator:
+            self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];
+            
+        default:
+            break;
     }
 }
 

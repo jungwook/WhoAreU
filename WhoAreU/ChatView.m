@@ -13,6 +13,10 @@
 
 #define chatFont [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold]
 
+const CGFloat rightOffset = 20;
+const CGFloat leftOffset = 80;
+
+
 @interface ChatRow : UITableViewCell
 @property (weak, nonatomic) MessageDic *message;
 @property (strong, nonatomic) UILabel *messageLabel;
@@ -29,11 +33,11 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.balloon = [Balloon new];
-        self.balloon.backgroundColor = [UIColor brownColor];
         
         self.messageLabel = [UILabel new];
         self.messageLabel.numberOfLines = FLT_MAX;
         self.messageLabel.font = chatFont;
+        self.messageLabel.textColor = [UIColor whiteColor];
         
         self.photoView = [PhotoView new];
         self.photoView.backgroundColor = [UIColor whiteColor];
@@ -59,9 +63,13 @@
 {
     _message = message;
     
-    NSLog(@"M:%@", message);
-    self.isMine = [self.message.fromUserId isEqualToString:[User me].objectId];
-    self.balloon.isMine = self.isMine;
+    BOOL isMine = [self.message.fromUserId isEqualToString:[User me].objectId];
+    
+    if (isMine && [self.message.toUserId isEqualToString:[User me].objectId]) {
+        isMine = NO;
+    }
+    self.isMine = isMine;
+    self.balloon.isMine = isMine;
     
     switch (self.message.messageType) {
         case kMessageTypeMedia:
@@ -86,8 +94,6 @@
     [super layoutSubviews];
     
     CGFloat W = CGRectGetWidth(self.bounds);
-    const CGFloat rightOffset = 100;
-    const CGFloat leftOffset = 100;
     
     switch (self.message.messageType) {
         case kMessageTypeText: {
@@ -137,6 +143,9 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 - (void)reloadData
 {
     [self.tableView reloadData];
+    
+    CGPoint offset = CGPointMake(0, self.tableView.contentSize.height - self.tableView.frame.size.height );
+    [self.tableView setContentOffset:offset animated:YES];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -170,17 +179,12 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
                                              selector:@selector(doEndEditingEvent:)
                                                  name:UITextViewTextDidEndEditingNotification
                                                object:nil];
-    
 }
+
 - (void) dealloc
 {
-    // Unregister for keyboard notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillChangeFrameNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UITextViewTextDidEndEditingNotification
-                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:nil];
 }
 
 - (void)doEndEditingEvent:(NSString *)string
@@ -216,6 +220,8 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [self.tableView registerClass:[ChatRow class] forCellReuseIdentifier:@"RowCell"];
     
@@ -356,17 +362,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (NSArray*) chats
 {
-    static BOOL dataSourceReady = NO;
-    
-    if (dataSourceReady) {
-        return [self.dataSource chats];
+    if (self.user) {
+        return [Engine messagesFromUser:self.user];
     }
-    
-    if (self.dataSource && [self.dataSource respondsToSelector:@selector(chats)]) {
-        dataSourceReady = YES;
-        return [self.dataSource chats];
+    else {
+        NSLog(@"ERROR:User not set");
+        return nil;
     }
-    return nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -383,10 +385,16 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 {
     ChatRow *cell = [tableView dequeueReusableCellWithIdentifier:@"RowCell" forIndexPath:indexPath];
     
-    cell.backgroundColor = [UIColor redColor];
     cell.message = [self.chats objectAtIndex:indexPath.row];
     cell.parent = self.parent;
     return cell;
+}
+
+- (void)setUser:(User *)user
+{
+    _user = user;
+//    NSArray *messages = [Engine messagesFromUser:self.user];
+//    NSLog(@"MESSAGES:%@", messages);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -9,9 +9,8 @@
 #import "Chat.h"
 #import "ChatView.h"
 
-@interface Chat () <ChatViewDataSource>
+@interface Chat ()
 @property (strong, nonatomic) ChatView *chatView;
-@property (strong, nonatomic) NSMutableArray *chats;
 @property (strong, nonatomic) StringBlock sendTextAction;
 @property (strong, nonatomic) MediaBlock sendMediaAction;
 
@@ -24,26 +23,56 @@
 {
     [super awakeFromNib];
     
-    self.chats = [NSMutableArray new];
-    
     [self initializeInputPane];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessage:)
+                                                 name:kNOTIFICATION_NEW_MESSAGE
+                                               object:nil];
+    
+    [self.chatView reloadData];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
+}
+
+- (void)newMessage:(id)sender
+{
+    [self.chatView reloadData];
+}
+
+- (NSArray *)chats
+{
+    __LF
+    NSLog(@"Chats from user:%@[%@]", self.user.objectId, self.user.nickname);
+    return [Engine messagesFromUser:self.user];
+}
+
+- (void)setUser:(User *)user
+{
+    _user = user;
+ 
+    self.chatView.user = user;
+    NSLog(@"SETTING USER TO:%@[%@]", self.user.objectId, self.user.nickname);
 }
 
 - (MediaBlock) sendMediaAction {
     return ^(Media *media) {
-        NSLog(@"Sending %@", media);
-        Message* message = [Message media:media toUser:self.user];
-        NSLog(@"MM:%@", message);
-        [self.chats addObject:message.dictionary];
+        NSLog(@"Sending Media:%@", media);
+        [Engine send:media toUser:self.user];
         [self.chatView reloadData];
     };
 }
 
 - (StringBlock) sendTextAction {
     return ^(NSString *string) {
-        NSLog(@"[Sending %@]", string);
-        Message* message = [Message message:string toUser:self.user];
-        [self.chats addObject:message.dictionary];
+        NSLog(@"Sending Message:[%@]", string);
+        [Engine send:string toUser:self.user];
         [self.chatView reloadData];
     };
 }
@@ -56,7 +85,6 @@
     [self.view addSubview:self.chatView];
     
     self.chatView.parent = self;
-    self.chatView.dataSource = self;
     self.chatView.sendTextAction = self.sendTextAction;
     self.chatView.sendMediaAction = self.sendMediaAction;
 }
