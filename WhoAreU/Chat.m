@@ -28,17 +28,17 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newMessage:)
-                                                 name:kNOTIFICATION_NEW_MESSAGE
-                                               object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(newMessage:)
+//                                                 name:kNOTIFICATION_NEW_MESSAGE
+//                                               object:nil];
     
     [self.chatView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
 }
 
 - (void)newMessage:(id)sender

@@ -218,6 +218,7 @@
 
 + (NSArray *)messagesFromUser:(User *)user
 {
+    NSAssert(user != nil, @"User cannot be nil");
     Engine *engine = [Engine new];
 
     NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];

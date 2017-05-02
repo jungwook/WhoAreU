@@ -63,7 +63,7 @@ const CGFloat leftOffset = 80;
 {
     _message = message;
     
-    BOOL isMine = [self.message.fromUserId isEqualToString:[User me].objectId];
+    BOOL isMine = [self.message.fromUserId isEqualToString:[User me].objectId] && (self.message.createdAt == self.message.updatedAt);
     
     if (isMine && [self.message.toUserId isEqualToString:[User me].objectId]) {
         isMine = NO;
@@ -179,12 +179,29 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
                                              selector:@selector(doEndEditingEvent:)
                                                  name:UITextViewTextDidEndEditingNotification
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessage:)
+                                                 name:kNOTIFICATION_NEW_MESSAGE
+                                               object:nil];
+
 }
 
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
+}
+
+- (void)newMessage:(id)sender
+{
+    [self.tableView reloadData];
+
+    CGFloat y = self.tableView.contentSize.height - self.tableView.frame.size.height;
+    CGPoint offset = CGPointMake(0, MAX(y, 0));
+    [self.tableView setContentOffset:offset animated:YES];
+
 }
 
 - (void)doEndEditingEvent:(NSString *)string
@@ -360,17 +377,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     previousRect = currentRect;
 }
 
-- (NSArray*) chats
-{
-    if (self.user) {
-        return [Engine messagesFromUser:self.user];
-    }
-    else {
-        NSLog(@"ERROR:User not set");
-        return nil;
-    }
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -378,37 +384,38 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.chats.count;
+    if (self.user) {
+        return [Engine messagesFromUser:self.user].count;
+    }
+    else {
+        // Some other view controller is alive somewhere...
+        return 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ChatRow *cell = [tableView dequeueReusableCellWithIdentifier:@"RowCell" forIndexPath:indexPath];
-    
-    cell.message = [self.chats objectAtIndex:indexPath.row];
+
+    NSArray *messages = [Engine messagesFromUser:self.user];
+    cell.message = [messages objectAtIndex:indexPath.row];
     cell.parent = self.parent;
     return cell;
 }
 
-- (void)setUser:(User *)user
-{
-    _user = user;
-//    NSArray *messages = [Engine messagesFromUser:self.user];
-//    NSLog(@"MESSAGES:%@", messages);
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    MessageDic *m = [self.chats objectAtIndex:indexPath.row];
-    switch (m.messageType) {
+    NSArray *messages = [Engine messagesFromUser:self.user];
+    MessageDic *dictionary = [messages objectAtIndex:indexPath.row];
+    switch (dictionary.messageType) {
         case kMessageTypeText: {
-            CGRect rect = __rectForString(m.message, chatFont, CHATMAXWIDTH);
+            CGRect rect = __rectForString(dictionary.message, chatFont, CHATMAXWIDTH);
             return CGRectGetHeight(rect)+3*INSET;
         }
             break;
         case kMessageTypeMedia: {
-            MediaDic *md = m.media;
-            CGFloat h = MEDIASIZE * md.size.height / md.size.width;
+            MediaDic *media = dictionary.media;
+            CGFloat h = MEDIASIZE * media.size.height / media.size.width;
             return h+3*INSET;
         }
             

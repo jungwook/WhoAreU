@@ -75,6 +75,7 @@
 {
     PFQuery *query = [User query];
     [query whereKeyDoesNotExist:@"simulated"];
+    [query whereKey:@"objectId" notEqualTo:[User me].objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         self.users = objects;
         [self.tableView reloadData];
