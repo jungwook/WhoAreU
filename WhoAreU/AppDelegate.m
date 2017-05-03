@@ -220,8 +220,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
 - (void) handleUserInfo:(id)userInfo
 {
+    __LF
     id messageId = [userInfo objectForKey:@"messageId"];
     [Engine postNewMessageNotification:messageId];
+    [Engine setSystemBadge];
     
 //    id messageId = [userInfo objectForKey:@"messageId"];
 //    id messageType = [userInfo objectForKey:@"pushType"];

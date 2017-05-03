@@ -119,32 +119,32 @@
     }
 }
 
-+ (void) loadMessage:(id)messageId
-{
-    NSLog(@"===========================================");
-    Message *message = [Message objectWithoutDataWithObjectId:messageId];
-    
-    [message fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        if (!error) {
-            if (message.media) {
-                [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-                    if (!error) {
-                        [[Engine new] addMessageToSystem:message];
-                    }
-                    else {
-                        NSLog(@"ERROR:%@", error.localizedDescription);
-                    }
-                }];
-            }
-            else {
-                [[Engine new] addMessageToSystem:message];
-            }
-        }
-        else {
-            NSLog(@"ERROR:%@", error.localizedDescription);
-        }
-    }];
-}
+//+ (void) loadMessage:(id)messageId
+//{
+//    NSLog(@"===========================================");
+//    Message *message = [Message objectWithoutDataWithObjectId:messageId];
+//    
+//    [message fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+//        if (!error) {
+//            if (message.media) {
+//                [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+//                    if (!error) {
+//                        [[Engine new] addMessageToSystem:message];
+//                    }
+//                    else {
+//                        NSLog(@"ERROR:%@", error.localizedDescription);
+//                    }
+//                }];
+//            }
+//            else {
+//                [[Engine new] addMessageToSystem:message];
+//            }
+//        }
+//        else {
+//            NSLog(@"ERROR:%@", error.localizedDescription);
+//        }
+//    }];
+//}
 
 + (void)readMessage:(MessageDic *)dictionary
 {
@@ -159,23 +159,29 @@
 - (void) addMessageToSystem:(Message*)message
 {
     __LF
-    
-    [message fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        User *fromUser = message.fromUser;
-        
+    UserBlock addToUser = ^(User* fromUser) {
         message.read = YES;
-        [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-            if (succeeded) {
-                [self addToUser:fromUser message:message.dictionary push:NO];
+        [self addToUser:fromUser message:message.dictionary push:NO completion:nil];
+        [message saveInBackground];
+    };
+    
+    User *fromUser = message.fromUser;
+    if (message.media) {
+        [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            if (!error) {
+                addToUser(fromUser);
             }
             else {
-                NSLog(@"ERROR:%@", error.localizedDescription);
+                NSLog(@"Error Fetching Media from Message:%@", message);
             }
         }];
-    }];
+    }
+    else {
+        addToUser(fromUser);
+    }
 }
 
-- (void) addToUser:(User*)user message:(MessageDic*)dictionary push:(BOOL)push
+- (void) addToUser:(User*)user message:(MessageDic*)dictionary push:(BOOL)push completion:(VoidBlock)handler
 {
     NSMutableArray *messages = [self messagesFromUser:user];
     
@@ -188,12 +194,23 @@
     }
     else {
         [messages addObject:dictionary];
-        [Engine postNewMessageNotification:dictionary.objectId];
         [Engine save];
         if (push) {
             [Engine sendPushMessage:dictionary.message messageId:dictionary.objectId toUserId:user.objectId];
         }
+        if (handler) {
+            handler();
+        }
     }
+}
+
++ (void) setSystemBadge
+{
+    [Engine countUnreadMessages:^(NSUInteger count) {
+        PFInstallation *install = [PFInstallation currentInstallation];
+        install.badge = count;
+        [install saveInBackground];
+    }];
 }
 
 + (NSUInteger)unreadMessagesFromUser:(User *)user
@@ -223,19 +240,37 @@
     }];
 }
 
-+ (void) loadUnreadMessagesFromUser:(User *)user
++ (void) loadUnreadMessagesFromUser:(User *)user completion:(VoidBlock)handler
 {
     PFQuery *query = [Message query];
     
     [query whereKey:@"toUser" equalTo:[User me]];
     [query whereKey:@"fromUser" equalTo:user];
     [query whereKey:@"read" equalTo:@(NO)];
+    [query orderByAscending:@"createdAt"];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
         NSLog(@"Found %ld messages", messages.count);
         [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
             [[Engine new] addMessageToSystem:message];
         }];
+        if (handler) {
+            handler();
+        }
+    }];
+}
+
++ (void) countUnreadMessages:(CountBlock)handler
+{
+    PFQuery *query = [Message query];
+    
+    [query whereKey:@"toUser" equalTo:[User me]];
+    [query whereKey:@"read" equalTo:@(NO)];
+    
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (handler) {
+            handler(number);
+        }
     }];
 }
 
@@ -297,7 +332,7 @@
     return messages;
 }
 
-+ (void)send:(id)msgToSend toUser:(User*)user
++ (void)send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler
 {
     Engine *engine = [Engine new];
     
@@ -315,7 +350,8 @@
             NSLog(@"ERROR:%@", [error localizedDescription]);
         }
         else {
-            [engine addToUser:user message:message.dictionary push:YES];
+            MessageDic *dictionary = message.dictionary;
+            [engine addToUser:user message:dictionary push:YES completion:handler];
         }
     }];
 }

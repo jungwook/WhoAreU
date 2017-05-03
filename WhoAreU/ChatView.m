@@ -124,17 +124,18 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     return curve << 16;
 }
 
-- (void)reloadData
+- (void)reloadDataAnimated:(BOOL) animated
 {
     [self.tableView reloadData];
-    [self scrollToBottom];
+    [self scrollToBottomAnimated:animated];
 }
 
-- (void) scrollToBottom
+- (void) scrollToBottomAnimated:(BOOL)animated
 {
-    CGFloat y = self.tableView.contentSize.height - self.tableView.frame.size.height;
-    CGPoint offset = CGPointMake(0, MAX(y, 0));
-    [self.tableView setContentOffset:offset animated:YES];
+    NSUInteger rows = [Engine messagesFromUser:self.user].count;
+    if (rows > 0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rows-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    }
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -203,6 +204,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     dispatch_async(dispatch_get_main_queue(), ^{
         [UIView animateWithDuration:keyboardTransitionDuration delay:0.0f options:AnimationOptionsForCurve(keyboardTransitionAnimationCurve) animations:^{
             [self setInputBarFrame];
+            [self reloadDataAnimated:NO];
         } completion:nil];
     });
 }
@@ -264,13 +266,14 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     self.textView.text = @"";
     [self textViewDidChange:self.textView];
     
-    [Engine send:textToSend toUser:self.user];
-    [self reloadData];
+//    [Engine send:textToSend toUser:self.user completion:^{
+//        [self reloadData];
+//    }];
     
-//    if (self.sendTextAction)
-//    {
-//        self.sendTextAction(textToSend);
-//    }
+    if (self.sendTextAction)
+    {
+        self.sendTextAction(textToSend);
+    }
 }
 
 - (void)mediaButPressed:(id)sender

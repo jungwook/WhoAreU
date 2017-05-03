@@ -14,5 +14,5 @@
 @property (copy, nonatomic) StringBlock sendTextAction;
 @property (copy, nonatomic) MediaBlock sendMediaAction;
 @property (nonatomic, strong) User *user;
--(void) reloadData;
+- (void)reloadDataAnimated:(BOOL) animated;
 @end

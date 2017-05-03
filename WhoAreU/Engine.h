@@ -24,14 +24,16 @@ typedef enum : NSUInteger {
 + (void) initializeSystems;
 + (NSArray*) chatUsers;
 + (void) save;
-+ (void) send:(id)message toUser:(User*)user;
 + (NSArray*) messagesFromUser:(User*)user;
 + (void) fetchOutstandingMessages;
-+ (void) loadMessage:(id)messageId;
+//+ (void) loadMessage:(id)messageId;
 + (BOOL) userExists:(User*)user;
 + (NSUInteger) unreadMessagesFromUser:(User*)user;
 + (void) readMessage:(MessageDic*)dictionary;
 + (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler;
-+ (void) loadUnreadMessagesFromUser:(User *)user;
++ (void) countUnreadMessages:(CountBlock)handler;
++ (void) loadUnreadMessagesFromUser:(User*)user completion:(VoidBlock)handler;
 + (void) postNewMessageNotification:(id)messageId;
++ (void) send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler;
++ (void) setSystemBadge;
 @end

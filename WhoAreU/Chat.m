@@ -30,8 +30,10 @@
 {
     __LF
     
-    [Engine loadUnreadMessagesFromUser:self.user];
-    [self.chatView reloadData];
+    [Engine loadUnreadMessagesFromUser:self.user completion:^{
+        [self.chatView reloadDataAnimated:NO];
+        [Engine setSystemBadge];
+    }];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newMessage:)
@@ -42,8 +44,9 @@
 - (void)newMessage:(id)sender
 {
     __LF
-    [Engine loadUnreadMessagesFromUser:self.user];
-    [self.chatView reloadData];
+    [Engine loadUnreadMessagesFromUser:self.user completion:^{
+        [self.chatView reloadDataAnimated:YES];
+    }];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -63,16 +66,18 @@
 - (MediaBlock) sendMediaAction {
     return ^(Media *media) {
         NSLog(@"Sending Media:%@", media);
-        [Engine send:media toUser:self.user];
-        [self.chatView reloadData];
+        [Engine send:media toUser:self.user completion:^{
+            [self.chatView reloadDataAnimated:YES];
+        }];
     };
 }
 
 - (StringBlock) sendTextAction {
     return ^(NSString *string) {
         NSLog(@"Sending Message:[%@]", string);
-        [Engine send:string toUser:self.user];
-        [self.chatView reloadData];
+        [Engine send:string toUser:self.user completion:^{
+            [self.chatView reloadDataAnimated:YES];
+        }];
     };
 }
 

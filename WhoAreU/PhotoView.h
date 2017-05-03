@@ -15,5 +15,5 @@
 
 - (void) clear;
 - (void) updateMedia;
-- (void)setMediaDic:(MediaDic *)mediaDic;
+- (void) setMediaDic:(MediaDic *)mediaDic;
 @end
