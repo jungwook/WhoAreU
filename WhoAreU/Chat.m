@@ -29,6 +29,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     __LF
+    
     [Engine loadUnreadMessagesFromUser:self.user];
     [self.chatView reloadData];
     
