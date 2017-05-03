@@ -7,15 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-#define LEFTBUTSIZE 45
-#define INSET 8
-#define SENDBUTSIZE 50
-#define LINEHEIGHT 17
-#define TEXTVIEWHEIGHT 48
-
-#define CHATMAXWIDTH 200
-#define MEDIASIZE 160
+#import "Balloon.h"
 
 @interface ChatView : UIView <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) UIViewController *parent;

@@ -28,29 +28,27 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(newMessage:)
-//                                                 name:kNOTIFICATION_NEW_MESSAGE
-//                                               object:nil];
+    __LF
+    [Engine loadUnreadMessagesFromUser:self.user];
+    [self.chatView reloadData];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessage:)
+                                                 name:kNOTIFICATION_NEW_MESSAGE
+                                               object:nil];
+}
+
+- (void)newMessage:(id)sender
+{
+    __LF
+    [Engine loadUnreadMessagesFromUser:self.user];
     [self.chatView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
-}
-
-- (void)newMessage:(id)sender
-{
-    [self.chatView reloadData];
-}
-
-- (NSArray *)chats
-{
-    __LF
-    NSLog(@"Chats from user:%@[%@]", self.user.objectId, self.user.nickname);
-    return [Engine messagesFromUser:self.user];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
 }
 
 - (void)setUser:(User *)user
@@ -79,7 +77,6 @@
 
 - (void) initializeInputPane
 {
-    // add inputBar
     self.chatView = [[ChatView alloc] initWithFrame:self.view.bounds];
 
     [self.view addSubview:self.chatView];

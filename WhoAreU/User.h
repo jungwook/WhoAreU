@@ -14,6 +14,7 @@
 
 typedef void(^BOOLBlock)(BOOL value);
 typedef void(^VoidBlock)(void);
+typedef void(^CountBlock)(NSUInteger count);
 typedef void(^UserBlock)(User* user);
 typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);
@@ -56,7 +57,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (readonly) NSUInteger initialFreeCredits;
 @property (readonly) NSUInteger openChatCredits;
 
-+ (void) payForChatOnViewController:(UIViewController*)viewController action:(VoidBlock)actionBlock;
++ (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock;
 @end
 
 

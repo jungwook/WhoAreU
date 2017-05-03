@@ -25,9 +25,17 @@
     return 250;
 }
 
-+ (void)payForChatOnViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock
++ (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock
 {
     Installation *install = [Installation currentInstallation];
+    
+    if ([Engine userExists:user]) {
+        if (actionBlock) {
+            actionBlock();
+            // Example ... [self performSegueWithIdentifier:@"Chat" sender:user];
+        }
+        return;
+    }
     
     void(^buyhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
         NSLog(@"Buy more credits");

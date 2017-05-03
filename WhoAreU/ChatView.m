@@ -11,17 +11,15 @@
 #import "PhotoView.h"
 #import "Balloon.h"
 
-#define chatFont [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold]
 
 const CGFloat rightOffset = 20;
-const CGFloat leftOffset = 80;
-
+const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 
 @interface ChatRow : UITableViewCell
 @property (weak, nonatomic) MessageDic *message;
-@property (strong, nonatomic) UILabel *messageLabel;
 @property (strong, nonatomic) PhotoView *photoView;
 @property (strong, nonatomic) Balloon *balloon;
+@property (weak, nonatomic) User* user;
 @property (weak, nonatomic) UIViewController *parent;
 @property BOOL isMine;
 @end
@@ -34,28 +32,30 @@ const CGFloat leftOffset = 80;
     if (self) {
         self.balloon = [Balloon new];
         
-        self.messageLabel = [UILabel new];
-        self.messageLabel.numberOfLines = FLT_MAX;
-        self.messageLabel.font = chatFont;
-        self.messageLabel.textColor = [UIColor whiteColor];
-        
         self.photoView = [PhotoView new];
-        self.photoView.backgroundColor = [UIColor whiteColor];
+        self.photoView.backgroundColor = kAppColor;
+        self.photoView.radius = PHOTOVIEWSIZE / 2.0f;
+        self.photoView.borderWidth = 1.0f;
+        self.photoView.borderColor = [UIColor blackColor];
         
         [self addSubview:self.balloon];
-        [self.balloon addSubview:self.messageLabel];
-        [self.balloon addSubview:self.photoView];
+        [self addSubview:self.photoView];
+        
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
 }
 
-- (UIViewController *)parent
+- (void)setUser:(User *)user
 {
-    return self.photoView.parent;
+    _user = user;
+    
+    self.photoView.media = user.media;
 }
 
 - (void)setParent:(UIViewController *)parent
 {
+    self.balloon.parent = parent;
     self.photoView.parent = parent;
 }
 
@@ -63,30 +63,11 @@ const CGFloat leftOffset = 80;
 {
     _message = message;
     
-    BOOL isMine = [self.message.fromUserId isEqualToString:[User me].objectId] && (self.message.createdAt == self.message.updatedAt);
+    BOOL isMine = [self.message.fromUserId isEqualToString:[User me].objectId];
     
-    if (isMine && [self.message.toUserId isEqualToString:[User me].objectId]) {
-        isMine = NO;
-    }
     self.isMine = isMine;
-    self.balloon.isMine = isMine;
-    
-    switch (self.message.messageType) {
-        case kMessageTypeMedia:
-            self.photoView.mediaDic = message.media;
-            self.messageLabel.alpha = 0.0f;
-            self.photoView.alpha = 1.0f;
-            break;
-            
-        case kMessageTypeText:
-            self.messageLabel.text = message.message;
-            self.messageLabel.alpha = 1.0f;
-            self.photoView.alpha = 0.0f;
-            break;
-            
-        default:
-            break;
-    }
+    self.balloon.type = isMine ? kBalloonTypeRight : kBalloonTypeLeft;
+    self.balloon.message = self.message;
 }
 
 - (void)layoutSubviews
@@ -94,17 +75,17 @@ const CGFloat leftOffset = 80;
     [super layoutSubviews];
     
     CGFloat W = CGRectGetWidth(self.bounds);
-    
+    CGFloat H = CGRectGetHeight(self.bounds);
     switch (self.message.messageType) {
         case kMessageTypeText: {
+            CGFloat inset = self.balloon.ballonInset;
             CGRect rect = __rectForString(self.message.message, chatFont, CHATMAXWIDTH);
             CGFloat w = CGRectGetWidth(rect);
             CGFloat h = CGRectGetHeight(rect);
             
-            CGFloat balloonWidth = w+2*INSET+6;
+            CGFloat balloonWidth = w+2*INSET+inset;
             CGFloat balloonOffset = self.isMine ? W-balloonWidth-rightOffset : leftOffset;
-            self.balloon.frame = CGRectMake(balloonOffset, INSET, balloonWidth, h+INSET);
-            self.messageLabel.frame = CGRectMake(self.isMine ? INSET : INSET+6, 0, w, h + INSET);
+            self.balloon.frame = CGRectMake(balloonOffset, 0, balloonWidth, h+INSET*3.0f/2.0f);
         }
             break;
             
@@ -112,13 +93,16 @@ const CGFloat leftOffset = 80;
             MediaDic *dic = self.message.media;
             CGFloat balloonOffset = self.isMine ? W-MEDIASIZE-rightOffset : leftOffset;
             CGFloat h = MEDIASIZE * dic.size.height / dic.size.width;
-            self.balloon.frame = CGRectMake(balloonOffset, INSET, MEDIASIZE, h+INSET);
-            self.photoView.frame = self.balloon.bounds;
+            self.balloon.frame = CGRectMake(balloonOffset, 0, MEDIASIZE, h+INSET*3.0f/2.0f);
         }
             break;
             
         default:
             break;
+    }
+    self.photoView.alpha = !self.isMine;
+    if (!self.isMine) {
+        self.photoView.frame = CGRectMake(INSET+3, H-PHOTOVIEWSIZE, PHOTOVIEWSIZE, PHOTOVIEWSIZE);
     }
 }
 
@@ -143,8 +127,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 - (void)reloadData
 {
     [self.tableView reloadData];
-    
-    CGPoint offset = CGPointMake(0, self.tableView.contentSize.height - self.tableView.frame.size.height );
+    [self scrollToBottom];
+}
+
+- (void) scrollToBottom
+{
+    CGFloat y = self.tableView.contentSize.height - self.tableView.frame.size.height;
+    CGPoint offset = CGPointMake(0, MAX(y, 0));
     [self.tableView setContentOffset:offset animated:YES];
 }
 
@@ -152,6 +141,9 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.translatesAutoresizingMaskIntoConstraints = YES;
+
         [self addContents];
         self.height = TEXTVIEWHEIGHT;
         self.baseLine = CGRectGetHeight(frame);
@@ -174,34 +166,18 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
                                              selector:@selector(doKeyBoardEvent:)
                                                  name:UIKeyboardWillChangeFrameNotification
                                                object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(doEndEditingEvent:)
                                                  name:UITextViewTextDidEndEditingNotification
                                                object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newMessage:)
-                                                 name:kNOTIFICATION_NEW_MESSAGE
-                                               object:nil];
-
 }
 
 - (void) dealloc
 {
+    __LF
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
-}
-
-- (void)newMessage:(id)sender
-{
-    [self.tableView reloadData];
-
-    CGFloat y = self.tableView.contentSize.height - self.tableView.frame.size.height;
-    CGPoint offset = CGPointMake(0, MAX(y, 0));
-    [self.tableView setContentOffset:offset animated:YES];
-
 }
 
 - (void)doEndEditingEvent:(NSString *)string
@@ -213,6 +189,8 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 {
     CGRect keyboardEndFrameWindow;
     [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardEndFrameWindow];
+    
+    keyboardEndFrameWindow = [[UIApplication sharedApplication].keyWindow convertRect:keyboardEndFrameWindow toView:self];
     
     double keyboardTransitionDuration;
     [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&keyboardTransitionDuration];
@@ -240,9 +218,19 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
+    self.tableView.allowsSelection = NO;
+    
+    [self.tableView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedOutside:)]];
+    
     [self.tableView registerClass:[ChatRow class] forCellReuseIdentifier:@"RowCell"];
     
     [self addSubview:self.tableView];
+}
+
+- (void) tappedOutside:(id)sender
+{
+    __LF
+    [self endEditing:YES];
 }
 
 - (void) addBorder
@@ -275,10 +263,14 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     NSString *textToSend = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     self.textView.text = @"";
     [self textViewDidChange:self.textView];
-    if (self.sendTextAction)
-    {
-        self.sendTextAction(textToSend);
-    }
+    
+    [Engine send:textToSend toUser:self.user];
+    [self reloadData];
+    
+//    if (self.sendTextAction)
+//    {
+//        self.sendTextAction(textToSend);
+//    }
 }
 
 - (void)mediaButPressed:(id)sender
@@ -318,6 +310,8 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void)layoutSubviews
 {
+    __LF
+    
     const CGFloat offset = 4;
     
     [super layoutSubviews];
@@ -343,8 +337,9 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 - (void) setInputBarFrame
 {
     CGFloat w = CGRectGetWidth(self.bounds);
+    
     CGFloat baseLine = self.baseLine - self.height;
-    [self.tableView setFrame:CGRectMake(0, 0, w, baseLine)];
+    [self.tableView setFrame:CGRectMake(0, 0, w, baseLine-2)];
     [self.inputView setFrame:CGRectMake(0, baseLine, w, self.height)];
 }
 
@@ -359,7 +354,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     CGFloat nh = CGRectGetMinY(currentRect)+CGRectGetHeight(currentRect);
     CGFloat ph = CGRectGetMinY(previousRect)+CGRectGetHeight(previousRect);
     
-    CGRect rect = __rectForString(textView.text, textView.font, textView.frame.size.width);
+    CGRect rect = __rectForString(textView.text, textView.font, CGRectGetWidth(textView.frame)-8);
     
     NSUInteger nl = CGRectGetHeight(rect) / self.textView.font.lineHeight;
     
@@ -372,6 +367,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     if (nh != ph){
         self.height = tvh;
         [self setNeedsLayout];
+        [self layoutIfNeeded];
     }
     
     previousRect = currentRect;
@@ -400,6 +396,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     NSArray *messages = [Engine messagesFromUser:self.user];
     cell.message = [messages objectAtIndex:indexPath.row];
     cell.parent = self.parent;
+    cell.user = self.user;
     return cell;
 }
 

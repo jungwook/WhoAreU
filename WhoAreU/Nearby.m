@@ -106,7 +106,7 @@
     cell.user = [self.users objectAtIndex:indexPath.row];
     cell.doChatBlock = ^(User *user) {
         // actions
-        [Installation payForChatOnViewController:self action:^{
+        [Installation payForChatWithUser:user onViewController:self action:^{
             [self performSegueWithIdentifier:@"Chat" sender:user];
         }];
     };

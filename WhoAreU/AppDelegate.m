@@ -221,11 +221,14 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (void) handleUserInfo:(id)userInfo
 {
     id messageId = [userInfo objectForKey:@"messageId"];
-    id messageType = [userInfo objectForKey:@"pushType"];
+    [Engine postNewMessageNotification:messageId];
     
-    if ([messageType isEqualToString:@"pushTypeMessage"]) {
-        [Engine loadMessage:messageId];
-    }
+//    id messageId = [userInfo objectForKey:@"messageId"];
+//    id messageType = [userInfo objectForKey:@"pushType"];
+//    
+//    if ([messageType isEqualToString:@"pushTypeMessage"]) {
+//        [Engine loadMessage:messageId];
+//    }
 }
 
 

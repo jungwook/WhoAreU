@@ -68,7 +68,7 @@
     [self setInitialized:YES];
     
     // Fetching outstanding messages just in case.
-    [self fetchOutstandingMessages];
+//    [self fetchOutstandingMessages];
 }
 
 - (void)setSimulatorStatus:(SimulatorStatus)simulatorStatus
@@ -115,7 +115,7 @@
 - (void) timeKeep
 {
     if (self.simulatorStatus == kSimulatorStatusSimulator && self.initialized) {
-        [self fetchOutstandingMessages];
+        [Engine fetchOutstandingMessages];
     }
 }
 
@@ -129,7 +129,7 @@
             if (message.media) {
                 [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
                     if (!error) {
-                        [[Engine new] readAndAddMessageToSystem:message];
+                        [[Engine new] addMessageToSystem:message];
                     }
                     else {
                         NSLog(@"ERROR:%@", error.localizedDescription);
@@ -137,7 +137,7 @@
                 }];
             }
             else {
-                [[Engine new] readAndAddMessageToSystem:message];
+                [[Engine new] addMessageToSystem:message];
             }
         }
         else {
@@ -146,8 +146,20 @@
     }];
 }
 
-- (void) readAndAddMessageToSystem:(Message*)message
++ (void)readMessage:(MessageDic *)dictionary
 {
+    id messageId = dictionary.objectId;
+    
+    Message *message = [Message objectWithoutDataWithObjectId:messageId];
+    
+    message.read = YES;
+    [message saveInBackground];
+}
+
+- (void) addMessageToSystem:(Message*)message
+{
+    __LF
+    
     [message fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         User *fromUser = message.fromUser;
         
@@ -176,7 +188,7 @@
     }
     else {
         [messages addObject:dictionary];
-        [self postNewMessageNotification:dictionary];
+        [Engine postNewMessageNotification:dictionary.objectId];
         [Engine save];
         if (push) {
             [Engine sendPushMessage:dictionary.message messageId:dictionary.objectId toUserId:user.objectId];
@@ -184,17 +196,17 @@
     }
 }
 
-- (void) postNewMessageNotification:(MessageDic*)dictionary
++ (NSUInteger)unreadMessagesFromUser:(User *)user
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:dictionary];
+    return 0;
+}
+
++ (void) postNewMessageNotification:(id)messageId
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:messageId];
 }
 
 + (void) fetchOutstandingMessages
-{
-    [[Engine new] fetchOutstandingMessages];
-}
-
-- (void) fetchOutstandingMessages
 {
     NSLog(@"Fetching Outstanding Messages For User:%@", [User me]);
     
@@ -206,8 +218,39 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
         NSLog(@"Found %ld messages", messages.count);
         [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-            [self readAndAddMessageToSystem:message];
+            [[Engine new] addMessageToSystem:message];
         }];
+    }];
+}
+
++ (void) loadUnreadMessagesFromUser:(User *)user
+{
+    PFQuery *query = [Message query];
+    
+    [query whereKey:@"toUser" equalTo:[User me]];
+    [query whereKey:@"fromUser" equalTo:user];
+    [query whereKey:@"read" equalTo:@(NO)];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
+        NSLog(@"Found %ld messages", messages.count);
+        [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+            [[Engine new] addMessageToSystem:message];
+        }];
+    }];
+}
+
++ (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler
+{
+    PFQuery *query = [Message query];
+    
+    [query whereKey:@"toUser" equalTo:[User me]];
+    [query whereKey:@"fromUser" equalTo:user];
+    [query whereKey:@"read" equalTo:@(NO)];
+
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (handler) {
+            handler(number);
+        }
     }];
 }
 
@@ -225,6 +268,22 @@
     
     NSMutableArray *messages = [engine messagesFromUser:user];
     return [messages sortedArrayUsingDescriptors:@[sd]];
+}
+
++ (BOOL)userExists:(User *)user
+{
+    NSArray *users = [Engine chatUsers];
+
+    NSLog(@"USERS:%@", users);
+    
+    __block BOOL ret = NO;
+    [[Engine chatUsers] enumerateObjectsUsingBlock:^(id _Nonnull userId, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([userId isEqualToString:user.objectId]) {
+            ret = YES;
+            *stop = YES;
+        }
+    }];
+    return ret;
 }
 
 - (NSMutableArray*) messagesFromUser:(User*)user

@@ -28,4 +28,10 @@ typedef enum : NSUInteger {
 + (NSArray*) messagesFromUser:(User*)user;
 + (void) fetchOutstandingMessages;
 + (void) loadMessage:(id)messageId;
++ (BOOL) userExists:(User*)user;
++ (NSUInteger) unreadMessagesFromUser:(User*)user;
++ (void) readMessage:(MessageDic*)dictionary;
++ (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler;
++ (void) loadUnreadMessagesFromUser:(User *)user;
++ (void) postNewMessageNotification:(id)messageId;
 @end

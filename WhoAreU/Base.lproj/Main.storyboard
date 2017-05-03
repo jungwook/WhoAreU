@@ -434,7 +434,7 @@
         <!--Chats-->
         <scene sceneID="gDe-DW-wRg">
             <objects>
-                <viewController id="VkT-8H-gGg" customClass="Chat" sceneMemberID="viewController">
+                <viewController id="VkT-8H-gGg" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RNz-Zd-5Bx"/>
                         <viewControllerLayoutGuide type="bottom" id="RaV-KH-R3a"/>
@@ -1072,6 +1072,6 @@
         <image name="send" width="166" height="166"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="1wJ-vB-19p"/>
+        <segue reference="WXf-cN-K3M"/>
     </inferredMetricsTieBreakers>
 </document>
