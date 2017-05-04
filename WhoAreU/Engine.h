@@ -33,7 +33,7 @@ typedef enum : NSUInteger {
 + (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler;
 + (void) countUnreadMessages:(CountBlock)handler;
 + (void) loadUnreadMessagesFromUser:(User*)user completion:(VoidBlock)handler;
-+ (void) postNewMessageNotification:(id)messageId;
++ (void) postNewMessageNotification:(id)userInfo;
 + (void) send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler;
 + (void) setSystemBadge;
 @end

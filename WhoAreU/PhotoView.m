@@ -11,6 +11,116 @@
 #import "S3File.h"
 #import "Preview.h"
 
+#pragma mark UserView
+
+@interface UserView()
+@property (strong, nonatomic) PhotoView *photoView;
+@end
+
+@implementation UserView
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self setup];
+}
+
+- (void)setup
+{
+    self.photoView = [PhotoView new];
+    self.photoView.borderColor = [UIColor blackColor];
+    self.photoView.borderWidth = 1.0f;
+    self.photoView.backgroundColor = kAppColor;    
+    self.backgroundColor = [UIColor clearColor];
+    
+    [self addSubview:self.photoView];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(newMessage:)
+                                             name:kNOTIFICATION_NEW_MESSAGE
+                                           object:nil];
+}
+
+- (void)newMessage:(NSNotification*)notification
+{
+    id userInfo = notification.object;
+    id senderId = [userInfo objectForKey:@"senderId"];
+
+//    NSLog(@"UserView: message from %@ vs. %@", senderId, self.user.objectId);
+    
+    if ([senderId isEqualToString:self.user.objectId]) {
+//        NSLog(@"UserView: matches userId - setting count");
+        [self setCount];
+    }
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
+}
+
+- (void)setParent:(UIViewController *)parent
+{
+    _parent = parent;
+    
+    self.photoView.parent = parent;
+}
+
+- (void)setUser:(User *)user
+{
+    _user = user;
+    
+    self.photoView.media = user.media;
+    
+    [self setNeedsLayout];
+    [self setCount];
+}
+
+- (void)setCount
+{
+    [Engine countUnreadMessagesFromUser:self.user completion:^(NSUInteger count) {
+        if (count >0) {
+            self.badgeValue = [NSString stringWithFormat:@"%ld", count];
+        }
+        else {
+            self.badgeValue = nil;
+        }
+    }];
+}
+
+- (void)clear
+{
+    [self.photoView clear];
+}
+
+- (void)updateMedia
+{
+    [self.photoView updateMedia];
+}
+
+- (void)layoutSubviews
+{
+    CGRect frame = self.bounds;
+    CGFloat w = CGRectGetWidth(frame);
+    CGFloat h = CGRectGetHeight(frame);
+    CGFloat m = MIN(w, h);
+    self.photoView.radius = m / 2.0f;
+    self.photoView.clipsToBounds = YES;
+    self.photoView.frame = CGRectMake((w-m)/2.0f, (h-m)/2.0f, m, m);
+}
+
+@end
+
+#pragma mark PhotoView
+
 @interface PhotoView()
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
 @property BOOL hasMedia;
@@ -22,12 +132,18 @@
 {
     self = [super init];
     if (self) {
-        [self initialize];
+        [self setup];
     }
     return self;
 }
 
-- (void)initialize
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self setup];
+}
+                               
+- (void)setup
 {
     self.hasMedia = NO;
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -39,12 +155,6 @@
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self initialize];
-}
-                               
 - (void)tapped:(id)sender
 {
     if (self.hasMedia && self.parent) {

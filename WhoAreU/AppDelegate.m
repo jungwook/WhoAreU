@@ -221,8 +221,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (void) handleUserInfo:(id)userInfo
 {
     __LF
-    id messageId = [userInfo objectForKey:@"messageId"];
-    [Engine postNewMessageNotification:messageId];
+    
+    NSLog(@"UserInfo:%@", userInfo);
+    [Engine postNewMessageNotification:userInfo];
     [Engine setSystemBadge];
     
 //    id messageId = [userInfo objectForKey:@"messageId"];

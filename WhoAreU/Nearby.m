@@ -18,7 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *nickname;
 @property (weak, nonatomic) IBOutlet UILabel *desc;
 @property (weak, nonatomic) IBOutlet IndentedLabel *age;
-@property (weak, nonatomic) IBOutlet PhotoView *photoView;
+@property (weak, nonatomic) IBOutlet UserView *userView;
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet UILabel *userId;
@@ -33,11 +33,11 @@
 {
     _user = user;
     
-    [self.photoView clear];
+    [self.userView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.desc;
-    self.photoView.parent = self.parent;
-    self.photoView.media = user.media;
+    self.userView.parent = self.parent;
+    self.userView.user = user;
     self.age.text = user.age;
     self.userId.text = user.objectId;
     self.compass.heading = __heading([Engine where], user.where);
@@ -102,12 +102,15 @@
 {
     UserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
 
+    __weak typeof(UserCell*) weakCell = cell;
+
     cell.parent = self;
     cell.user = [self.users objectAtIndex:indexPath.row];
     cell.doChatBlock = ^(User *user) {
         // actions
         [Installation payForChatWithUser:user onViewController:self action:^{
             [self performSegueWithIdentifier:@"Chat" sender:user];
+            weakCell.userView.badgeValue = nil;
         }];
     };
     

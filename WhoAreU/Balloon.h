@@ -11,6 +11,7 @@
 
 #define LEFTBUTSIZE 45
 #define INSET 8
+#define HINSET 4
 #define SENDBUTSIZE 50
 #define LINEHEIGHT 17
 #define TEXTVIEWHEIGHT 48

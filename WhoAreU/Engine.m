@@ -11,6 +11,70 @@
 
 #define CHAT_FILE_PATH @"Chats"
 
+
+#pragma mark Counter
+
+@interface Counter : NSObject
+@property (strong, nonatomic) NSMutableDictionary *counters;
+@end
+
+@implementation Counter
+
++ (instancetype) new
+{
+    static id sharedFile = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedFile = [[self alloc] initOnce];
+    });
+    return sharedFile;
+}
+
+- (instancetype)initOnce
+{
+    __LF
+    self = [super init];
+    if (self) {
+        self.counters = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
+- (id) setCount:(NSUInteger)count completion:(VoidBlock)handler
+{
+    id counterId = [ObjectIdStore newObjectId];
+    if (counterId) {
+        id object = @{
+                      @"count" : @(count),
+                      @"handler" : handler
+                      };
+        [self.counters setObject:object forKey:counterId];
+    }
+    return counterId;
+}
+
+- (void) decreaseCount:(id)counterId
+{
+    id object = [self.counters objectForKey:counterId];
+    VoidBlock handler = [object objectForKey:@"handler"];
+    NSUInteger count = [[object objectForKey:@"count"] integerValue] - 1;
+    if (count <= 0) {
+        count = 0;
+        if (handler) {
+            handler();
+        }
+    }
+    id updatedObject = @{
+                  @"count" : @(count),
+                  @"handler" : handler
+                  };
+    [self.counters setObject:updatedObject forKey:counterId];
+}
+
+@end
+
+#pragma mark Engine
+
 @interface Engine() <CLLocationManagerDelegate>
 // Location related
 @property (nonatomic, strong) CLLocationManager *locationManager;
@@ -156,13 +220,19 @@
     [message saveInBackground];
 }
 
-- (void) addMessageToSystem:(Message*)message
+- (void) addMessageToSystem:(Message*)message completion:(VoidBlock) handler
 {
     __LF
     UserBlock addToUser = ^(User* fromUser) {
         message.read = YES;
-        [self addToUser:fromUser message:message.dictionary push:NO completion:nil];
-        [message saveInBackground];
+        [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            if (succeeded) {
+                [self addToUser:fromUser message:message.dictionary push:NO completion:handler];
+            }
+            else {
+                NSLog(@"ERROR:Could not update read=YES to message");
+            }
+        }];
     };
     
     User *fromUser = message.fromUser;
@@ -207,6 +277,7 @@
 + (void) setSystemBadge
 {
     [Engine countUnreadMessages:^(NSUInteger count) {
+        NSLog(@"counted %ld unread messages", count);
         PFInstallation *install = [PFInstallation currentInstallation];
         install.badge = count;
         [install saveInBackground];
@@ -218,14 +289,16 @@
     return 0;
 }
 
-+ (void) postNewMessageNotification:(id)messageId
++ (void) postNewMessageNotification:(id)userInfo
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:messageId];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:userInfo];
 }
 
 + (void) fetchOutstandingMessages
 {
-    NSLog(@"Fetching Outstanding Messages For User:%@", [User me]);
+    Counter *counter = [Counter new];
+
+    NSLog(@"Fetching Outstanding Messages For User:%@", [User me].nickname);
     
     PFQuery *query = [Message query];
     
@@ -234,14 +307,26 @@
     
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
         NSLog(@"Found %ld messages", messages.count);
-        [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-            [[Engine new] addMessageToSystem:message];
+        id countId = [counter setCount:messages.count completion:^{
+            [Engine setSystemBadge];
+        }];
+
+        [messages enumerateObjectsUsingBlock:^(Message*  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+            [counter decreaseCount:countId];
+            [Engine postNewMessageNotification:@{
+                                                 @"senderId" : message.fromUser.objectId
+                                                 }];
+//            [[Engine new] addMessageToSystem:message completion:^{
+//                [counter decreaseCount:countId];
+//            }];
         }];
     }];
 }
 
 + (void) loadUnreadMessagesFromUser:(User *)user completion:(VoidBlock)handler
 {
+    Counter *counter = [Counter new];
+    
     PFQuery *query = [Message query];
     
     [query whereKey:@"toUser" equalTo:[User me]];
@@ -251,12 +336,19 @@
     
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
         NSLog(@"Found %ld messages", messages.count);
-        [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-            [[Engine new] addMessageToSystem:message];
+
+        id countId = [counter setCount:messages.count completion:^{
+            NSLog(@"Counter reached 0. running completion handler");
+            if (handler) {
+                handler();
+            }
         }];
-        if (handler) {
-            handler();
-        }
+
+        [messages enumerateObjectsUsingBlock:^(id  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+            [[Engine new] addMessageToSystem:message completion:^{
+                [counter decreaseCount:countId];
+            }];
+        }];
     }];
 }
 

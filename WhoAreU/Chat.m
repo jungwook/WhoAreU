@@ -46,6 +46,7 @@
     __LF
     [Engine loadUnreadMessagesFromUser:self.user completion:^{
         [self.chatView reloadDataAnimated:YES];
+        [Engine setSystemBadge];
     }];
 }
 

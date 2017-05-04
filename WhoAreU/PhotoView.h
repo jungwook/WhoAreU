@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@interface UserView : UIView
+@property (strong, nonatomic) User *user;
+@property (weak, nonatomic) UIViewController* parent;
+- (void) clear;
+- (void) updateMedia;
+@end
+
 @interface PhotoView : UIView
 @property (strong, nonatomic) IBInspectable UIImage* image;
 @property (strong, nonatomic) Media* media;

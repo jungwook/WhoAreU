@@ -17,10 +17,12 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 
 @interface ChatRow : UITableViewCell
 @property (weak, nonatomic) MessageDic *message;
-@property (strong, nonatomic) PhotoView *photoView;
-@property (strong, nonatomic) Balloon *balloon;
 @property (weak, nonatomic) User* user;
 @property (weak, nonatomic) UIViewController *parent;
+
+@property (strong, nonatomic) UILabel *nickname, *when;
+@property (strong, nonatomic) PhotoView *photoView;
+@property (strong, nonatomic) Balloon *balloon;
 @property BOOL isMine;
 @end
 
@@ -37,9 +39,17 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
         self.photoView.radius = PHOTOVIEWSIZE / 2.0f;
         self.photoView.borderWidth = 1.0f;
         self.photoView.borderColor = [UIColor blackColor];
+
+        self.nickname = [UILabel new];
+        self.nickname.font = [UIFont systemFontOfSize:12];
+
+        self.when = [UILabel new];
+        self.when.font = [UIFont systemFontOfSize:8];
         
         [self addSubview:self.balloon];
         [self addSubview:self.photoView];
+        [self addSubview:self.nickname];
+        [self addSubview:self.when];
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
@@ -51,6 +61,8 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     _user = user;
     
     self.photoView.media = user.media;
+    self.nickname.text = user.nickname;
+    [self.nickname sizeToFit];
 }
 
 - (void)setParent:(UIViewController *)parent
@@ -68,6 +80,11 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     self.isMine = isMine;
     self.balloon.type = isMine ? kBalloonTypeRight : kBalloonTypeLeft;
     self.balloon.message = self.message;
+    
+    self.when.text = [NSDateFormatter localizedStringFromDate:message.createdAt dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];
+    [self.when sizeToFit];
+    
+    [self setNeedsLayout];
 }
 
 - (void)layoutSubviews
@@ -76,34 +93,51 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     
     CGFloat W = CGRectGetWidth(self.bounds);
     CGFloat H = CGRectGetHeight(self.bounds);
+    CGFloat inset = self.balloon.ballonInset;
+
+    CGFloat ww = CGRectGetWidth(self.when.frame);
+    CGFloat wh = CGRectGetHeight(self.when.frame);
+    CGFloat nw = CGRectGetWidth(self.nickname.frame);
+    CGFloat nh = CGRectGetHeight(self.nickname.frame);
+
+    CGFloat height = 0.f;
+    CGFloat width = 0.f, offset = 0.f;
+    
     switch (self.message.messageType) {
         case kMessageTypeText: {
-            CGFloat inset = self.balloon.ballonInset;
             CGRect rect = __rectForString(self.message.message, chatFont, CHATMAXWIDTH);
             CGFloat w = CGRectGetWidth(rect);
-            CGFloat h = CGRectGetHeight(rect);
-            
-            CGFloat balloonWidth = w+2*INSET+inset;
-            CGFloat balloonOffset = self.isMine ? W-balloonWidth-rightOffset : leftOffset;
-            self.balloon.frame = CGRectMake(balloonOffset, 0, balloonWidth, h+INSET*3.0f/2.0f);
+            height = CGRectGetHeight(rect);
+            width = w+2*INSET+inset;
+            offset = self.isMine ? W-width-rightOffset : leftOffset;
         }
             break;
             
         case kMessageTypeMedia: {
             MediaDic *dic = self.message.media;
-            CGFloat balloonOffset = self.isMine ? W-MEDIASIZE-rightOffset : leftOffset;
-            CGFloat h = MEDIASIZE * dic.size.height / dic.size.width;
-            self.balloon.frame = CGRectMake(balloonOffset, 0, MEDIASIZE, h+INSET*3.0f/2.0f);
+            width = MEDIASIZE;
+            offset = self.isMine ? W-width-rightOffset : leftOffset;
+            height = MEDIASIZE * dic.size.height / dic.size.width;
         }
             break;
             
         default:
             break;
     }
-    self.photoView.alpha = !self.isMine;
-    if (!self.isMine) {
-        self.photoView.frame = CGRectMake(INSET+3, H-PHOTOVIEWSIZE, PHOTOVIEWSIZE, PHOTOVIEWSIZE);
+    
+    self.balloon.frame = CGRectMake(offset, INSET, width, height+HINSET*3.0f);
+    if (self.isMine) {
+        self.when.frame = CGRectMake(offset - ww - HINSET, height+4*HINSET-wh, ww, wh);
     }
+    else {
+        self.when.frame = CGRectMake(offset + width + HINSET, 3*HINSET, ww, wh);
+        self.photoView.frame = CGRectMake(INSET+3, H-PHOTOVIEWSIZE, PHOTOVIEWSIZE, PHOTOVIEWSIZE);
+        
+        self.nickname.frame = CGRectMake(leftOffset+self.balloon.ballonInset, H-nh-2, nw, nh);
+    }
+
+    self.photoView.alpha = !self.isMine;
+    self.nickname.alpha = !self.isMine;
 }
 
 @end
@@ -407,16 +441,21 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 {
     NSArray *messages = [Engine messagesFromUser:self.user];
     MessageDic *dictionary = [messages objectAtIndex:indexPath.row];
+    
+    BOOL isMine = [dictionary.fromUserId isEqualToString:[User me].objectId];
+    CGFloat room = isMine ? 2 : 5;
+    
     switch (dictionary.messageType) {
         case kMessageTypeText: {
             CGRect rect = __rectForString(dictionary.message, chatFont, CHATMAXWIDTH);
-            return CGRectGetHeight(rect)+3*INSET;
+            
+            return CGRectGetHeight(rect)+room*INSET;
         }
             break;
         case kMessageTypeMedia: {
             MediaDic *media = dictionary.media;
             CGFloat h = MEDIASIZE * media.size.height / media.size.width;
-            return h+3*INSET;
+            return h+room*INSET;
         }
             
         default:

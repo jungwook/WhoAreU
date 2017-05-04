@@ -63,6 +63,7 @@
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
 		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
 		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
+		128C257E1EBAAA950003F502 /* UIView+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = 128C257D1EBAAA950003F502 /* UIView+Badge.m */; };
 		12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A213441EB47DBD00DF79B0 /* Balloon.m */; };
 		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
 		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
@@ -174,6 +175,8 @@
 		1289C39D1EA7956000A69146 /* IndentedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndentedLabel.m; sourceTree = "<group>"; };
 		1289C39F1EA99F8300A69146 /* BaseFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseFunctions.m; sourceTree = "<group>"; };
 		1289C3A11EA99F9500A69146 /* BaseFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseFunctions.h; sourceTree = "<group>"; };
+		128C257C1EBAAA950003F502 /* UIView+Badge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Badge.h"; sourceTree = "<group>"; };
+		128C257D1EBAAA950003F502 /* UIView+Badge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Badge.m"; sourceTree = "<group>"; };
 		12A213431EB47DBD00DF79B0 /* Balloon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Balloon.h; sourceTree = "<group>"; };
 		12A213441EB47DBD00DF79B0 /* Balloon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Balloon.m; sourceTree = "<group>"; };
 		12B796091EAA2C970041AE6C /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
@@ -361,6 +364,8 @@
 		126154111E8CCC6500F2AD4F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				128C257C1EBAAA950003F502 /* UIView+Badge.h */,
+				128C257D1EBAAA950003F502 /* UIView+Badge.m */,
 				1289C39C1EA7956000A69146 /* IndentedLabel.h */,
 				1289C39D1EA7956000A69146 /* IndentedLabel.m */,
 				126154121E8CCC7900F2AD4F /* PhotoView.h */,
@@ -486,6 +491,7 @@
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
 				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
+				128C257E1EBAAA950003F502 /* UIView+Badge.m in Sources */,
 				123AF1511E9E0F5300ED0547 /* Menu.m in Sources */,
 				1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */,
 				1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */,
