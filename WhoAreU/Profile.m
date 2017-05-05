@@ -29,19 +29,20 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    __LF
+    [self setup];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
+- (void) setup
 {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        __LF
-    }
-    return self;
+    [self.tableView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedOutside:)]];
 }
 
-- (void)setMe:(User *)me
+- (void) tappedOutside:(id)sender
+{
+    [self.view endEditing:YES];
+}
+
+- (void) setMe:(User *)me
 {
     __LF
     _me = me;

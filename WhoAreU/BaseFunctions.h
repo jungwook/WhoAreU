@@ -28,6 +28,7 @@
 #define appScreen [UIScreen mainScreen]
 #define appWindow [UIApplication sharedApplication].keyWindow
 
+typedef void(^AlertAction)(UIAlertAction *action);
 
 CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
 UIImage*    __scaleImage(UIImage* image, CGSize size);
@@ -47,6 +48,8 @@ CGFloat     __widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLa
 UIView*     __viewWithTag(UIView *view, NSInteger tag);
 PFGeoPoint* __pointFromCLLocation(CLLocation* location);
 PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
+
+void __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction);
 
 
 #endif /* BaseFunctions_h */

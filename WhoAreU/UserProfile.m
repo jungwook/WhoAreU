@@ -9,6 +9,7 @@
 #import "UserProfile.h"
 #import "PhotoView.h"
 #import "MediaCollection.h"
+#import "Compass.h"
 
 @interface UserProfile ()
 @property (weak, nonatomic) IBOutlet PhotoView *photoView;
@@ -18,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *age;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet UILabel *heading;
+@property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet MediaCollection *mediaCollection;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomViewHeight;
 
@@ -51,6 +53,8 @@
     // Do any additional setup after loading the view.
     
     self.bottomViewHeight.constant = self.user.photos.count ? 200.0f : 80.f;
+    
+    self.compass.heading = __heading(self.user.where, [User me].where);
 }
 
 - (void)didReceiveMemoryWarning {

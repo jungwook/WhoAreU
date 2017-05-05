@@ -22,7 +22,7 @@
 
 - (NSUInteger)openChatCredits
 {
-    return 250;
+    return 25;
 }
 
 + (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock

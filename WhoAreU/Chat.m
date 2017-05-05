@@ -13,7 +13,6 @@
 @property (strong, nonatomic) ChatView *chatView;
 @property (strong, nonatomic) StringBlock sendTextAction;
 @property (strong, nonatomic) MediaBlock sendMediaAction;
-
 //@property CGFloat baseLine;
 @end
 
@@ -39,6 +38,11 @@
                                              selector:@selector(newMessage:)
                                                  name:kNOTIFICATION_NEW_MESSAGE
                                                object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.chatView reloadDataAnimated:NO];
 }
 
 - (void)newMessage:(id)sender
@@ -108,6 +112,7 @@
 - (void)tappedOutside:(id)sender {
     [self.view endEditing:YES];
 }
+
 
 /*
 #pragma mark - Navigation

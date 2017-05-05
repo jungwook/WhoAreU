@@ -10,6 +10,7 @@
 		120775081E9DD29000B02AF6 /* SignUp.m in Sources */ = {isa = PBXBuildFile; fileRef = 120775061E9DD29000B02AF6 /* SignUp.m */; };
 		120775091E9DD29000B02AF6 /* SignUp.xib in Resources */ = {isa = PBXBuildFile; fileRef = 120775071E9DD29000B02AF6 /* SignUp.xib */; };
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
+		12134D501EBC0615001EEC5E /* Chats.m in Sources */ = {isa = PBXBuildFile; fileRef = 12134D4F1EBC0615001EEC5E /* Chats.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215085B1EAF180E00EAA5E1 /* Tabs.m */; };
 		1215C5A71EA5C43800BA509E /* Nearby.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A61EA5C43800BA509E /* Nearby.m */; };
@@ -91,6 +92,8 @@
 		120775071E9DD29000B02AF6 /* SignUp.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignUp.xib; sourceTree = "<group>"; };
 		12082F921E9376D700E8D051 /* ShadowLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowLabel.h; sourceTree = "<group>"; };
 		12082F931E9376D700E8D051 /* ShadowLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowLabel.m; sourceTree = "<group>"; };
+		12134D4E1EBC0615001EEC5E /* Chats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chats.h; sourceTree = "<group>"; };
+		12134D4F1EBC0615001EEC5E /* Chats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chats.m; sourceTree = "<group>"; };
 		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
 		12144DB61E934CEA000828BF /* ListField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListField.m; sourceTree = "<group>"; };
 		1215085A1EAF180E00EAA5E1 /* Tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tabs.h; sourceTree = "<group>"; };
@@ -357,6 +360,8 @@
 				1225F0161EAF2881002763A0 /* UserProfile.m */,
 				1225F01E1EB07491002763A0 /* Credits.h */,
 				1225F01F1EB07491002763A0 /* Credits.m */,
+				12134D4E1EBC0615001EEC5E /* Chats.h */,
+				12134D4F1EBC0615001EEC5E /* Chats.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -421,6 +426,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
 							com.apple.Push = {
@@ -502,6 +510,7 @@
 				12F96D561EB453620054DA6C /* ChatView.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				12134D501EBC0615001EEC5E /* Chats.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,

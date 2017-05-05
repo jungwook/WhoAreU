@@ -32,7 +32,6 @@
 
 - (instancetype)initOnce
 {
-    __LF
     self = [super init];
     if (self) {
         self.counters = [NSMutableDictionary dictionary];
@@ -76,9 +75,11 @@
 #pragma mark Engine
 
 @interface Engine() <CLLocationManagerDelegate>
-// Location related
+
+// Location and heading related
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) CLLocation* currentLocation;
+@property (nonatomic) CLLocationDirection heading;
 
 // Filesystem related
 @property (strong, nonatomic) NSObject *lock;
@@ -366,6 +367,14 @@
     }];
 }
 
++ (void)deleteChatWithUserId:(id)userId
+{
+    Engine *engine = [Engine new];
+    
+    [engine.chats removeObjectForKey:userId];
+    [Engine save];
+}
+
 + (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler
 {
     PFQuery *query = [Message query];
@@ -381,7 +390,7 @@
     }];
 }
 
-+ (NSArray *)chatUsers
++ (NSArray *)chatUserIds
 {
     return [Engine new].chats.allKeys;
 }
@@ -399,12 +408,10 @@
 
 + (BOOL)userExists:(User *)user
 {
-    NSArray *users = [Engine chatUsers];
+    NSArray *users = [Engine chatUserIds];
 
-    NSLog(@"USERS:%@", users);
-    
     __block BOOL ret = NO;
-    [[Engine chatUsers] enumerateObjectsUsingBlock:^(id _Nonnull userId, NSUInteger idx, BOOL * _Nonnull stop) {
+    [users enumerateObjectsUsingBlock:^(id _Nonnull userId, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([userId isEqualToString:user.objectId]) {
             ret = YES;
             *stop = YES;
@@ -482,10 +489,9 @@
 
 - (void)saveChatsFile
 {
-    BOOL ret = [self.chats writeToURL:self.chatFilePath atomically:YES];
-    if (ret) {
-        NSLog(@"Message added successfully");
-    } else {
+    if (![self.chats writeToURL:self.chatFilePath
+                     atomically:YES])
+    {
         NSLog(@"Error saving chat file");
     }
 }
@@ -513,7 +519,6 @@
     self.locationManager.distanceFilter = kCLDistanceFilterNone;
     
     if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
-        
         NSLog(@"Allowing background location updates");
         [self.locationManager setAllowsBackgroundLocationUpdates:YES];
     }
@@ -538,6 +543,13 @@
     else {
         NSLog(@"LOCATION SERVICES NOT ENABLED");
     }
+    
+    [self.locationManager startUpdatingHeading];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    self.heading = newHeading.magneticHeading;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
@@ -556,6 +568,11 @@
         default:
             break;
     }
+}
+
++ (CLLocationDirection)heading
+{
+    return [Engine new].heading;
 }
 
 - (void)setCurrentLocation:(CLLocation *)currentLocation

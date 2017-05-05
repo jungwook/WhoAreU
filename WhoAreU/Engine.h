@@ -19,10 +19,9 @@ typedef enum : NSUInteger {
 @interface Engine : NSObject
 @property (nonatomic) BOOL initialized;
 @property (nonatomic) SimulatorStatus simulatorStatus;
-
 + (PFGeoPoint*) where;
 + (void) initializeSystems;
-+ (NSArray*) chatUsers;
++ (NSArray*) chatUserIds;
 + (void) save;
 + (NSArray*) messagesFromUser:(User*)user;
 + (void) fetchOutstandingMessages;
@@ -36,4 +35,6 @@ typedef enum : NSUInteger {
 + (void) postNewMessageNotification:(id)userInfo;
 + (void) send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler;
 + (void) setSystemBadge;
++ (CLLocationDirection) heading;
++ (void) deleteChatWithUserId:(id)userId;
 @end

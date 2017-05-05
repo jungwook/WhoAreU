@@ -24,7 +24,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *userId;
 @property (weak, nonatomic) UIViewController* parent;
 @property (nonatomic) CGFloat heading;
-@property (copy, nonatomic) UserBlock doChatBlock;
+@property (copy, nonatomic) UserBlock chatAction;
+@property (copy, nonatomic) UserBlock profileAction;
 @end
 
 @implementation UserCell
@@ -46,9 +47,14 @@
 }
 
 - (IBAction)doChat:(id)sender {
-    __LF
-    if (self.doChatBlock) {
-        self.doChatBlock(self.user);
+    if (self.chatAction) {
+        self.chatAction(self.user);
+    }
+}
+
+- (IBAction)doProfile:(id)sender {
+    if (self.profileAction) {
+        self.profileAction(self.user);
     }
 }
 
@@ -56,6 +62,7 @@
 
 @interface Nearby ()
 @property (strong, nonatomic) NSArray <User*> *users;
+@property (nonatomic) NSInteger selectedRow;
 @end
 
 @implementation Nearby
@@ -68,7 +75,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.selectedRow = -1;
 }
 
 - (void) reloadUsers
@@ -106,12 +113,16 @@
 
     cell.parent = self;
     cell.user = [self.users objectAtIndex:indexPath.row];
-    cell.doChatBlock = ^(User *user) {
+    cell.chatAction = ^(User *user) {
         // actions
         [Installation payForChatWithUser:user onViewController:self action:^{
             [self performSegueWithIdentifier:@"Chat" sender:user];
             weakCell.userView.badgeValue = nil;
         }];
+    };
+    
+    cell.profileAction = ^(User *user) {
+        [self performSegueWithIdentifier:@"UserProfile" sender:user];
     };
     
     return cell;
@@ -120,11 +131,10 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"UserProfile"]) {
-        UserCell *cell = sender;
         UserProfile *vc = segue.destinationViewController;
         vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
         vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        vc.user = cell.user;
+        vc.user = sender;
     }
     else if ([segue.identifier isEqualToString:@"Chat"]) {
         // other preparations.
@@ -136,9 +146,25 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    if (indexPath.row == self.selectedRow) {
+        return 130;
+    }
+    else {
+        return 60;
+    }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == self.selectedRow) {
+        self.selectedRow = -1;
+    }
+    else {
+        self.selectedRow = indexPath.row;
+    }
+    [tableView beginUpdates];
+    [tableView endUpdates];
+}
 
 /*
 // Override to support conditional editing of the table view.

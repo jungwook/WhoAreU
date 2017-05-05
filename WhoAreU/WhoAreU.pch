@@ -19,6 +19,7 @@
 @import AWSCore;
 @import AWSS3;
 @import UserNotifications;
+@import StoreKit;
 
 #import "BaseFunctions.h"
 #import "ObjectIdStore.h"

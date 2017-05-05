@@ -148,6 +148,19 @@ NSString* __headingString(double heading)
 }
 
 
+void __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction)
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:okAction];
+    
+    [alert addAction:ok];
+    if (cancelAction) {
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"CANCEL" style:UIAlertActionStyleCancel handler:cancelAction];
+        [alert addAction:cancel];
+    }
+    [parent presentViewController:alert animated:YES completion:nil];
+}
+
 NSString* __distanceString(double distance)
 {
     if (distance > 500) {

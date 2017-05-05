@@ -75,7 +75,8 @@
 @end
 
 @interface Compass()
-@property (nonatomic, strong) UIView* pane;
+@property (nonatomic, strong) CADisplayLink *displayLink;
+@property (nonatomic) BOOL hasHeading;
 @end
 
 @implementation Compass
@@ -92,24 +93,50 @@
         self.lineColor = [UIColor blackColor];
         self.lineWidth = 1.0f;
         self.backgroundColor = [UIColor clearColor];
+        self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
+
+        // displaylink for smooth animation.
+        
+        self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateDisplay)];
+        [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     }
     return self;
+}
+
+- (void)updateDisplay
+{
+    static NSUInteger count = 0;
+    const int steps = 5;
+    
+    if (!self.hasHeading || (++count)%steps != 0) {
+        return;
+    }
+
+    CLLocationDirection trueHeading = [Engine heading];
+    CLLocationDirection h = self.hasHeading ? self.heading - trueHeading : self.heading;
+    self.transform = CGAffineTransformMakeRotation(h * M_PI/180);
+}
+
+-(void)dealloc
+{
+    __LF
+    [self.displayLink removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    self.displayLink = nil;
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    self.transform = CGAffineTransformMakeRotation(self.heading * M_PI/180);
 }
 
 - (void)drawRect:(CGRect)rect
 {
     CGFloat midX = CGRectGetMidX(rect);
     CGFloat midY = CGRectGetMidY(rect);
-    CGFloat h = MIN(CGRectGetWidth(rect), CGRectGetHeight(rect)) / 2.0f * 0.5f;
+    CGFloat h = MIN(CGRectGetWidth(rect), CGRectGetHeight(rect)) / 2.0f * 0.7f;
     
-    UIBezierPath *path = [UIBezierPath bezierPathWithArrowFromPoint:CGPointMake(midX, midY+h) toPoint:CGPointMake(midX, midY-h) tailWidth:2 headWidth:6 headLength:6];
+    CGFloat f = 1.5f, f1=1.0f, f2=0.8;
+    UIBezierPath *path = [UIBezierPath bezierPathWithArrowFromPoint:CGPointMake(midX, midY+h) toPoint:CGPointMake(midX, midY-h) tailWidth:h/(1.5*f) headWidth:h/f2 headLength:h/f1];
     
     path.lineWidth = self.lineWidth;
     [self.lineColor setStroke];
@@ -132,13 +159,13 @@
 
 - (void)setPaneColor:(UIColor *)paneColor
 {
-    self.backgroundColor = paneColor;
+    self.backgroundColor = self.hasHeading ? paneColor : [paneColor colorWithAlphaComponent:0.2];
     [self setNeedsDisplay];
 }
 
 - (void)setLineColor:(UIColor *)lineColor
 {
-    _lineColor = lineColor;
+    _lineColor = self.hasHeading ? lineColor : [lineColor colorWithAlphaComponent:0.4];
     [self setNeedsDisplay];
 }
 

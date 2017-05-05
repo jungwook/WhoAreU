@@ -11,6 +11,21 @@
 #import "PhotoView.h"
 #import "Balloon.h"
 
+@interface NSDate (extensions)
+- (NSDate *) dateWithoutTime;
+@end
+
+@implementation NSDate (extensions)
+
+-(NSDate *) dateWithoutTime
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:self];
+    return [calendar dateFromComponents:components];
+}
+
+@end
+
 
 const CGFloat rightOffset = 20;
 const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
@@ -148,6 +163,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 @property (strong, nonatomic) UIView *border;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIView* inputView;
+@property (weak, nonatomic) NSArray *sections;
 @property CGFloat height, baseLine;
 @end
 
@@ -166,9 +182,10 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) scrollToBottomAnimated:(BOOL)animated
 {
-    NSUInteger rows = [Engine messagesFromUser:self.user].count;
-    if (rows > 0) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rows-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    NSUInteger sections = self.sections.count - 1;
+    NSUInteger rows = [self messagesForSection:sections].count - 1;
+    if ([Engine messagesFromUser:self.user].count > 0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rows inSection:sections] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
     }
 }
 
@@ -245,10 +262,10 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) addTableView
 {
-    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
     
     self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
-
+    self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
@@ -412,13 +429,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return self.sections.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (self.user) {
-        return [Engine messagesFromUser:self.user].count;
+        return [self messagesForSection:section].count;
     }
     else {
         // Some other view controller is alive somewhere...
@@ -430,8 +447,9 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 {
     ChatRow *cell = [tableView dequeueReusableCellWithIdentifier:@"RowCell" forIndexPath:indexPath];
 
-    NSArray *messages = [Engine messagesFromUser:self.user];
-    cell.message = [messages objectAtIndex:indexPath.row];
+    MessageDic *dictionary = [[self messagesForSection:indexPath.section] objectAtIndex:indexPath.row];
+    
+    cell.message = dictionary;
     cell.parent = self.parent;
     cell.user = self.user;
     return cell;
@@ -439,11 +457,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *messages = [Engine messagesFromUser:self.user];
-    MessageDic *dictionary = [messages objectAtIndex:indexPath.row];
     
+//    NSArray *messages = [Engine messagesFromUser:self.user];
+//    MessageDic *dictionary = [messages objectAtIndex:indexPath.row];
+    MessageDic *dictionary = [[self messagesForSection:indexPath.section] objectAtIndex:indexPath.row];
+
     BOOL isMine = [dictionary.fromUserId isEqualToString:[User me].objectId];
-    CGFloat room = isMine ? 2 : 5;
+    CGFloat room = isMine ? 3 : 5;
     
     switch (dictionary.messageType) {
         case kMessageTypeText: {
@@ -461,6 +481,45 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
         default:
             return 44;
     }
-    
 }
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSDate *date = [self.sections objectAtIndex:section];
+    
+    return [NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 20.0f;
+}
+
+- (NSArray*) sections
+{
+    NSMutableSet *dates = [NSMutableSet set];
+    NSArray *messages = [Engine messagesFromUser:self.user];
+    [messages enumerateObjectsUsingBlock:^(MessageDic*  _Nonnull dictionary, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSDate *date = dictionary.createdAt.dateWithoutTime;
+        [dates addObject:date];
+    }];
+    
+    return [[dates allObjects] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        if (obj1 > obj2)
+            return NSOrderedDescending;
+        else if (obj1 == obj2)
+            return NSOrderedSame;
+        else
+            return NSOrderedAscending;
+    }];
+}
+
+- (NSArray*) messagesForSection:(NSUInteger)section
+{
+    NSDate *dateForSection = [self.sections objectAtIndex:section];
+    NSArray *messages = [[Engine messagesFromUser:self.user] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createdAt.dateWithoutTime == %@", dateForSection]];
+    
+    return messages;
+}
+
 @end
