@@ -76,9 +76,9 @@
 @interface MediaCell : UICollectionViewCell
 @property (nonatomic, strong) PhotoView *photoView;
 @property (nonatomic, strong) UIButton *trashButton;
-@property (nonatomic, copy) MediaBlock deleteBlock;
 @property (nonatomic, weak) UIViewController* parent;
 @property (nonatomic, weak) Media* media;
+@property (nonatomic, copy) MediaBlock deleteBlock;
 @property (nonatomic) BOOL editable;
 @end
 
@@ -110,6 +110,7 @@
         self.photoView = [PhotoView new];
         self.photoView.radius = 4.0f;
         
+        self.backgroundColor = [UIColor clearColor];
         [self createTrashButton];
         [self addSubview:self.photoView];
         [self addSubview:self.trashButton];
@@ -126,7 +127,7 @@
     self.trashButton.borderWidth = 1.0f;
     self.trashButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.4f];
     
-    [self.trashButton setTintColor:[UIColor blackColor]];
+    [self.trashButton setTintColor:[UIColor whiteColor]];
     [self.trashButton setImage:trash
                        forState:UIControlStateNormal];
     [self.trashButton addTarget:self
@@ -136,10 +137,11 @@
 
 - (void)trashMedia:(id)sender
 {
-    __LF
-    if (self.deleteBlock) {
-        self.deleteBlock(self.media);
-    }
+    __alert(self.parent, @"Confirm Deletion", @"Do you really want to delete this photo?", ^(UIAlertAction *action) {
+        if (self.deleteBlock) {
+            self.deleteBlock(self.media);
+        }
+    }, ^(UIAlertAction *action) {});
 }
 
 - (void)layoutSubviews
@@ -180,7 +182,6 @@
 
 - (void)setUser:(User *)user
 {
-    NSLog(@"SEtting user:%@", user);
     _user = user;
     [self reloadData];
 }
@@ -192,8 +193,6 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    __LF
-    NSLog(@"Returning %ld cells", self.user.photos.count);
     return MAX(self.user.photos.count, 1);
 }
 

@@ -39,6 +39,7 @@ float       __headingRad(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
 float       __headingUsers(PFUser* from, PFUser* to);
 CGRect      __rectForString(NSString *string, UIFont *font, CGFloat maxWidth);
 NSData*     __compressedImageData(NSData* data, CGFloat width);
+NSData*     __compressedImageDataQuality(NSData* data, CGFloat width, CGFloat compressionRatio);
 NSString*   __randomObjectId();
 NSString*   __distanceString(double distance);
 NSString*   __headingString(double heading);
@@ -51,5 +52,7 @@ PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
 
 void __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction);
 
+NSString *NSStringFromUIColor(UIColor *color);
+UIColor *UIColorFromNSString(NSString *string);
 
 #endif /* BaseFunctions_h */

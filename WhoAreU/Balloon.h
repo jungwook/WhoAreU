@@ -31,7 +31,7 @@ typedef enum : NSUInteger {
 @interface Balloon : UIView
 @property (nonatomic, weak) UIViewController* parent;
 @property (nonatomic) CGFloat cornerRadius;
-@property (nonatomic) CGFloat ballonInset;
+@property (nonatomic) CGFloat balloonInset;
 @property (nonatomic, weak) MessageDic* message;
 @property (nonatomic, strong) UIColor *rightColor, *leftColor;
 @property (nonatomic) BalloonType type;

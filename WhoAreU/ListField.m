@@ -55,7 +55,6 @@
 
 - (void) initialize
 {
-    __LF
     self.pickerView = [UIPickerView new];
     self.pickerView.delegate = self;
     self.pickerView.dataSource = self;

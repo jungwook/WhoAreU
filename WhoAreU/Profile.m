@@ -16,7 +16,9 @@
 @property (weak, nonatomic) IBOutlet PhotoView *photoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nicknameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nickname;
+@property (weak, nonatomic) IBOutlet UITextField *introduction;
 @property (weak, nonatomic) IBOutlet UILabel *sinceLabel;
+@property (weak, nonatomic) IBOutlet UILabel *credits;
 @property (weak, nonatomic) IBOutlet ListField *age;
 @property (weak, nonatomic) IBOutlet ListField *desc;
 @property (weak, nonatomic) IBOutlet ListField *gender;
@@ -58,14 +60,20 @@
 
     self.photoImageView.parent = self;
     self.nickname.delegate = self;
+    self.introduction.delegate = self;
     self.mediaCollection.parent = self;
 
     self.me = [User me];
 }
 
 - (IBAction)editingDidEnd:(id)sender {
-    self.me.nickname = self.nickname.text;
-    self.nicknameLabel.text = self.nickname.text;
+    if (sender == self.nickname) {
+        self.me.nickname = self.nickname.text;
+        self.nicknameLabel.text = self.nickname.text;
+    }
+    else if (sender == self.introduction) {
+        self.me.introduction = self.introduction.text;
+    }
 }
 
 - (IBAction)saveUserDetails:(id)sender {
@@ -90,8 +98,10 @@
     self.mediaCollection.user = self.me;
     self.gender.text = self.me.genderTypeString;
     self.nickname.text = self.me.nickname;
+    self.introduction.text = self.me.introduction;
     self.nicknameLabel.text = self.me.nickname;
     self.sinceLabel.text = [NSString stringWithFormat:@"member since %@", [NSDateFormatter localizedStringFromDate:self.me.createdAt dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle]];
+    self.credits.text = [@([Installation currentInstallation].credits).stringValue stringByAppendingString:@" Credits"];
     [self.photoImageView setMedia:self.me.media];
 }
 
@@ -138,6 +148,10 @@
 - (void) chargeCredits:(id)sender
 {
     __LF
+    UIViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"Credits"];
+    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (void) addMoreMedia:(id)sender

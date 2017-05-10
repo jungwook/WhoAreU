@@ -81,13 +81,18 @@ float __headingUsers(User* from, User* to)
     return __heading(fromLoc, toLoc);
 }
 
-NSData* __compressedImageData(NSData* data, CGFloat width)
+NSData* __compressedImageDataQuality(NSData* data, CGFloat width, CGFloat compressionRatio)
 {
     UIImage *image = [UIImage imageWithData:data];
     const CGFloat thumbnailWidth = width;
     CGFloat thumbnailHeight = image.size.width ? thumbnailWidth * image.size.height / image.size.width : 200;
     image = __scaleImage(image, CGSizeMake(thumbnailWidth, thumbnailHeight));
-    return UIImageJPEGRepresentation(image, kJPEGCompressionMedium);
+    return UIImageJPEGRepresentation(image, compressionRatio);
+}
+
+NSData* __compressedImageData(NSData* data, CGFloat width)
+{
+    return __compressedImageDataQuality(data, width, kJPEGCompressionMedium);
 }
 
 CGRect __rectForString(NSString *string, UIFont *font, CGFloat maxWidth)
@@ -221,4 +226,25 @@ PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates)
 {
     return [PFGeoPoint geoPointWithLatitude:coordinates.latitude longitude:coordinates.longitude];
 }
+
+NSString *NSStringFromUIColor(UIColor *color)
+{
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+    return [NSString stringWithFormat:@"[%f, %f, %f, %f]",
+            components[0],
+            components[1],
+            components[2],
+            components[3]];
+}
+
+UIColor *UIColorFromNSString(NSString *string)
+{
+    NSString *componentsString = [[string stringByReplacingOccurrencesOfString:@"[" withString:@""] stringByReplacingOccurrencesOfString:@"]" withString:@""];
+    NSArray *components = [componentsString componentsSeparatedByString:@", "];
+    return [UIColor colorWithRed:[(NSString*)components[0] floatValue]
+                           green:[(NSString*)components[1] floatValue]
+                            blue:[(NSString*)components[2] floatValue]
+                           alpha:[(NSString*)components[3] floatValue]];
+}
+
 

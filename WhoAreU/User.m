@@ -12,68 +12,6 @@
 
 #pragma mark Message
 
-@implementation Installation
-@dynamic user, credits, initialFreeCredits, openChatCredits;
-
-- (NSUInteger)initialFreeCredits
-{
-    return 1000;
-}
-
-- (NSUInteger)openChatCredits
-{
-    return 25;
-}
-
-+ (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock
-{
-    Installation *install = [Installation currentInstallation];
-    
-    if ([Engine userExists:user]) {
-        if (actionBlock) {
-            actionBlock();
-            // Example ... [self performSegueWithIdentifier:@"Chat" sender:user];
-        }
-        return;
-    }
-    
-    void(^buyhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
-        NSLog(@"Buy more credits");
-        
-        UIViewController *vc = [viewController.storyboard instantiateViewControllerWithIdentifier:@"Credits"];
-        // other vc initializations;
-        vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
-        
-        [viewController presentViewController:vc animated:YES completion:nil];
-    };
-    void(^okhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
-        
-        install.credits -= install.openChatCredits;
-        [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-            if (succeeded) {
-                if (actionBlock) {
-                    actionBlock();
-                    // Example ... [self performSegueWithIdentifier:@"Chat" sender:user];
-                }
-            }
-        }];
-    };
-    BOOL enoughCredits = install.credits > install.openChatCredits;
-    
-    NSString *message = enoughCredits ?  [NSString stringWithFormat:@"You have a total of %ld credits.\nTo continue %ld credits will be charged. Do you want to continue?", install.credits, install.openChatCredits] : [NSString stringWithFormat:@"You need %ld credits to open a new chat!\n\nYou currently have a total of %ld credits. Would you like to buy more credits?", install.openChatCredits, install.credits];
-    
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Proceed" style:UIAlertActionStyleDefault handler:enoughCredits ? okhandler : buyhandler];
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:nil];
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Initiate Chat" message:message preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alert addAction:okAction];
-    [alert addAction:cancelAction];
-    
-    [viewController presentViewController:alert animated:YES completion:nil];
-}
-
-@end
 
 
 @implementation NSMutableDictionary(Dictionary)
@@ -402,11 +340,34 @@
 #pragma mark user
 
 @implementation User
-@dynamic nickname, where, whereUdatedAt, age, desc, media, photos, gender, simulated;
+@dynamic nickname, where, whereUdatedAt, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated;
 
 + (User *)me
 {
     return [User currentUser];
+}
+
+- (void)like:(User *)user
+{
+    BOOL likes = [self likes:user];
+    if (!likes) {
+        [self addUniqueObject:user forKey:@"likes"];
+        [self saveInBackground];
+    }
+}
+
+- (void)unlike:(User *)user
+{
+    BOOL likes = [self likes:user];
+    if (likes) {
+        [self removeObjectsInArray:@[user] forKey:@"likes"];
+        [self saveInBackground];
+    }
+}
+
+- (BOOL)likes:(User *)user
+{
+    return [self.likes containsObject:user];
 }
 
 - (NSString*) genderCode
@@ -528,6 +489,12 @@
              @"Watch a movie",
              @"Make Love",
              ];
+}
+
+-(void)setMedia:(Media *)media
+{
+    [self setObject:media forKey:@"media"];
+    self.thumbnail = media.thumbnail;
 }
 
 @end

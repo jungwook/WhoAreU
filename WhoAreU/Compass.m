@@ -96,9 +96,10 @@
         self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
 
         // displaylink for smooth animation.
-        
-        self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateDisplay)];
-        [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        if (self.hasHeading) {
+            self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateDisplay)];
+            [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        }
     }
     return self;
 }
@@ -113,15 +114,17 @@
     }
 
     CLLocationDirection trueHeading = [Engine heading];
-    CLLocationDirection h = self.hasHeading ? self.heading - trueHeading : self.heading;
+    CLLocationDirection h = self.heading - trueHeading;
     self.transform = CGAffineTransformMakeRotation(h * M_PI/180);
 }
 
 -(void)dealloc
 {
     __LF
-    [self.displayLink removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    self.displayLink = nil;
+    if (self.hasHeading) {
+        [self.displayLink removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        self.displayLink = nil;
+    }
 }
 
 - (void)layoutSubviews
@@ -159,7 +162,8 @@
 
 - (void)setPaneColor:(UIColor *)paneColor
 {
-    self.backgroundColor = self.hasHeading ? paneColor : [paneColor colorWithAlphaComponent:0.2];
+    UIColor *color = [UIColor grayColor];
+    self.backgroundColor = self.hasHeading ? paneColor : [color colorWithAlphaComponent:0.2];
     [self setNeedsDisplay];
 }
 

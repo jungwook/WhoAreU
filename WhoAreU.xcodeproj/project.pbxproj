@@ -58,6 +58,12 @@
 		123AF1591E9F0DA300ED0547 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1581E9F0DA300ED0547 /* Profile.m */; };
 		123AF15C1EA07DF300ED0547 /* Preview.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15B1EA07DF300ED0547 /* Preview.m */; };
 		123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15E1EA1AF7500ED0547 /* Chat.m */; };
+		124587451EBD61CF00746AAF /* Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587441EBD61CF00746AAF /* Refresh.m */; };
+		124587481EBD92F400746AAF /* BalloonLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587471EBD92F400746AAF /* BalloonLabel.m */; };
+		1245874B1EBF2FDA00746AAF /* Installation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1245874A1EBF2FDA00746AAF /* Installation.m */; };
+		1245874F1EBF40BD00746AAF /* NSDateTimeAgo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */; };
+		124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */; };
+		124587531EC0248700746AAF /* Channel.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587521EC0248700746AAF /* Channel.m */; };
 		1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */; };
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
@@ -166,6 +172,17 @@
 		123AF15B1EA07DF300ED0547 /* Preview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preview.m; sourceTree = "<group>"; };
 		123AF15D1EA1AF7500ED0547 /* Chat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chat.h; sourceTree = "<group>"; };
 		123AF15E1EA1AF7500ED0547 /* Chat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chat.m; sourceTree = "<group>"; };
+		124587431EBD61CF00746AAF /* Refresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Refresh.h; sourceTree = "<group>"; };
+		124587441EBD61CF00746AAF /* Refresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Refresh.m; sourceTree = "<group>"; };
+		124587461EBD92F400746AAF /* BalloonLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BalloonLabel.h; sourceTree = "<group>"; };
+		124587471EBD92F400746AAF /* BalloonLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BalloonLabel.m; sourceTree = "<group>"; };
+		124587491EBF2FDA00746AAF /* Installation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Installation.h; sourceTree = "<group>"; };
+		1245874A1EBF2FDA00746AAF /* Installation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Installation.m; sourceTree = "<group>"; };
+		1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = NSDateTimeAgo.bundle; sourceTree = "<group>"; };
+		1245874D1EBF40BD00746AAF /* NSDate+TimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeAgo.h"; sourceTree = "<group>"; };
+		1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeAgo.m"; sourceTree = "<group>"; };
+		124587511EC0248700746AAF /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
+		124587521EC0248700746AAF /* Channel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Channel.m; sourceTree = "<group>"; };
 		1249DD491EAC46CA00E9E39F /* MediaCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCollection.h; sourceTree = "<group>"; };
 		1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaCollection.m; sourceTree = "<group>"; };
 		126154071E8CBBEC00F2AD4F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
@@ -261,6 +278,9 @@
 		1222627A1E8B6E8000F51FAE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */,
+				1245874D1EBF40BD00746AAF /* NSDate+TimeAgo.h */,
+				1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */,
 				122262D51E8B81FC00F51FAE /* S3File.h */,
 				122262D61E8B81FC00F51FAE /* S3File.m */,
 				122262D81E8B822B00F51FAE /* ObjectIdStore.h */,
@@ -334,6 +354,8 @@
 				121E15B41E95FE59009CCF51 /* MediaPicker.m */,
 				12B796091EAA2C970041AE6C /* Engine.h */,
 				12B7960A1EAA2C970041AE6C /* Engine.m */,
+				124587491EBF2FDA00746AAF /* Installation.h */,
+				1245874A1EBF2FDA00746AAF /* Installation.m */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -362,6 +384,8 @@
 				1225F01F1EB07491002763A0 /* Credits.m */,
 				12134D4E1EBC0615001EEC5E /* Chats.h */,
 				12134D4F1EBC0615001EEC5E /* Chats.m */,
+				124587511EC0248700746AAF /* Channel.h */,
+				124587521EC0248700746AAF /* Channel.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -373,6 +397,8 @@
 				128C257D1EBAAA950003F502 /* UIView+Badge.m */,
 				1289C39C1EA7956000A69146 /* IndentedLabel.h */,
 				1289C39D1EA7956000A69146 /* IndentedLabel.m */,
+				124587461EBD92F400746AAF /* BalloonLabel.h */,
+				124587471EBD92F400746AAF /* BalloonLabel.m */,
 				126154121E8CCC7900F2AD4F /* PhotoView.h */,
 				126154131E8CCC7900F2AD4F /* PhotoView.m */,
 				123AF15A1EA07DF300ED0547 /* Preview.h */,
@@ -385,6 +411,8 @@
 				1215C5A91EA6F88000BA509E /* Compass.m */,
 				1249DD491EAC46CA00E9E39F /* MediaCollection.h */,
 				1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */,
+				124587431EBD61CF00746AAF /* Refresh.h */,
+				124587441EBD61CF00746AAF /* Refresh.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -464,6 +492,7 @@
 				1222628A1E8B6E8000F51FAE /* LaunchScreen.storyboard in Resources */,
 				122262871E8B6E8000F51FAE /* Assets.xcassets in Resources */,
 				123AF1521E9E0F5300ED0547 /* Menu.xib in Resources */,
+				1245874F1EBF40BD00746AAF /* NSDateTimeAgo.bundle in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
 				123AF1531E9E0F5300ED0547 /* MenuCell.xib in Resources */,
 				120775091E9DD29000B02AF6 /* SignUp.xib in Resources */,
@@ -494,8 +523,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
+				124587531EC0248700746AAF /* Channel.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */,
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
 				123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */,
@@ -508,8 +539,11 @@
 				1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */,
 				1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */,
 				12F96D561EB453620054DA6C /* ChatView.m in Sources */,
+				124587481EBD92F400746AAF /* BalloonLabel.m in Sources */,
+				124587451EBD61CF00746AAF /* Refresh.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				1245874B1EBF2FDA00746AAF /* Installation.m in Sources */,
 				12134D501EBC0615001EEC5E /* Chats.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,

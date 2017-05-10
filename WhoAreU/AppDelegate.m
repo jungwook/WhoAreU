@@ -134,12 +134,12 @@
     [currentInstallation setDeviceTokenFromData:deviceToken];
     [currentInstallation saveInBackground];
     
-    [PFPush subscribeToChannelInBackground:@"" block:^(BOOL succeeded, NSError *error) {
+    [PFPush subscribeToChannelInBackground:@"Main" block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"ParseStarterProject successfully subscribed to push notifications on the broadcast channel.");
+            NSLog(@"application successfully subscribed to push notifications on the broadcast channel.");
             [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
         } else {
-            NSLog(@"ParseStarterProject failed to subscribe to push notifications on the broadcast channel.");
+            NSLog(@"application failed to subscribe to push notifications on the broadcast channel.");
         }
     }];
 }
@@ -157,38 +157,20 @@
 {
     // iOS 10 will handle notifications through other methods
     
-    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO( @"10.0" ) )
-    {
-        NSLog( @"iOS version >= 10. Let NotificationCenter handle this one." );
-        // set a member variable to tell the new delegate that this is background
-        return;
-    }
-    
-    NSLog( @"HANDLE PUSH, didReceiveRemoteNotification: %@", userInfo );
-    
-    // custom code to handle notification content
-
     switch (application.applicationState) {
         case UIApplicationStateActive:
-            //    [self.system treatPushNotificationWith:userInfo];
             NSLog( @"Notification in FOREGROUND" );
-            [self handleUserInfo:userInfo];
-            completionHandler( UIBackgroundFetchResultNewData );
             break;
         case UIApplicationStateInactive:
-            //    [self.system treatPushNotificationWith:userInfo];
             NSLog( @"Notification in INACTIVE" );
-            [self handleUserInfo:userInfo];
-            completionHandler( UIBackgroundFetchResultNewData );
             break;
-            
         case UIApplicationStateBackground:
-            //    [self.system treatPushNotificationWith:userInfo];
-            NSLog( @"'Notification in BACKGROUND" );
-            [self handleUserInfo:userInfo];
-            completionHandler( UIBackgroundFetchResultNewData );
+            NSLog( @"Notification in BACKGROUND" );
             break;
     }
+    
+    [Engine handlePushUserInfo:userInfo];
+    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
@@ -201,38 +183,27 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
-    NSLog( @"Handle push from foreground" );
-    NSLog(@"%@", notification.request.content.userInfo);
+    id userInfo = notification.request.content.userInfo;
     
-    completionHandler(UNNotificationPresentationOptionSound);
-    [self handleUserInfo:notification.request.content.userInfo];
+    NSLog( @"Handle push from foreground" );
+    NSLog(@"%@", userInfo);
+    UNNotificationPresentationOptions option = [Engine handlePushUserInfo:userInfo];
+
+    if (completionHandler)
+        completionHandler(option);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler
 {
+    id userInfo = response.notification.request.content.userInfo;
+
     NSLog(@"Handle push from background or closed" );
-    NSLog(@"%@", response.notification.request.content.userInfo);
-    [self handleUserInfo:response.notification.request.content.userInfo];
+    NSLog(@"%@", userInfo);
+
+    [Engine handlePushUserInfo:userInfo];
     completionHandler();
 }
-
-- (void) handleUserInfo:(id)userInfo
-{
-    __LF
-    
-    NSLog(@"UserInfo:%@", userInfo);
-    [Engine postNewMessageNotification:userInfo];
-    [Engine setSystemBadge];
-    
-//    id messageId = [userInfo objectForKey:@"messageId"];
-//    id messageType = [userInfo objectForKey:@"pushType"];
-//    
-//    if ([messageType isEqualToString:@"pushTypeMessage"]) {
-//        [Engine loadMessage:messageId];
-//    }
-}
-
 
 @end

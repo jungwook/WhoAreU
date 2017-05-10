@@ -49,18 +49,6 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
     kMessageTypeMedia,
 };
 
-#pragma mark Installation
-
-@interface Installation : PFInstallation <PFSubclassing>
-@property (retain) User *user;
-@property NSUInteger credits;
-@property (readonly) NSUInteger initialFreeCredits;
-@property (readonly) NSUInteger openChatCredits;
-
-+ (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(VoidBlock)actionBlock;
-@end
-
-
 #pragma mark Message
 
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
@@ -129,8 +117,11 @@ typedef NSMutableDictionary MediaDic;
 @property (retain) NSDate*      whereUdatedAt;
 @property (retain) NSString*    age;
 @property (retain) NSString*    desc;
+@property (retain) NSString*    introduction;
+@property (retain) NSString*    thumbnail;
 @property (retain) Media*       media;
 @property (retain) NSArray<Media*> *photos;
+@property (retain) NSArray<User*> *likes;
 @property GenderType            gender;
 @property BOOL                  simulated;
 
@@ -147,7 +138,9 @@ typedef NSMutableDictionary MediaDic;
 - (UIColor*)    genderColor;
 + (NSArray*)    genders;
 + (NSArray*)    genderCodes;
-
+- (BOOL)        likes:(User*)user;
+- (void)        like:(User*)user;
+- (void)        unlike:(User*)user;
 @end
 
 @interface SimulatedUsers : NSObject

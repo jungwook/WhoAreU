@@ -7,10 +7,121 @@
 //
 
 #import "Engine.h"
-#include "TargetConditionals.h"
+#import "TargetConditionals.h"
+#import "S3File.h"
 
-#define CHAT_FILE_PATH @"Chats"
+#pragma mark Queue
 
+@interface Queue()
+@property (nonatomic) NSUInteger capacity;
+@property (nonatomic, strong) NSURL *filePath;
+@property (nonatomic, strong) NSMutableArray *array;
+@end
+
+@implementation Queue
+
++ (instancetype)new
+{
+    return [self initWithCapacity:200];
+}
+
++ (instancetype)initWithCapacity:(NSUInteger)numItems
+{
+    static id sharedFile = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedFile = [[self alloc] initOnceWithCapacity:numItems];
+    });
+    return sharedFile;
+}
+
+- (NSArray *)objects
+{
+    return self.array;
+}
+
++ (NSArray*)objects
+{
+    return [Queue new].objects;
+}
+
+- (NSUInteger)count
+{
+    return self.array.count;
+}
+
++ (NSUInteger)count
+{
+    return [Queue new].count;
+}
+
+- (instancetype)initOnceWithCapacity:(NSUInteger)numItems
+{
+    NSURL *filePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHANNEL_FILE_PATH];
+    
+    self = [super init];
+    if (self) {
+        self.array = [NSMutableArray arrayWithContentsOfURL:filePath];
+//        self.array = [NSMutableArray array];
+        if (!self.array) {
+            self.array = [NSMutableArray new];
+        }
+        self.capacity = numItems;
+        self.filePath = filePath;
+    }
+    return self;
+}
+
++ (void)clear
+{
+    [[Queue new] clear];
+}
+
+- (void)clear
+{
+    @synchronized (self.array) {
+        [self.array removeAllObjects];
+        [self saveArray];
+    }
+}
+
++ (void)addObject:(id)anObject
+{
+    [[Queue new] addObject:anObject];
+}
+
+- (void) addObject:(id)anObject
+{
+    if (anObject) {
+        if (self.array.count == self.capacity) {
+            [self.array removeLastObject];
+        }
+        @synchronized (self.array) {
+            [self.array insertObject:anObject atIndex:0];
+            [self saveArray];
+        }
+    }
+}
+
+- (void) saveArray
+{
+    BOOL ret = [self.array writeToURL:self.filePath atomically:YES];
+    if (!ret) {
+        NSLog(@"Error writing to channel file");
+    }
+}
+
+- (id)objectAtIndex:(NSUInteger)index
+{
+    return [self.array objectAtIndex:index];
+}
+
++ (id)objectAtIndex:(NSUInteger)index
+{
+    return [[Queue new] objectAtIndex:index];
+}
+
+@end
 
 #pragma mark Counter
 
@@ -41,15 +152,23 @@
 
 - (id) setCount:(NSUInteger)count completion:(VoidBlock)handler
 {
-    id counterId = [ObjectIdStore newObjectId];
-    if (counterId) {
-        id object = @{
-                      @"count" : @(count),
-                      @"handler" : handler
-                      };
-        [self.counters setObject:object forKey:counterId];
+    if (count) {
+        id counterId = [ObjectIdStore newObjectId];
+        if (counterId) {
+            id object = @{
+                          @"count" : @(count),
+                          @"handler" : handler
+                          };
+            [self.counters setObject:object forKey:counterId];
+        }
+        return counterId;
     }
-    return counterId;
+    else {
+        if (handler) {
+            handler();
+        }
+        return nil;
+    }
 }
 
 - (void) decreaseCount:(id)counterId
@@ -83,7 +202,7 @@
 
 // Filesystem related
 @property (strong, nonatomic) NSObject *lock;
-@property (strong, nonatomic) NSURL* chatFilePath;
+@property (strong, nonatomic) NSURL* chatFilePath, *channelFilePath;
 
 // User related
 @property (weak, nonatomic) User *me;
@@ -164,9 +283,13 @@
 {
     self.chatFilePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHAT_FILE_PATH];
     
+    self.channelFilePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHANNEL_FILE_PATH];
+    
 #ifndef RESET_CHAT_FILE
     self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatFilePath];
 #endif
+    
+    
     
     if (!self.chats) {
         self.chats = [NSMutableDictionary dictionary];
@@ -280,8 +403,10 @@
     [Engine countUnreadMessages:^(NSUInteger count) {
         NSLog(@"counted %ld unread messages", count);
         PFInstallation *install = [PFInstallation currentInstallation];
-        install.badge = count;
-        [install saveInBackground];
+        if (count != install.badge) {
+            install.badge = count;
+            [install saveInBackground];
+        }
     }];
 }
 
@@ -290,9 +415,14 @@
     return 0;
 }
 
-+ (void) postNewMessageNotification:(id)userInfo
++ (void) postNewUserMessageNotification:(id)userInfo
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNOTIFICATION_NEW_MESSAGE object:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewUserMessage object:userInfo];
+}
+
++ (void) postNewChannelMessageNotification:(id)userInfo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewChannelMessage object:userInfo];
 }
 
 + (void) fetchOutstandingMessages
@@ -314,7 +444,7 @@
 
         [messages enumerateObjectsUsingBlock:^(Message*  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
             [counter decreaseCount:countId];
-            [Engine postNewMessageNotification:@{
+            [Engine postNewUserMessageNotification:@{
                                                  @"senderId" : message.fromUser.objectId
                                                  }];
 //            [[Engine new] addMessageToSystem:message completion:^{
@@ -433,6 +563,13 @@
 
 + (void)send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler
 {
+    if (msgToSend == nil) {
+        if (handler) {
+            handler();
+        }
+        return;
+    }
+    
     Engine *engine = [Engine new];
     
     Message *message = nil;
@@ -464,21 +601,72 @@
         textToSend = [textToSend stringByAppendingString:@"..."];
     }
     
-    id params = @{
-                  @"recipientId": userId,
-                  @"senderId":    [User me].objectId,
-                  @"message":     textToSend,
-                  @"messageId":   messageId,
-                  @"pushType":    @"pushTypeMessage"
-                  };
+    [S3File getDataFromFile:[User me].media.thumbnail dataBlock:^(NSData *data) {
+        NSData *compressed = __compressedImageDataQuality(data, 20, kJPEGCompressionLow);
+        NSLog(@"Thumbnail size:%ld", compressed.length);
+        id params = @{
+                      @"alert" : textToSend,
+                      @"badge" : @"increment",
+                      @"sound" : @"default",
+                      @"recipientId": userId,
+                      @"payload" : @{
+                              @"thumbnail" : compressed,
+                              @"senderId":    [User me].objectId,
+                              @"message":     textToSend,
+                              @"messageId":   messageId,
+                              },
+                      };
+        
+        [PFCloud callFunctionInBackground:@"pushUserMessage" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+            }
+            else {
+                NSLog(@"PUSH SENT:%@", object);
+            }
+        }];
+        
+    }];
+}
+
++ (void) sendChannelMessage:(NSString *)message
+{
+    const NSInteger maxLength = 100;
+    NSUInteger length = [message length];
+    if (length >= maxLength) {
+        message = [message substringToIndex:maxLength];
+        message = [message stringByAppendingString:@"..."];
+    }
+    User *me = [User me];
     
-    [PFCloud callFunctionInBackground:@"sendPushToUser" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-        }
-        else {
-            NSLog(@"PUSH SENT:%@", object);
-        }
+    [S3File getDataFromFile:[User me].media.thumbnail dataBlock:^(NSData *data) {
+        
+        NSData *compressed = __compressedImageDataQuality(data, 20, kJPEGCompressionLow);
+        NSLog(@"Thumbnail size:%ld", compressed.length);
+        
+        id params = @{
+                      @"channel" : @"Main",
+                      @"payload" : @{
+                              @"senderId": me.objectId,
+                              @"nickname" : me.nickname,
+                              @"desc" : me.desc,
+                              @"introduction" : me.introduction,
+                              @"age" : me.age,
+                              @"gender" : me.genderTypeString,
+                              @"genderColor" : NSStringFromUIColor(me.genderColor),
+                              @"where" : me.where,
+                              @"message": message,
+                              @"thumbnail" : me.media.thumbnail,
+                              },
+                      };
+        [PFCloud callFunctionInBackground:@"sendMessageToChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+            }
+            else {
+                NSLog(@"PUSH SENT:%@", object);
+            }
+        }];
     }];
 }
 
@@ -518,10 +706,10 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     self.locationManager.distanceFilter = kCLDistanceFilterNone;
     
-    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
-        NSLog(@"Allowing background location updates");
-        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
-    }
+//    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+//        NSLog(@"Allowing background location updates");
+//        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
+//    }
     
     switch ([CLLocationManager authorizationStatus]) {
         case kCLAuthorizationStatusDenied:
@@ -535,7 +723,10 @@
             break;
     }
     
-    [self.locationManager startMonitoringSignificantLocationChanges];
+//    [self.locationManager startMonitoringSignificantLocationChanges];
+    
+    [self.locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
+    [self.locationManager startUpdatingLocation];
     
     if ([CLLocationManager locationServicesEnabled]) {
         NSLog(@"LOCATION SERVICES ENABLED");
@@ -554,8 +745,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
 {
-    __LF
-    
     CLLocation* location = [locations lastObject];
     switch (self.simulatorStatus) {
         case kSimulatorStatusDevice:
@@ -601,6 +790,32 @@
         default:
             break;
     }
+}
+
+
++ (UNNotificationPresentationOptions)handlePushUserInfo:(id)info
+{
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:info];
+    
+    UNNotificationPresentationOptions option;
+    id pushType = userInfo[@"pushType"];
+    [userInfo setObject:[NSDate date] forKey:@"updatedAt"];
+    
+    if ([pushType isEqualToString:@"pushTypeChannel"]) {
+        option = UNNotificationPresentationOptionNone;
+        [Queue addObject:userInfo];
+        [Engine postNewChannelMessageNotification:userInfo];
+    }
+    else if ([pushType isEqualToString:@"pushTypeMessage"]){
+        option = UNNotificationPresentationOptionSound;
+        [Engine postNewUserMessageNotification:userInfo];
+        [Engine setSystemBadge];
+    }
+    else {
+        option = UNNotificationPresentationOptionNone;
+    }
+    
+    return option;
 }
 
 

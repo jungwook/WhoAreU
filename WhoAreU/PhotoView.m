@@ -37,34 +37,30 @@
 - (void)setup
 {
     self.photoView = [PhotoView new];
-    self.photoView.borderColor = [UIColor blackColor];
-    self.photoView.borderWidth = 1.0f;
-    self.photoView.backgroundColor = kAppColor;    
+    self.photoView.backgroundColor = kAppColor;
     self.backgroundColor = [UIColor clearColor];
     
     [self addSubview:self.photoView];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                          selector:@selector(newMessage:)
-                                             name:kNOTIFICATION_NEW_MESSAGE
+                                             name:kNotificationNewUserMessage
                                            object:nil];
 }
 
 - (void)newMessage:(NSNotification*)notification
 {
     id userInfo = notification.object;
-    id senderId = [userInfo objectForKey:@"senderId"];
+    id payload = userInfo[@"payload"];
+    id senderId = payload[@"senderId"];
 
-//    NSLog(@"UserView: message from %@ vs. %@", senderId, self.user.objectId);
-    
     if ([senderId isEqualToString:self.user.objectId]) {
-//        NSLog(@"UserView: matches userId - setting count");
         [self setCount];
     }
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewUserMessage object:nil];
 }
 
 - (void)setParent:(UIViewController *)parent
@@ -78,10 +74,12 @@
 {
     _user = user;
     
-    self.photoView.media = user.media;
-    
-    [self setNeedsLayout];
-    [self setCount];
+    [self.user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        self.photoView.user = user;
+        self.photoView.backgroundColor = user.genderColor;
+        [self setNeedsLayout];
+        [self setCount];
+    }];
 }
 
 - (void)setCount
@@ -150,7 +148,7 @@
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
     self.layer.masksToBounds = YES;
-    self.image = [UIImage imageNamed:@"avatar"];
+    self.image = self.avatar;
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
 }
@@ -165,6 +163,25 @@
     }
     else {
         NSLog(@"No image or no parent view controller set");
+    }
+}
+
+- (void)setUser:(User *)user
+{
+    _media = user.media;
+    if (self.media) {
+        [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            self.hasMedia = YES;
+        }];
+        [self.activity startAnimating];
+        [S3File getImageFromFile:user.thumbnail imageBlock:^(UIImage *image) {
+            self.image = image;
+            [self.activity stopAnimating];
+        }];
+    }
+    else {
+        self.image = self.avatar;
+        self.hasMedia = NO;
     }
 }
 
@@ -188,7 +205,7 @@
         }];
     }
     else {
-        self.image = [UIImage imageNamed:@"avatar"];
+        self.image = self.avatar;
         self.hasMedia = NO;
     }
 }
@@ -207,33 +224,38 @@
     [self setMedia:media];
 }
 
-
 - (void)clear
 {
-    self.image = [UIImage imageNamed:@"avatar"];
+    self.image = self.avatar;
+    self.hasMedia = NO;
 }
 
 - (void)setImage:(UIImage *)image
 {
     _image = image;
     
-    self.layer.contents = (id) image.CGImage;
-    self.layer.contentsGravity = kCAGravityResizeAspectFill;
+    __drawImage(image, self);
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
     
-    self.activity.frame = self.bounds;
+    self.activity.frame = self.bounds;    
 }
 
-//- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-//{
-//    UITouch *touch = [touches anyObject];
-//    if ([self hitTest:[touch locationInView:self] withEvent:nil] == self) {
-//    }
-//}
+- (UIImage*) avatar
+{
+    static UIImage *avatar = nil;
+    if (avatar) {
+        return avatar;
+    }
+    else {
+        avatar = [UIImage imageNamed:@"avatar"];
+    }
+    
+    return avatar;
+}
 
 - (void)updateMedia
 {
@@ -242,7 +264,7 @@
         [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
             NSLog(@"User:%@", self.me);
         }];
-        self.image = [UIImage imageNamed:@"avatar"];
+        self.image = self.avatar;
         [self.activity stopAnimating];
     };
     void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
@@ -294,7 +316,5 @@
     }
     return me;
 }
-
-
 
 @end

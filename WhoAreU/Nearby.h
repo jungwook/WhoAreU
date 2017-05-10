@@ -8,6 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    kSegmentGirls = 0,
+    kSegmentBoys,
+    kSegmentAll,
+    kSegmentLikes
+} SegmentType;
+
+typedef enum : NSUInteger {
+    kSectionUsers = 0,
+    kSectionLoadMore,
+} SectionType;
+
+
 @interface Nearby : UITableViewController
 
 @end

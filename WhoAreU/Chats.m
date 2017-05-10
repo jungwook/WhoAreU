@@ -19,6 +19,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *nickname;
 @property (weak, nonatomic) IBOutlet UILabel *introduction;
 @property (weak, nonatomic) IBOutlet IndentedLabel *age;
+@property (weak, nonatomic) IBOutlet IndentedLabel *gender;
+@property (weak, nonatomic) IBOutlet IndentedLabel *ago;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) UIViewController *parent;
@@ -36,8 +38,11 @@
     self.nickname.text = user.nickname;
     self.introduction.text = user.desc;
     self.age.text = user.age;
+    self.gender.text = user.genderTypeString;
+    self.gender.backgroundColor = user.genderColor;
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
     self.compass.heading = __headingUsers(self.user, [User me]);
+    self.ago.text = user.whereUdatedAt.timeAgoSimple;
 }
 
 - (void)setParent:(UIViewController *)parent

@@ -43,6 +43,7 @@
     CGFloat heading = __heading([Engine where], self.user.where);
     self.distance.text = __distanceString(distance);
     self.heading.text = __headingString(heading);
+    self.compass.heading = heading;
     
     NSLog(@"Heading %f", heading);
     
@@ -54,7 +55,6 @@
     
     self.bottomViewHeight.constant = self.user.photos.count ? 200.0f : 80.f;
     
-    self.compass.heading = __heading(self.user.where, [User me].where);
 }
 
 - (void)didReceiveMemoryWarning {

@@ -22,79 +22,41 @@
 {
     [super awakeFromNib];
     
-    [self initializeInputPane];
+    [self setup];
+}
+
+- (void) setup
+{
+    self.chatView = [[ChatView alloc] initWithFrame:self.view.bounds];
+    
+    [self.view addSubview:self.chatView];
+    
+    self.chatView.parent = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     __LF
     
-    [Engine loadUnreadMessagesFromUser:self.user completion:^{
-        [self.chatView reloadDataAnimated:NO];
-        [Engine setSystemBadge];
-    }];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newMessage:)
-                                                 name:kNOTIFICATION_NEW_MESSAGE
-                                               object:nil];
+    [self.chatView reloadDataAnimated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self.chatView reloadDataAnimated:NO];
-}
-
-- (void)newMessage:(id)sender
-{
     __LF
-    [Engine loadUnreadMessagesFromUser:self.user completion:^{
-        [self.chatView reloadDataAnimated:YES];
-        [Engine setSystemBadge];
-    }];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNOTIFICATION_NEW_MESSAGE object:nil];
 }
 
 - (void)setUser:(User *)user
 {
     _user = user;
- 
+    
     self.chatView.user = user;
     NSLog(@"SETTING USER TO:%@[%@]", self.user.objectId, self.user.nickname);
-}
-
-- (MediaBlock) sendMediaAction {
-    return ^(Media *media) {
-        NSLog(@"Sending Media:%@", media);
-        [Engine send:media toUser:self.user completion:^{
-            [self.chatView reloadDataAnimated:YES];
-        }];
-    };
-}
-
-- (StringBlock) sendTextAction {
-    return ^(NSString *string) {
-        NSLog(@"Sending Message:[%@]", string);
-        [Engine send:string toUser:self.user completion:^{
-            [self.chatView reloadDataAnimated:YES];
-        }];
-    };
-}
-
-- (void) initializeInputPane
-{
-    self.chatView = [[ChatView alloc] initWithFrame:self.view.bounds];
-
-    [self.view addSubview:self.chatView];
-    
-    self.chatView.parent = self;
-    self.chatView.sendTextAction = self.sendTextAction;
-    self.chatView.sendMediaAction = self.sendMediaAction;
+    [Engine loadUnreadMessagesFromUser:self.user completion:^{
+        NSLog(@"Loaded Unread Messages From Chat");
+        [self.chatView reloadDataAnimated:NO];
+        [Engine setSystemBadge];
+    }];
 }
 
 -(void) viewDidLoad

@@ -42,7 +42,7 @@
     self.rightColor = kAppColor;
     
     self.cornerRadius = 8.0f;
-    self.ballonInset = 8.0f;
+    self.balloonInset = 8.0f;
     self.label = [UILabel new];
     self.label.numberOfLines = FLT_MAX;
     self.label.font = chatFont;
@@ -104,7 +104,7 @@
     
     switch (self.message.messageType) {
         case kMessageTypeText: {
-            CGFloat inset = self.ballonInset;
+            CGFloat inset = self.balloonInset;
             CGFloat w = CGRectGetWidth(self.bounds);
             CGFloat h = CGRectGetHeight(self.bounds);
             
@@ -144,7 +144,7 @@
 
 - (UIBezierPath*) ballonPath
 {
-    const CGFloat cr = self.cornerRadius, inset = self.ballonInset;
+    const CGFloat cr = self.cornerRadius, inset = self.balloonInset;
     
     CGRect rect = self.frame;
     UIBezierPath *path = [UIBezierPath bezierPath];

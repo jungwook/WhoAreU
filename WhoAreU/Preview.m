@@ -51,6 +51,7 @@
 @property (nonatomic) CGFloat zoom;
 @property (nonatomic) BOOL videoAlive;
 @property (weak, nonatomic) Media* media;
+@property (strong, nonatomic) UILabel *real;
 @end
 
 @implementation Preview
@@ -61,7 +62,6 @@
     if (self) {
         self.videoAlive = NO;
         [self initializeVideoWithURL:[NSURL URLWithString:[S3LOCATION stringByAppendingString:url]]];
-        NSLog(@"Playing:%@", [S3LOCATION stringByAppendingString:url]);
     }
     return self;
 }
@@ -99,13 +99,11 @@
 
 - (void)tapToKill:(id)sender
 {
-    __LF
     [self killThisView];
 }
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification
 {
-    __LF
     [self.player seekToTime:kCMTimeZero];
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -116,14 +114,11 @@
 
 - (void)playerItemStalled:(NSNotification *)notification
 {
-    __LF
     [self restartPlayingIfLikelyToKeepUp];
 }
 
 - (void) restartPlayingIfLikelyToKeepUp
 {
-    __LF
-    
     if (self.videoAlive == NO) {
         return;
     }
@@ -144,7 +139,6 @@
                         change:(NSDictionary<NSString *,id> *)change
                        context:(void *)context
 {
-    __LF
     if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
         switch (self.playerItem.status) {
             case AVPlayerItemStatusReadyToPlay: {
@@ -203,63 +197,83 @@
 
 - (void) dealloc
 {
-    __LF
     [self killAllSubViews];
+}
+
+- (instancetype) initWithImageFile:(id)mediaFile
+{
+    self = [super init];
+    if (self) {
+        self.scrollView = [[CenterScrollView alloc] initWithFrame:self.view.frame];
+        self.scrollView.delegate = self;
+        self.scrollView.backgroundColor = [UIColor blackColor];
+        [self.view addSubview:self.scrollView];
+        
+        self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.scrollView addSubview:self.imageView];
+        
+        // Tap gesture recognizers
+        
+        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+        doubleTap.numberOfTapsRequired = 2;
+        
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
+        
+        [self.scrollView addGestureRecognizer:doubleTap];
+        [self.scrollView addGestureRecognizer:singleTap];
+        [S3File getDataFromFile:mediaFile dataBlock:^(NSData *data) {
+            UIImage *image = [UIImage imageWithData:data];
+            NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
+            NSDictionary *views = @{@"imageView":self.imageView};
+            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
+            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
+            self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+            
+            self.imageView.image = image;
+            [self initZoomWithImage:image];
+        }];
+    }
+    return self;
 }
 
 - (instancetype)initWithMedia:(Media *)media
 {
-    _media = media;
-    switch (self.media.type) {
+    switch (media.type) {
         case kMediaTypePhoto: {
-            self = [super init];
-            if (self) {
-                self.scrollView = [[CenterScrollView alloc] initWithFrame:self.view.frame];
-                self.scrollView.delegate = self;
-                self.scrollView.backgroundColor = [UIColor blackColor];
-                [self.view addSubview:self.scrollView];
-                
-                self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-                self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-                [self.scrollView addSubview:self.imageView];
-                
-                // Tap gesture recognizers
-                
-                UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
-                doubleTap.numberOfTapsRequired = 2;
-                
-                UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
-                
-                [self.scrollView addGestureRecognizer:doubleTap];
-                [self.scrollView addGestureRecognizer:singleTap];
-                NSLog(@"Media:%@", media);
-                NSLog(@"File:%@", media.media);
-                [S3File getDataFromFile:media.media dataBlock:^(NSData *data) {
-                    NSLog(@"Retrieved Data:%ld", data.length);
-                    UIImage *image = [UIImage imageWithData:data];
-                    NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
-                    NSDictionary *views = @{@"imageView":self.imageView};
-                    [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
-                    [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
-                    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-                    
-                    self.imageView.image = image;
-                    [self initZoomWithImage:image];
-                }];
-            }
-            return self;
+            self = [self initWithImageFile:media.media];
         }
             
             break;
         case kMediaTypeVideo:
         {
-            return [self initWithVideoURL:self.media.media];
+            self = [self initWithVideoURL:media.media];
         }
             break;
-            
-        default:
-            break;
     }
+    if (self) {
+        _media = media;
+        self.real = [UILabel new];
+        self.real.textColor = [UIColor whiteColor];
+        self.real.text = media.source == kSourceTaken ? @"From Camera" : @"From Library";
+        [self.real sizeToFit];
+        
+        [self.view addSubview:self.real];
+    }
+    return self;
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    CGFloat w = CGRectGetWidth(self.view.bounds);
+    CGFloat h = CGRectGetHeight(self.view.bounds);
+    CGFloat lw = CGRectGetWidth(self.real.bounds);
+    CGFloat lh = CGRectGetHeight(self.real.bounds);
+    CGFloat inset = 10;
+    
+    self.real.frame = CGRectMake(w-lw-inset, h-lh-inset, lw, lh);
 }
 
 - (instancetype)initWithImage:(UIImage*)image

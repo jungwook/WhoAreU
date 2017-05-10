@@ -11,7 +11,7 @@
 
 @interface S3File ()
 @property (nonatomic, strong) NSMutableDictionary *cache;
-@property (nonatomic, strong) NSURL* cachePath;
+@property (nonatomic, strong) NSURL* cachePath, *dataPath;
 @end
 
 
@@ -39,13 +39,38 @@
         NSURL* applicationPath = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
         NSURL* systemPath = [applicationPath URLByAppendingPathComponent:@"Engine"];
         self.cachePath = [systemPath URLByAppendingPathComponent:@"MediaCache"];
+        self.dataPath = [systemPath URLByAppendingPathComponent:@"DataCache"];
+        
+        [self createSystemPaths];
+        
         self.cache = [NSMutableDictionary dictionaryWithContentsOfURL:self.cachePath];
-//        self.cache = [NSMutableDictionary dictionary];
         if (!self.cache) {
             self.cache = [NSMutableDictionary dictionary];
         }
     }
     return self;
+}
+
+- (void) createSystemPaths
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSError *error = nil;
+    
+    BOOL ret = [manager createDirectoryAtURL:self.cachePath withIntermediateDirectories:YES attributes:nil error:&error];
+    if (!ret || error) {
+        NSLog(@"ERROR:%@", error.localizedDescription);
+        NSLog(@"ERROR:%@", error.localizedRecoverySuggestion);
+    } else {
+        NSLog(@"SYSTEM & MESSAGES PATH[%@] SUCCESSFULLY SETUP", [self.cachePath path]);
+    }
+    ret = [manager createDirectoryAtURL:self.dataPath withIntermediateDirectories:YES attributes:nil error:&error];
+    if (!ret || error) {
+        NSLog(@"ERROR:%@", error.localizedDescription);
+        NSLog(@"ERROR:%@", error.localizedRecoverySuggestion);
+    } else {
+        NSLog(@"SYSTEM & MESSAGES PATH[%@] SUCCESSFULLY SETUP", [self.dataPath path]);
+    }
 }
 
 + (id)objectForKey:(id)key
@@ -105,13 +130,31 @@
 
 - (id) objectForKey:(id)key
 {
+    NSError *error = nil;
+
     if (!key) {
         NSLog(@"ERROR: Cannot retrieve data from (null) key");
         return nil;
     }
     
     id cacheItem = [self.cache objectForKey:key];
-    return cacheItem[@"data"];
+    if (cacheItem) {
+        return cacheItem[@"data"];
+    }
+    else {
+        NSData *data = [NSData dataWithContentsOfURL:[self.dataPath URLByAppendingPathComponent:[key lastPathComponent]] options:NSDataReadingUncached error:&error];
+
+        if (data) {
+            @synchronized (self.cache) {
+                id cacheItem = @{ @"updatedAt" : [NSDate date],
+                                  @"data" : data };
+                
+                [self.cache setObject:cacheItem forKey:key];
+            }
+        }
+        
+        return data;
+    }
 }
 
 - (void) setObject:(id)data forKey:(id)key
@@ -132,6 +175,16 @@
             
             [self.cache setObject:cacheItem forKey:key];
         }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSError *error = nil;
+            NSURL *path = [self.dataPath URLByAppendingPathComponent:[key lastPathComponent]];
+            BOOL ret = [data writeToURL:path options:NSDataWritingAtomic error:&error];
+            if (!ret) {
+                NSLog(@"Failed to write data file:%@", path.absoluteString);
+                NSLog(@"ERROR:%@", error.localizedDescription);
+                NSLog(@"ERROR:%@", error.localizedRecoverySuggestion);
+            }
+        });
     }
 }
 

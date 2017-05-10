@@ -24,8 +24,10 @@
 #import "BaseFunctions.h"
 #import "ObjectIdStore.h"
 #import "User.h"
+#import "Installation.h"
 #import "Extensions.h"
 #import "Engine.h"
 #import "UIView+Badge.h"
+#import "NSDate+TimeAgo.h"
 
 #endif /* WhoAreU_pch */

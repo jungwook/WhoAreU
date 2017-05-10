@@ -22,5 +22,6 @@
 
 - (void) clear;
 - (void) updateMedia;
+- (void) setUser:(User *)user;
 - (void) setMediaDic:(MediaDic *)mediaDic;
 @end

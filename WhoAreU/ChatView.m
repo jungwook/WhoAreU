@@ -52,8 +52,6 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
         self.photoView = [PhotoView new];
         self.photoView.backgroundColor = kAppColor;
         self.photoView.radius = PHOTOVIEWSIZE / 2.0f;
-        self.photoView.borderWidth = 1.0f;
-        self.photoView.borderColor = [UIColor blackColor];
 
         self.nickname = [UILabel new];
         self.nickname.font = [UIFont systemFontOfSize:12];
@@ -108,7 +106,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     
     CGFloat W = CGRectGetWidth(self.bounds);
     CGFloat H = CGRectGetHeight(self.bounds);
-    CGFloat inset = self.balloon.ballonInset;
+    CGFloat inset = self.balloon.balloonInset;
 
     CGFloat ww = CGRectGetWidth(self.when.frame);
     CGFloat wh = CGRectGetHeight(self.when.frame);
@@ -148,7 +146,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
         self.when.frame = CGRectMake(offset + width + HINSET, 3*HINSET, ww, wh);
         self.photoView.frame = CGRectMake(INSET+3, H-PHOTOVIEWSIZE, PHOTOVIEWSIZE, PHOTOVIEWSIZE);
         
-        self.nickname.frame = CGRectMake(leftOffset+self.balloon.ballonInset, H-nh-2, nw, nh);
+        self.nickname.frame = CGRectMake(leftOffset+self.balloon.balloonInset, H-nh-2, nw, nh);
     }
 
     self.photoView.alpha = !self.isMine;
@@ -164,7 +162,8 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIView* inputView;
 @property (weak, nonatomic) NSArray *sections;
-@property CGFloat height, baseLine;
+@property (nonatomic) CGFloat height, keyboardHeight;
+@property (nonatomic) BOOL keyboardUp;
 @end
 
 @implementation ChatView
@@ -176,6 +175,8 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void)reloadDataAnimated:(BOOL) animated
 {
+    __LF
+    
     [self.tableView reloadData];
     [self scrollToBottomAnimated:animated];
 }
@@ -198,7 +199,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
         [self addContents];
         self.height = TEXTVIEWHEIGHT;
-        self.baseLine = CGRectGetHeight(frame);
     }
     return self;
 }
@@ -219,9 +219,26 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
                                                  name:UIKeyboardWillChangeFrameNotification
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(doEndEditingEvent:)
-                                                 name:UITextViewTextDidEndEditingNotification
+                                             selector:@selector(doKeyboardShowEvent:)
+                                                 name:UIKeyboardWillShowNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(doKeyboardHideEvent:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessage:)
+                                                 name:kNotificationNewUserMessage
+                                               object:nil];
+}
+
+- (void)newMessage:(id)sender
+{
+    __LF
+    [Engine loadUnreadMessagesFromUser:self.user completion:^{
+        [self reloadDataAnimated:YES];
+        [Engine setSystemBadge];
+    }];
 }
 
 - (void) dealloc
@@ -229,12 +246,19 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     __LF
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewUserMessage object:nil];
 }
 
-- (void)doEndEditingEvent:(NSString *)string
+- (void)doKeyboardShowEvent:(NSNotification *)notification
 {
-    __LF
+    self.keyboardUp = YES;
+}
+
+- (void)doKeyboardHideEvent:(NSNotification *)notification
+{
+    self.keyboardUp = NO;
 }
 
 - (void)doKeyBoardEvent:(NSNotification *)notification
@@ -244,13 +268,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     
     keyboardEndFrameWindow = [[UIApplication sharedApplication].keyWindow convertRect:keyboardEndFrameWindow toView:self];
     
+    self.keyboardHeight = CGRectGetHeight(keyboardEndFrameWindow);
+    
     double keyboardTransitionDuration;
     [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&keyboardTransitionDuration];
     
     UIViewAnimationCurve keyboardTransitionAnimationCurve;
     [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&keyboardTransitionAnimationCurve];
-    
-    self.baseLine = CGRectGetMinY(keyboardEndFrameWindow);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [UIView animateWithDuration:keyboardTransitionDuration delay:0.0f options:AnimationOptionsForCurve(keyboardTransitionAnimationCurve) animations:^{
@@ -260,9 +284,45 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     });
 }
 
+- (void)layoutSubviews
+{
+    const CGFloat offset = 4;
+    
+    [super layoutSubviews];
+    
+    CGFloat w = CGRectGetWidth(self.frame);
+    
+    [self setInputBarFrame];
+    
+    [self.border setFrame:CGRectMake(0, 0, w, 0.5)];
+    [self.mediaBut setFrame:CGRectMake(offset,
+                                       self.height-LEFTBUTSIZE,
+                                       LEFTBUTSIZE-2*offset,
+                                       LEFTBUTSIZE-2*offset)];
+    [self.textView setFrame:CGRectMake(LEFTBUTSIZE,
+                                       INSET,
+                                       w-LEFTBUTSIZE-INSET-SENDBUTSIZE-INSET,
+                                       self.height-2*INSET)];
+    [self.sendBut setFrame:CGRectMake(
+                                      w-SENDBUTSIZE-INSET,
+                                      self.height-LEFTBUTSIZE, SENDBUTSIZE, LEFTBUTSIZE-2*offset)];
+}
+
+- (void) setInputBarFrame
+{
+    CGFloat w = CGRectGetWidth(self.bounds);
+    CGFloat h = CGRectGetHeight(self.bounds);
+    CGFloat baseLine, inputBarHeight = self.height;
+    
+    baseLine = h - inputBarHeight - (self.keyboardUp ? self.keyboardHeight : 0.0f);
+    
+    [self.tableView setFrame:CGRectMake(0, 0, w, baseLine)];
+    [self.inputView setFrame:CGRectMake(0, baseLine, w, inputBarHeight)];
+}
+
 - (void) addTableView
 {
-    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
+    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStylePlain];
     
     self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
     self.tableView.backgroundColor = [UIColor whiteColor];
@@ -282,7 +342,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) tappedOutside:(id)sender
 {
-    __LF
     [self endEditing:YES];
 }
 
@@ -304,7 +363,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) addSendBut
 {
-    __LF
     self.sendBut = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.sendBut setTitle:@"SEND" forState:UIControlStateNormal];
     [self.sendBut addTarget:self action:@selector(sendButPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -317,21 +375,18 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     self.textView.text = @"";
     [self textViewDidChange:self.textView];
     
-//    [Engine send:textToSend toUser:self.user completion:^{
-//        [self reloadData];
-//    }];
-    
-    if (self.sendTextAction)
-    {
-        self.sendTextAction(textToSend);
-    }
+    [Engine send:textToSend toUser:self.user completion:^{
+        [self reloadDataAnimated:YES];
+    }];
 }
 
 - (void)mediaButPressed:(id)sender
 {
     [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
-        if (picked && self.sendMediaAction) {
-            self.sendMediaAction(media);
+        if (picked) {
+            [Engine send:media toUser:self.user completion:^{
+                [self reloadDataAnimated:YES];
+            }];
         }
     }];
 }
@@ -360,41 +415,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     
     // view hierachy
     [self.inputView addSubview:self.textView];
-}
-
-- (void)layoutSubviews
-{
-    __LF
-    
-    const CGFloat offset = 4;
-    
-    [super layoutSubviews];
-    
-    CGFloat w = CGRectGetWidth(self.frame);
-    
-    [self setInputBarFrame];
-    
-    [self.border setFrame:CGRectMake(0, 0, w, 0.5)];
-    [self.mediaBut setFrame:CGRectMake(offset,
-                                       self.height-LEFTBUTSIZE,
-                                       LEFTBUTSIZE-2*offset,
-                                       LEFTBUTSIZE-2*offset)];
-    [self.textView setFrame:CGRectMake(LEFTBUTSIZE,
-                                       INSET,
-                                       w-LEFTBUTSIZE-INSET-SENDBUTSIZE-INSET,
-                                       self.height-2*INSET)];
-    [self.sendBut setFrame:CGRectMake(
-                                      w-SENDBUTSIZE-INSET,
-                                      self.height-LEFTBUTSIZE, SENDBUTSIZE, LEFTBUTSIZE-2*offset)];
-}
-
-- (void) setInputBarFrame
-{
-    CGFloat w = CGRectGetWidth(self.bounds);
-    
-    CGFloat baseLine = self.baseLine - self.height;
-    [self.tableView setFrame:CGRectMake(0, 0, w, baseLine-2)];
-    [self.inputView setFrame:CGRectMake(0, baseLine, w, self.height)];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -457,9 +477,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-//    NSArray *messages = [Engine messagesFromUser:self.user];
-//    MessageDic *dictionary = [messages objectAtIndex:indexPath.row];
     MessageDic *dictionary = [[self messagesForSection:indexPath.section] objectAtIndex:indexPath.row];
 
     BOOL isMine = [dictionary.fromUserId isEqualToString:[User me].objectId];
@@ -492,7 +509,24 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 20.0f;
+    return 40.0f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    NSDate *date = [self.sections objectAtIndex:section];
+    CGFloat w = CGRectGetWidth(self.bounds);
+    
+    UIView *header = [UIView new];
+    header.frame = CGRectMake(0, 0, w, 40);
+    UILabel *headerLabel = [UILabel new];
+    headerLabel.textAlignment = NSTextAlignmentCenter;
+    headerLabel.frame = header.bounds;
+    headerLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightBold];
+    headerLabel.text = [NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+    [header addSubview:headerLabel];
+    
+    return header;
 }
 
 - (NSArray*) sections
@@ -516,10 +550,17 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (NSArray*) messagesForSection:(NSUInteger)section
 {
-    NSDate *dateForSection = [self.sections objectAtIndex:section];
-    NSArray *messages = [[Engine messagesFromUser:self.user] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createdAt.dateWithoutTime == %@", dateForSection]];
+    NSArray *sections = self.sections;
     
-    return messages;
+    if (sections.count>0) {
+        NSDate *dateForSection = [sections objectAtIndex:section];
+        NSArray *messages = [[Engine messagesFromUser:self.user] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createdAt.dateWithoutTime == %@", dateForSection]];
+        
+        return messages;
+    }
+    else {
+        return nil;
+    }
 }
 
 @end
