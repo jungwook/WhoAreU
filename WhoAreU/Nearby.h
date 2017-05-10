@@ -20,6 +20,10 @@ typedef enum : NSUInteger {
     kSectionLoadMore,
 } SectionType;
 
+typedef enum : BOOL {
+    kNearBySortByLocation = 0,
+    kNearBySortByTime,
+} NearBySortBy;
 
 @interface Nearby : UITableViewController
 

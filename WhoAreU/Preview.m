@@ -44,6 +44,7 @@
 @interface PreviewUserCell : UICollectionViewCell
 @property (nonatomic, strong) Media* media;
 @property (nonatomic, copy) MediaBlock tapAction;
+@property (nonatomic, strong) UIActivityIndicatorView *activity;
 @end
 
 @implementation PreviewUserCell
@@ -55,6 +56,11 @@
         self.radius = 4.0f;
         self.clipsToBounds = YES;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+        
+        self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        self.activity.frame = frame;
+        [self.activity startAnimating];
+        [self addSubview:self.activity];
     }
     return self;
 }
@@ -66,6 +72,7 @@
     [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         [S3File getImageFromFile:self.media.thumbnail imageBlock:^(UIImage *image) {
             __drawImage(image, self);
+            [self.activity stopAnimating];
         }];
     }];
 }
@@ -81,6 +88,7 @@
 
 @interface PreviewUser ()
 @property (nonatomic, strong) User *user;
+@property (nonatomic, strong) UIActivityIndicatorView *activity;
 @property (nonatomic, strong) UIView *preview;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSMutableArray *media;
@@ -91,7 +99,6 @@
 
 - (instancetype)initWithUser:(User *)user
 {
-    const CGFloat collectionViewHeight = 80.0f;
     CGRect bounds = mainWindow.bounds;
     self = [super initWithFrame:bounds];
     if (self) {
@@ -102,44 +109,79 @@
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver: self selector:   @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
         
-        self.media = [NSMutableArray array];
-        if (self.user.media) {
-            [self.media addObject:self.user.media];
-        }
-        [self.media addObjectsFromArray:self.user.photos];
-        
-        CGFloat h = CGRectGetHeight(bounds), w = CGRectGetWidth(bounds);
-        CGRect collectionViewRect = CGRectMake(0, h-collectionViewHeight, w, collectionViewHeight);
-        
-        // Preview
-        self.preview = [[UIView alloc] initWithFrame:bounds];
-        self.preview.backgroundColor = [UIColor blackColor];
-        [self addSubview:self.preview];
-        
-        UICollectionViewFlowLayout *flow = [UICollectionViewFlowLayout new];
-        flow.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        
-        self.collectionView = [[UICollectionView alloc] initWithFrame:collectionViewRect collectionViewLayout:flow];
-        self.collectionView.backgroundColor = [UIColor clearColor];
-        self.collectionView.delegate = self;
-        self.collectionView.dataSource = self;
-        self.collectionView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
-
-        self.collectionView.bounces = YES;
-        self.collectionView.alwaysBounceHorizontal = YES;
-        [self.collectionView registerClass:[PreviewUserCell class] forCellWithReuseIdentifier:@"MediaCell"];
-        
-        [self addSubview:self.collectionView];
+        [self setupPreviewWithBounds:bounds];
+        [self setupCollectionViewWithBounds:bounds];
+        [self setupMedia];
+        [self selectFirstMedia];
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
-        
-        Media *firstMedia = self.media.firstObject;
-        if (firstMedia) {
-            PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:firstMedia exitWithTap:NO];
-            [self.preview addSubview:preview];
-            self.presentedMedia = firstMedia;
-        }
     }
     return self;
+}
+
+- (void)setupPreviewWithBounds:(CGRect)bounds
+{
+    self.preview = [[UIView alloc] initWithFrame:bounds];
+    self.preview.backgroundColor = [UIColor blackColor];
+    [self addSubview:self.preview];
+    
+    self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.activity.frame = bounds;
+    [self.activity startAnimating];
+    [self.preview addSubview:self.activity];
+}
+
+- (void)setupMedia
+{
+    self.media = [NSMutableArray array];
+    if (self.user.media) {
+        [self.user.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            [self.media insertObject:self.user.media atIndex:0];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.collectionView reloadData];
+            });
+        }];
+    }
+    
+    [self.user.photos enumerateObjectsUsingBlock:^(Media * _Nonnull photo, NSUInteger idx, BOOL * _Nonnull stop) {
+        [photo fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            [self.media addObject:photo];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.collectionView reloadData];
+            });
+        }];
+    }];
+}
+
+- (void)selectFirstMedia
+{
+    Media *firstMedia = self.media.firstObject;
+    if (firstMedia) {
+        [self showPreview:[[PreviewMedia alloc] initWithMedia:firstMedia exitWithTap:NO]];
+        self.presentedMedia = firstMedia;
+    }
+}
+
+- (void)setupCollectionViewWithBounds:(CGRect) bounds
+{
+    const CGFloat collectionViewHeight = 80.0f;
+
+    CGFloat h = CGRectGetHeight(bounds), w = CGRectGetWidth(bounds);
+    CGRect collectionViewRect = CGRectMake(0, h-collectionViewHeight, w, collectionViewHeight);
+
+    UICollectionViewFlowLayout *flow = [UICollectionViewFlowLayout new];
+    flow.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+
+    self.collectionView = [[UICollectionView alloc] initWithFrame:collectionViewRect collectionViewLayout:flow];
+    self.collectionView.backgroundColor = [UIColor clearColor];
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
+    self.collectionView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+    
+    self.collectionView.bounces = YES;
+    self.collectionView.alwaysBounceHorizontal = YES;
+    [self.collectionView registerClass:[PreviewUserCell class] forCellWithReuseIdentifier:@"MediaCell"];
+
+    [self addSubview:self.collectionView];
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
@@ -161,6 +203,7 @@
     self.collectionView.frame = collectionViewRect;
     
     self.preview.frame = self.bounds;
+    self.activity.frame = self.bounds;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
@@ -195,7 +238,7 @@
     PreviewUserCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MediaCell" forIndexPath:indexPath];
     
     cell.media = [self.media objectAtIndex:indexPath.row];
-    cell.backgroundColor = [UIColor yellowColor];
+    cell.backgroundColor = [UIColor blackColor];
     cell.tapAction = ^(Media *media) {
         [self showPreview:[[PreviewMedia alloc] initWithMedia:media exitWithTap:NO]];
         self.presentedMedia = media;
@@ -206,8 +249,8 @@
 - (void) showPreview:(PreviewMedia*)preview
 {
     const CGFloat duration = 0.3f;
-    
-    PreviewMedia *subView = [self.preview.subviews firstObject];
+
+    PreviewMedia *subView = self.firstPreview;
     preview.alpha = 0.0f;
     [self.preview addSubview:preview];
     [UIView animateWithDuration:duration animations:^{
@@ -225,15 +268,30 @@
     [UIView animateWithDuration:duration animations:^{
         self.alpha = 0.0f;
     } completion:^(BOOL finished) {
-        [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof PreviewMedia * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
-            [view killThisView];
-        }];
         [self killThisView];
     }];
 }
 
+- (PreviewMedia*) firstPreview
+{
+    __block PreviewMedia* preview = nil;
+    [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([view isKindOfClass:[PreviewMedia class]]) {
+            preview = view;
+            *stop = YES;
+        }
+    }];
+    return preview;
+}
+
 - (void) killThisView
 {
+    [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([view isKindOfClass:[PreviewMedia class]]) {
+            PreviewMedia *pm = (PreviewMedia*) view;
+            [pm killThisView];
+        }
+    }];
     [self removeFromSuperview];
 }
 
@@ -289,7 +347,7 @@
 
 - (instancetype)initWithVideoURL:(NSString*)url exitWithTap:(BOOL)taps
 {
-    self = [super initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
+    self = [super initWithFrame:mainWindow.frame];
     if (self) {
         self.exitsWithTap = taps;
         self.videoAlive = NO;
@@ -300,14 +358,13 @@
 
 - (instancetype) initWithImageFile:(id)mediaFile exitWithTap:(BOOL)taps
 {
-    self = [super initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
+    self = [super initWithFrame:mainWindow.frame];
     if (self) {
         self.exitsWithTap = taps;
 
         CGRect frame = self.frame, bounds = self.bounds;
         self.scrollView = [[CenterScrollView alloc] initWithFrame:frame];
         self.scrollView.delegate = self;
-        self.scrollView.backgroundColor = [UIColor blackColor];
         [self addSubview:self.scrollView];
         
         self.imageView = [[UIImageView alloc] initWithFrame:bounds];
@@ -365,7 +422,6 @@
                                                  name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                object:self.playerItem];
     
-    self.backgroundColor = [UIColor blackColor];
     self.playerView = [[UIView alloc] initWithFrame:self.bounds];
     [self addSubview:self.playerView];
     [self.playerView.layer addSublayer:self.playerLayer];
@@ -382,6 +438,7 @@
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification
 {
+    __LF
     [self.player seekToTime:kCMTimeZero];
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -392,11 +449,13 @@
 
 - (void)playerItemStalled:(NSNotification *)notification
 {
+    __LF
     [self restartPlayingIfLikelyToKeepUp];
 }
 
 - (void) restartPlayingIfLikelyToKeepUp
 {
+    __LF
     if (self.videoAlive == NO) {
         return;
     }

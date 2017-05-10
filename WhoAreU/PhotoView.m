@@ -178,6 +178,7 @@
     _user = user;
     _media = user.media;
     if (self.media) {
+        self.hasMedia = NO;
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             self.hasMedia = YES;
         }];
@@ -203,7 +204,9 @@
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
             
+            NSLog(@"====");
             NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
+            NSLog(@"====++++++++");
             
             [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
                 UIImage *photo = [UIImage imageWithData:data];

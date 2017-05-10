@@ -69,8 +69,7 @@
     self.gender.backgroundColor = user.genderColor;
     self.mediaCollection.parent = self.parent;
     self.introduction.text = user.introduction;
-    self.introduction.hidden = (user.introduction == nil);
-    self.ago.text = user.whereUdatedAt.timeAgoSimple;
+    self.ago.text = user.updatedAt.timeAgoSimple;
     [self setLikeStatus:[[User me] likes:user]];
 }
 
@@ -149,6 +148,8 @@
 @property (nonatomic, strong) Refresh *refresh;
 @property (nonatomic) NSUInteger skip, limit;
 @property (nonatomic) SegmentType segmentIndex;
+@property (nonatomic) NearBySortBy sortby;
+@property (weak, nonatomic) IBOutlet UILabel *sortbyLabel;
 @end
 
 @implementation Nearby
@@ -156,6 +157,7 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    self.sortby = kNearBySortByLocation;
     self.segmentIndex = 0;
     self.skip = 0;
     self.limit = 200;
@@ -194,7 +196,7 @@
             [array addObjectsFromArray:users];
             self.users = array;
         }
-        self.users = [self sortUsersByDistance:self.users];
+//        self.users = [self sortUsersByDistance:self.users];
         
         [self.refresh endRefreshing];
         [self.tableView reloadData];
@@ -251,9 +253,15 @@
         default:
             break;
     }
-    [query whereKey:@"where" nearGeoPoint:[User me].where];
-    [query orderByAscending:@"where"];
     [query whereKey:@"objectId" notEqualTo:[User me].objectId];
+    if (self.sortby == kNearBySortByLocation) {
+        NSLog(@"Querying location");
+        [query whereKey:@"where" nearGeoPoint:[User me].where];
+    }
+    else {
+        NSLog(@"Querying by time");
+        [query orderByDescending:@"updatedAt"];
+    }
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable users, NSError * _Nullable error) {
         if (block) {
             block(users);
@@ -354,10 +362,10 @@
 {
     if (indexPath.section == kSectionUsers) {
         if (indexPath.row == self.selectedRow) {
-            return 220;
+            return 120;
         }
         else {
-            return 70;
+            return 65;
         }
     }
     else {
@@ -392,8 +400,12 @@
     }
 }
 
-- (IBAction)testSendChannel:(id)sender {
-    [Engine sendChannelMessage:@"Testing 123..."];
+- (IBAction)sortByTimeLocation:(UISwitch*)sender {
+    __LF
+    
+    self.sortby = !sender.on;
+    [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    self.sortbyLabel.text = self.sortby ? @"By\nTime" : @"By\nGPS";
 }
 
 /*

@@ -19,7 +19,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.type = kBalloonTypeLeft;
-        self.balloonInset = 10;
+        self.balloonInset = 8;
         self.cornerRadius = 8;
         self.textInsets = UIEdgeInsetsMake(5, self.balloonInset+8, 5, 8);
     }
@@ -37,18 +37,23 @@
 
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
-    UIEdgeInsets insets = self.textInsets;
-    
-    [self invalidateIntrinsicContentSize];
-    CGRect rect = [super textRectForBounds:UIEdgeInsetsInsetRect(bounds, insets)
-                    limitedToNumberOfLines:numberOfLines];
-    
-    rect.origin.x    -= insets.left;
-    rect.origin.y    -= insets.top;
-    rect.size.width  += (insets.left + insets.right);
-    rect.size.height += (insets.top + insets.bottom);
-    
-    return rect;
+    if (self.text && ![self.text isEqualToString:@""]) {
+        UIEdgeInsets insets = self.textInsets;
+        
+        [self invalidateIntrinsicContentSize];
+        CGRect rect = [super textRectForBounds:UIEdgeInsetsInsetRect(bounds, insets)
+                        limitedToNumberOfLines:numberOfLines];
+        
+        rect.origin.x    -= insets.left;
+        rect.origin.y    -= insets.top;
+        rect.size.width  += (insets.left + insets.right);
+        rect.size.height += (insets.top + insets.bottom);
+        
+        return rect;
+    }
+    else {
+        return CGRectZero;
+    }
 }
 
 - (void)layoutSubviews

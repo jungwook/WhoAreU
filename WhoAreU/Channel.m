@@ -99,6 +99,10 @@
     
 }
 
+- (IBAction)sendChannelMessage:(id)sender {
+    [Engine sendChannelMessage:@"Testing 123..."];
+}
+
 - (void)newChannelMessage:(id)sender
 {
     __LF
