@@ -63,13 +63,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewUserMessage object:nil];
 }
 
-- (void)setParent:(UIViewController *)parent
-{
-    _parent = parent;
-    
-    self.photoView.parent = parent;
-}
-
 - (void)setUser:(User *)user
 {
     _user = user;
@@ -121,6 +114,7 @@
 
 @interface PhotoView()
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
+@property (strong, nonatomic) User *user;
 @property BOOL hasMedia;
 @end
 
@@ -147,7 +141,8 @@
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
-    self.layer.masksToBounds = YES;
+    
+    self.clipsToBounds = YES;
     self.image = self.avatar;
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
@@ -155,11 +150,23 @@
 
 - (void)tapped:(id)sender
 {
-    if (self.hasMedia && self.parent) {
-        Preview *preview = [[Preview alloc] initWithMedia:self.media];
-        preview.modalPresentationStyle = UIModalPresentationOverFullScreen;
-        preview.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [self.parent presentViewController:preview animated:YES completion:nil];
+    if (self.hasMedia) {
+        if (self.user) {
+            PreviewUser *preview = [[PreviewUser alloc] initWithUser:self.user];
+            preview.alpha = 0;
+            [mainWindow addSubview:preview];
+            [UIView animateWithDuration:0.3 animations:^{
+                preview.alpha = 1.0f;
+            }];
+        }
+        else {
+            PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:self.media exitWithTap:YES];
+            preview.alpha = 0;
+            [mainWindow addSubview:preview];
+            [UIView animateWithDuration:0.3 animations:^{
+                preview.alpha = 1.0f;
+            }];
+        }
     }
     else {
         NSLog(@"No image or no parent view controller set");
@@ -168,6 +175,7 @@
 
 - (void)setUser:(User *)user
 {
+    _user = user;
     _media = user.media;
     if (self.media) {
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
@@ -180,6 +188,7 @@
         }];
     }
     else {
+        self.media = nil;
         self.image = self.avatar;
         self.hasMedia = NO;
     }
@@ -226,6 +235,8 @@
 
 - (void)clear
 {
+    self.user = nil;
+    self.media = nil;
     self.image = self.avatar;
     self.hasMedia = NO;
 }

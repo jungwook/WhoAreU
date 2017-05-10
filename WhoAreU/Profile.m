@@ -58,7 +58,6 @@
     __LF
     [super viewDidLoad];
 
-    self.photoImageView.parent = self;
     self.nickname.delegate = self;
     self.introduction.delegate = self;
     self.mediaCollection.parent = self;

@@ -77,12 +77,6 @@
     [self setNeedsLayout];
 }
 
-- (void)setParent:(UIViewController *)parent
-{
-    _parent = parent;
-    self.mediaView.parent = parent;
-}
-
 - (void)setType:(BalloonType)type
 {
     _type = type;

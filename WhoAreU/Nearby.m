@@ -61,7 +61,6 @@
     [self.userView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.desc;
-    self.userView.parent = self.parent;
     self.userView.user = user;
     self.age.text = user.age;
     self.compass.heading = heading;

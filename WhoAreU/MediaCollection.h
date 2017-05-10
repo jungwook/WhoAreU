@@ -13,3 +13,4 @@
 @property (nonatomic, weak) UIViewController* parent;
 - (void) addMedia;
 @end
+ 

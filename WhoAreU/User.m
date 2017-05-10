@@ -493,8 +493,15 @@
 
 -(void)setMedia:(Media *)media
 {
-    [self setObject:media forKey:@"media"];
-    self.thumbnail = media.thumbnail;
+    if (media) {
+        [self setObject:media forKey:@"media"];
+        self.thumbnail = media.thumbnail;
+    }
+    else {
+        NSLog(@"Removing media and thumbnail");
+        [self removeObjectForKey:@"media"];
+        [self removeObjectForKey:@"thumbnail"];
+    }
 }
 
 @end

@@ -23,7 +23,6 @@
 @property (weak, nonatomic) IBOutlet IndentedLabel *ago;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet Compass *compass;
-@property (weak, nonatomic) UIViewController *parent;
 @property (weak, nonatomic) id userId;
 @property (strong, nonatomic) User* user;
 @end
@@ -43,11 +42,6 @@
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
     self.compass.heading = __headingUsers(self.user, [User me]);
     self.ago.text = user.whereUdatedAt.timeAgoSimple;
-}
-
-- (void)setParent:(UIViewController *)parent
-{
-    self.userView.parent = parent;
 }
 
 - (void) setUserId:(id)userId
@@ -111,7 +105,6 @@
     
     id userId = [self.chats objectAtIndex:indexPath.row];
     [cell setUserId:userId];
-    [cell setParent:self];
     
     return cell;
 }

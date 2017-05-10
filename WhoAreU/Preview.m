@@ -41,7 +41,213 @@
 
 @end
 
-@interface Preview () <UIScrollViewDelegate>
+@interface PreviewUserCell : UICollectionViewCell
+@property (nonatomic, strong) Media* media;
+@property (nonatomic, copy) MediaBlock tapAction;
+@end
+
+@implementation PreviewUserCell
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.radius = 4.0f;
+        self.clipsToBounds = YES;
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+    }
+    return self;
+}
+
+- (void)setMedia:(Media *)media
+{
+    _media = media;
+    
+    [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        [S3File getImageFromFile:self.media.thumbnail imageBlock:^(UIImage *image) {
+            __drawImage(image, self);
+        }];
+    }];
+}
+
+- (void) tapped:(id)sender
+{
+    if (self.tapAction) {
+        self.tapAction(self.media);
+    }
+}
+
+@end
+
+@interface PreviewUser ()
+@property (nonatomic, strong) User *user;
+@property (nonatomic, strong) UIView *preview;
+@property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) NSMutableArray *media;
+@property (nonatomic, weak) Media *presentedMedia;
+@end
+
+@implementation PreviewUser
+
+- (instancetype)initWithUser:(User *)user
+{
+    const CGFloat collectionViewHeight = 80.0f;
+    CGRect bounds = mainWindow.bounds;
+    self = [super initWithFrame:bounds];
+    if (self) {
+        _user = user;
+        
+        self.presentedMedia = nil;
+    
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver: self selector:   @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
+        
+        self.media = [NSMutableArray array];
+        if (self.user.media) {
+            [self.media addObject:self.user.media];
+        }
+        [self.media addObjectsFromArray:self.user.photos];
+        
+        CGFloat h = CGRectGetHeight(bounds), w = CGRectGetWidth(bounds);
+        CGRect collectionViewRect = CGRectMake(0, h-collectionViewHeight, w, collectionViewHeight);
+        
+        // Preview
+        self.preview = [[UIView alloc] initWithFrame:bounds];
+        self.preview.backgroundColor = [UIColor blackColor];
+        [self addSubview:self.preview];
+        
+        UICollectionViewFlowLayout *flow = [UICollectionViewFlowLayout new];
+        flow.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        
+        self.collectionView = [[UICollectionView alloc] initWithFrame:collectionViewRect collectionViewLayout:flow];
+        self.collectionView.backgroundColor = [UIColor clearColor];
+        self.collectionView.delegate = self;
+        self.collectionView.dataSource = self;
+        self.collectionView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+
+        self.collectionView.bounces = YES;
+        self.collectionView.alwaysBounceHorizontal = YES;
+        [self.collectionView registerClass:[PreviewUserCell class] forCellWithReuseIdentifier:@"MediaCell"];
+        
+        [self addSubview:self.collectionView];
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+        
+        Media *firstMedia = self.media.firstObject;
+        if (firstMedia) {
+            PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:firstMedia exitWithTap:NO];
+            [self.preview addSubview:preview];
+            self.presentedMedia = firstMedia;
+        }
+    }
+    return self;
+}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+    self.frame = mainWindow.bounds;
+    self.preview.frame = self.bounds;
+    if (self.presentedMedia) {
+        [self showPreview:[[PreviewMedia alloc] initWithMedia:self.presentedMedia exitWithTap:NO]];
+    }
+}
+
+- (void)layoutSubviews
+{
+    const CGFloat collectionViewHeight = 80.0f;
+
+    [super layoutSubviews];
+    
+    CGFloat h = CGRectGetHeight(self.bounds), w = CGRectGetWidth(self.bounds);
+    CGRect collectionViewRect = CGRectMake(0, h-collectionViewHeight, w, collectionViewHeight);
+    self.collectionView.frame = collectionViewRect;
+    
+    self.preview.frame = self.bounds;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 5.0f;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 5.0f;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    const CGFloat inset = 10.0f;
+    CGFloat h = CGRectGetHeight(collectionView.bounds);
+    return CGSizeMake(h-inset, h-inset);
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.media.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PreviewUserCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MediaCell" forIndexPath:indexPath];
+    
+    cell.media = [self.media objectAtIndex:indexPath.row];
+    cell.backgroundColor = [UIColor yellowColor];
+    cell.tapAction = ^(Media *media) {
+        [self showPreview:[[PreviewMedia alloc] initWithMedia:media exitWithTap:NO]];
+        self.presentedMedia = media;
+    };
+    return cell;
+}
+
+- (void) showPreview:(PreviewMedia*)preview
+{
+    const CGFloat duration = 0.3f;
+    
+    PreviewMedia *subView = [self.preview.subviews firstObject];
+    preview.alpha = 0.0f;
+    [self.preview addSubview:preview];
+    [UIView animateWithDuration:duration animations:^{
+        subView.alpha = 0.0f;
+        preview.alpha = 1.0f;
+    } completion:^(BOOL finished) {
+        [subView killThisView];
+    }];
+}
+
+- (void) tapped:(id)sender
+{
+    const CGFloat duration = 0.3f;
+
+    [UIView animateWithDuration:duration animations:^{
+        self.alpha = 0.0f;
+    } completion:^(BOOL finished) {
+        [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof PreviewMedia * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+            [view killThisView];
+        }];
+        [self killThisView];
+    }];
+}
+
+- (void) killThisView
+{
+    [self removeFromSuperview];
+}
+
+- (void)dealloc
+{
+    __LF
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+}
+
+@end
+
+@interface PreviewMedia () <UIScrollViewDelegate>
+@property (strong, nonatomic) Media* media;
 @property (strong, nonatomic) CenterScrollView *scrollView;
 @property (strong, nonatomic) UIImageView *imageView;
 @property (nonatomic, strong) AVPlayerItem *playerItem;
@@ -49,19 +255,88 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) UIView* playerView;
 @property (nonatomic) CGFloat zoom;
-@property (nonatomic) BOOL videoAlive;
-@property (weak, nonatomic) Media* media;
+@property (nonatomic) BOOL videoAlive, exitsWithTap;
 @property (strong, nonatomic) UILabel *real;
 @end
 
-@implementation Preview
+@implementation PreviewMedia
 
-- (instancetype)initWithVideoURL:(NSString*)url
+- (instancetype)initWithMedia:(Media *)media exitWithTap:(BOOL)taps
 {
-    self = [super init];
+    switch (media.type) {
+        case kMediaTypePhoto: {
+            self = [self initWithImageFile:media.media exitWithTap:(BOOL)taps];
+        }
+            
+            break;
+        case kMediaTypeVideo:
+        {
+            self = [self initWithVideoURL:media.media exitWithTap:(BOOL)taps];
+        }
+            break;
+    }
     if (self) {
+        _media = media;
+        self.real = [UILabel new];
+        self.real.textColor = [UIColor whiteColor];
+        self.real.text = media.source == kSourceTaken ? @"From Camera" : @"From Library";
+        [self.real sizeToFit];
+        
+        [self addSubview:self.real];
+    }
+    return self;
+}
+
+- (instancetype)initWithVideoURL:(NSString*)url exitWithTap:(BOOL)taps
+{
+    self = [super initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
+    if (self) {
+        self.exitsWithTap = taps;
         self.videoAlive = NO;
         [self initializeVideoWithURL:[NSURL URLWithString:[S3LOCATION stringByAppendingString:url]]];
+    }
+    return self;
+}
+
+- (instancetype) initWithImageFile:(id)mediaFile exitWithTap:(BOOL)taps
+{
+    self = [super initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
+    if (self) {
+        self.exitsWithTap = taps;
+
+        CGRect frame = self.frame, bounds = self.bounds;
+        self.scrollView = [[CenterScrollView alloc] initWithFrame:frame];
+        self.scrollView.delegate = self;
+        self.scrollView.backgroundColor = [UIColor blackColor];
+        [self addSubview:self.scrollView];
+        
+        self.imageView = [[UIImageView alloc] initWithFrame:bounds];
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.scrollView addSubview:self.imageView];
+        
+        // Tap gesture recognizers
+        
+        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+        doubleTap.numberOfTapsRequired = 2;
+        
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
+        
+        if (self.exitsWithTap) {
+            [self.scrollView addGestureRecognizer:singleTap];
+        }
+        [self.scrollView addGestureRecognizer:doubleTap];
+        [S3File getDataFromFile:mediaFile dataBlock:^(NSData *data) {
+            UIImage *image = [UIImage imageWithData:data];
+            NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
+            NSDictionary *views = @{@"imageView":self.imageView};
+            [self.scrollView removeConstraints:self.scrollView.constraints];
+            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
+            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
+            self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+            
+            self.imageView.image = image;
+            [self initZoomWithImage:image];
+        }];
     }
     return self;
 }
@@ -90,16 +365,14 @@
                                                  name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                object:self.playerItem];
     
-//    self.view.backgroundColor = [UIColor blackColor];
     self.backgroundColor = [UIColor blackColor];
-//    self.playerView = [[UIView alloc] initWithFrame:self.view.bounds];
     self.playerView = [[UIView alloc] initWithFrame:self.bounds];
-    
-//    [self.view addSubview:self.playerView];
     [self addSubview:self.playerView];
     [self.playerView.layer addSublayer:self.playerLayer];
-//    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
+    
+    if (self.exitsWithTap) {
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
+    }
 }
 
 - (void)tapToKill:(id)sender
@@ -149,7 +422,8 @@
             case AVPlayerItemStatusReadyToPlay: {
                 CGSize size = self.playerItem.presentationSize;
                 CGFloat w = size.width, h=size.height;
-                CGFloat W = CGRectGetWidth(self.view.bounds), H = CGRectGetHeight(self.view.bounds);
+                CGRect bounds = self.bounds;
+                CGFloat W = CGRectGetWidth(bounds), H = CGRectGetHeight(bounds);
                 CGFloat fW = W, fH = h * W / w;
                 
                 self.playerView.frame = CGRectMake(0, (H-fH)/2, fW, fH);
@@ -193,7 +467,6 @@
     self.playerView = nil;
     
     [self removeFromSuperview];
-//    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) dealloc
@@ -201,127 +474,23 @@
     __LF
 }
 
-- (instancetype) initWithImageFile:(id)mediaFile
+- (void)layoutSubviews
 {
-    self = [super init];
-    if (self) {
-        self.scrollView = [[CenterScrollView alloc] initWithFrame:self.view.frame];
-        self.scrollView.delegate = self;
-        self.scrollView.backgroundColor = [UIColor blackColor];
-        [self.view addSubview:self.scrollView];
-        
-        self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.scrollView addSubview:self.imageView];
-        
-        // Tap gesture recognizers
-        
-        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
-        doubleTap.numberOfTapsRequired = 2;
-        
-        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
-        
-        [self.scrollView addGestureRecognizer:doubleTap];
-        [self.scrollView addGestureRecognizer:singleTap];
-        [S3File getDataFromFile:mediaFile dataBlock:^(NSData *data) {
-            UIImage *image = [UIImage imageWithData:data];
-            NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
-            NSDictionary *views = @{@"imageView":self.imageView};
-            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
-            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
-            self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-            
-            self.imageView.image = image;
-            [self initZoomWithImage:image];
-        }];
-    }
-    return self;
-}
-
-- (instancetype)initWithMedia:(Media *)media
-{
-    switch (media.type) {
-        case kMediaTypePhoto: {
-            self = [self initWithImageFile:media.media];
-        }
-            
-            break;
-        case kMediaTypeVideo:
-        {
-            self = [self initWithVideoURL:media.media];
-        }
-            break;
-    }
-    if (self) {
-        _media = media;
-        self.real = [UILabel new];
-        self.real.textColor = [UIColor whiteColor];
-        self.real.text = media.source == kSourceTaken ? @"From Camera" : @"From Library";
-        [self.real sizeToFit];
-        
-        [self.view addSubview:self.real];
-    }
-    return self;
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
+    __LF
+    [super layoutSubviews];
     
-    CGFloat w = CGRectGetWidth(self.view.bounds);
-    CGFloat h = CGRectGetHeight(self.view.bounds);
+    CGFloat w = CGRectGetWidth(self.bounds);
+    CGFloat h = CGRectGetHeight(self.bounds);
     CGFloat lw = CGRectGetWidth(self.real.bounds);
     CGFloat lh = CGRectGetHeight(self.real.bounds);
     CGFloat inset = 10;
     
     self.real.frame = CGRectMake(w-lw-inset, h-lh-inset, lw, lh);
-}
-
-- (instancetype)initWithImage:(UIImage*)image
-{
-    self = [super init];
-    if (self) {
-        self.scrollView = [[CenterScrollView alloc] initWithFrame:self.view.frame];
-        self.scrollView.delegate = self;
-        self.scrollView.backgroundColor = [UIColor blackColor];
-        [self.view addSubview:self.scrollView];
-
-        self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.scrollView addSubview:self.imageView];
-
-        NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
-        NSDictionary *views = @{@"imageView":self.imageView};
-        [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
-        [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
-        self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-
-        self.imageView.image = image;
-        
-        // Tap gesture recognizers
-        
-        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
-        doubleTap.numberOfTapsRequired = 2;
-        
-        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
-        
-        [self.scrollView addGestureRecognizer:doubleTap];
-        [self.scrollView addGestureRecognizer:singleTap];
-        
-        // initialize zoom factors for image
-        
-        [self initZoomWithImage:image];
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+    self.real.frame = CGRectMake(inset, inset*1.5, lw, lh);
 }
 
 - (void) singleTap:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self killThisView];
 }
 
 - (void) doubleTap:(id)sender {
@@ -336,7 +505,7 @@
 
 - (void) initZoomWithImage:(UIImage*)image
 {
-    float minZoom = MIN(self.view.bounds.size.width / image.size.width, self.view.bounds.size.height / image.size.height);
+    float minZoom = MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height);
     if (minZoom > 1) return;
     
     self.scrollView.minimumZoomScale = minZoom;
@@ -345,10 +514,10 @@
     self.zoom = minZoom;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
+//- (void)didReceiveMemoryWarning {
+//    [super didReceiveMemoryWarning];
+//}
+//
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     self.zoom = scale;

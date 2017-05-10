@@ -27,6 +27,7 @@
 #define kAppColor [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f]
 #define appScreen [UIScreen mainScreen]
 #define appWindow [UIApplication sharedApplication].keyWindow
+#define mainWindow [[[UIApplication sharedApplication] delegate] window]
 
 typedef void(^AlertAction)(UIAlertAction *action);
 

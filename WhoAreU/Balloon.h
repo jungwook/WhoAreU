@@ -29,7 +29,6 @@ typedef enum : NSUInteger {
 } BalloonType;
 
 @interface Balloon : UIView
-@property (nonatomic, weak) UIViewController* parent;
 @property (nonatomic) CGFloat cornerRadius;
 @property (nonatomic) CGFloat balloonInset;
 @property (nonatomic, weak) MessageDic* message;

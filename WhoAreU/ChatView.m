@@ -33,8 +33,6 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 @interface ChatRow : UITableViewCell
 @property (weak, nonatomic) MessageDic *message;
 @property (weak, nonatomic) User* user;
-@property (weak, nonatomic) UIViewController *parent;
-
 @property (strong, nonatomic) UILabel *nickname, *when;
 @property (strong, nonatomic) PhotoView *photoView;
 @property (strong, nonatomic) Balloon *balloon;
@@ -76,12 +74,6 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     self.photoView.media = user.media;
     self.nickname.text = user.nickname;
     [self.nickname sizeToFit];
-}
-
-- (void)setParent:(UIViewController *)parent
-{
-    self.balloon.parent = parent;
-    self.photoView.parent = parent;
 }
 
 - (void)setMessage:(MessageDic*)message
@@ -470,7 +462,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     MessageDic *dictionary = [[self messagesForSection:indexPath.section] objectAtIndex:indexPath.row];
     
     cell.message = dictionary;
-    cell.parent = self.parent;
     cell.user = self.user;
     return cell;
 }

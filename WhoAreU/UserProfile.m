@@ -49,7 +49,6 @@
     
     self.mediaCollection.parent = self;
     self.mediaCollection.user = self.user;
-    self.photoView.parent = self;
     self.photoView.media = self.user.media;
     // Do any additional setup after loading the view.
     

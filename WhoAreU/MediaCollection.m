@@ -84,12 +84,6 @@
 
 @implementation MediaCell
 
-- (void)setParent:(UIViewController *)parent
-{
-    _parent = parent;
-    self.photoView.parent = parent;
-}
-
 - (void)setEditable:(BOOL)editable
 {
     _editable = editable;
@@ -158,31 +152,54 @@
 
 @end
 
+#pragma mark MediaCollection
+
+@interface MediaCollection()
+@property (nonatomic, strong) NSMutableArray *media;
+
+@end
+
 @implementation MediaCollection
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
 
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    
+    [self setup];
+}
+
+- (void)setup
+{
     self.delegate = self;
     self.dataSource = self;
     
     [self registerClass:[MediaCell class] forCellWithReuseIdentifier:@"MediaCell"];
     [self registerClass:[EmptyCell class] forCellWithReuseIdentifier:@"EmptyCell"];
+    
+    self.media = [NSMutableArray array];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    UICollectionViewFlowLayout *flow = [[UICollectionViewFlowLayout alloc] init];
+    flow.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    
+    self = [super initWithFrame:frame collectionViewLayout:flow];
+    if (self) {
+        [self setup];
+    }
+    return self;
 }
 
 - (void)setUser:(User *)user
 {
+    [self.media removeAllObjects];
     _user = user;
+    if (user) {
+        if (!self.user.isMe) {
+            [self.media addObject:user.media];
+        }
+        [self.media addObjectsFromArray:user.photos];
+    }
     [self reloadData];
 }
 
@@ -193,12 +210,12 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return MAX(self.user.photos.count, 1);
+    return MAX(self.media.count, 1);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.user.photos.count == 0) {
+    if (self.media.count == 0) {
         EmptyCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"EmptyCell" forIndexPath:indexPath];
         cell.editable = self.user.isMe;
         cell.addMediaBlock = ^{
@@ -209,16 +226,17 @@
     else {
         MediaCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MediaCell" forIndexPath:indexPath];
         
-        cell.media = [self.user.photos objectAtIndex:indexPath.row];
+        cell.media = [self.media objectAtIndex:indexPath.row];
         cell.parent = self.parent;
         cell.editable = self.user.isMe;
         cell.deleteBlock = ^(Media *media) {
-            NSUInteger idx = [self.user.photos indexOfObject:media];
+            NSUInteger idx = [self.media indexOfObject:media];
             NSLog(@"Deleting photo at index %ld", idx);
+            [self.media removeObject:media];
             [self.user removeObjectsInArray:@[media] forKey:@"photos"];
             [self.user saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                 if (succeeded) {
-                    if (self.user.photos.count > 0) {
+                    if (self.media.count > 0) {
                         [collectionView performBatchUpdates:^{
                             [collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]]];
                         } completion:nil];
@@ -240,10 +258,11 @@
     void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
         [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
             if (picked) {
+                [self.media addObject:media];
                 [self.user addUniqueObject:media forKey:@"photos"];
                 [self.user saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                     if (succeeded) {
-                        NSUInteger idx = [self.user.photos indexOfObject:media];
+                        NSUInteger idx = [self.media indexOfObject:media];
                         if (idx == 0) {
                             [self performBatchUpdates:^{
                                 [self reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]]];
@@ -279,7 +298,5 @@
     CGFloat h = CGRectGetHeight(self.bounds), offset = 10;
     return CGSizeMake(h-offset, h-offset);
 }
-
-
 
 @end

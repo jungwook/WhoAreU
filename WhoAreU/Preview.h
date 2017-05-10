@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Preview : UIViewController
-- (instancetype)initWithMedia:(Media*)media;
+@interface PreviewMedia : UIView
+- (instancetype)initWithMedia:(Media*)media exitWithTap:(BOOL)taps;
+- (void) killThisView;
+@end
+
+@interface PreviewUser : UIView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+- (instancetype)initWithUser:(User*)user;
 @end
