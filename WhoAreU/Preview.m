@@ -90,11 +90,16 @@
                                                  name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                object:self.playerItem];
     
-    self.view.backgroundColor = [UIColor blackColor];
-    self.playerView = [[UIView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.playerView];
+//    self.view.backgroundColor = [UIColor blackColor];
+    self.backgroundColor = [UIColor blackColor];
+//    self.playerView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.playerView = [[UIView alloc] initWithFrame:self.bounds];
+    
+//    [self.view addSubview:self.playerView];
+    [self addSubview:self.playerView];
     [self.playerView.layer addSublayer:self.playerLayer];
-    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
+//    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
 }
 
 - (void)tapToKill:(id)sender
@@ -176,12 +181,6 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemFailedToPlayToEndTimeNotification object:nil];
     }
     
-    [self killAllSubViews];
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void) killAllSubViews
-{
     [self.imageView removeFromSuperview];
     [self.scrollView removeFromSuperview];
     [self.playerView removeFromSuperview];
@@ -192,12 +191,14 @@
     self.player = nil;
     self.playerLayer = nil;
     self.playerView = nil;
-
+    
+    [self removeFromSuperview];
+//    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) dealloc
 {
-    [self killAllSubViews];
+    __LF
 }
 
 - (instancetype) initWithImageFile:(id)mediaFile

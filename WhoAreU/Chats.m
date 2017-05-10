@@ -38,7 +38,7 @@
     self.nickname.text = user.nickname;
     self.introduction.text = user.desc;
     self.age.text = user.age;
-    self.gender.text = user.genderTypeString;
+    self.gender.text = user.genderCode;
     self.gender.backgroundColor = user.genderColor;
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
     self.compass.heading = __headingUsers(self.user, [User me]);

@@ -99,9 +99,9 @@
     [self.photoView clear];
 }
 
-- (void)updateMedia
+- (void)updateMediaOnViewController:(UIViewController *)viewController
 {
-    [self.photoView updateMedia];
+    [self.photoView updateMediaOnViewController:viewController];
 }
 
 - (void)layoutSubviews
@@ -257,7 +257,7 @@
     return avatar;
 }
 
-- (void)updateMedia
+- (void)updateMediaOnViewController:(UIViewController *)viewController
 {
     void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
         self.me.media = nil;
@@ -268,7 +268,7 @@
         [self.activity stopAnimating];
     };
     void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
-        [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
+        [MediaPicker pickMediaOnViewController:viewController withUserMediaHandler:^(Media *media, BOOL picked) {
             if (picked) {
                 [self setMedia:media];
                 self.me.media = media;
@@ -305,7 +305,7 @@
                                                 handler:cancelAction]];
     }
     [self.activity startAnimating];
-    [self.parent presentViewController:alert animated:YES completion:nil];
+    [viewController presentViewController:alert animated:YES completion:nil];
 }
 
 - (User*) me

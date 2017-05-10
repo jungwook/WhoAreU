@@ -42,6 +42,7 @@
 @property (copy, nonatomic) UserBlock chatAction;
 @property (copy, nonatomic) UserBlock profileAction;
 @property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
+@property (nonatomic) BOOL expand;
 @end
 
 @implementation UserCell
@@ -65,7 +66,7 @@
     self.age.text = user.age;
     self.compass.heading = heading;
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
-    self.gender.text = user.genderTypeString;
+    self.gender.text = user.genderCode;
     self.gender.backgroundColor = user.genderColor;
     self.mediaCollection.parent = self.parent;
     self.introduction.text = user.introduction;
@@ -110,15 +111,14 @@
     [self setLikeStatus:!likes];
 }
 
-- (void) expand:(BOOL) expand
+- (void)setExpand:(BOOL)expand
 {
-//    CGFloat scale = 1.05f;
-    if (expand) {
-//        self.transform = CGAffineTransformMakeScale(scale, scale);
+    _expand = expand;
+    
+    if (self.expand) {
         self.mediaCollection.user = self.user;
     }
     else {
-//        self.transform = CGAffineTransformIdentity;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.mediaCollection.user = nil;
         });
@@ -293,9 +293,10 @@
         UserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
         
         __weak typeof(UserCell*) weakCell = cell;
+        User *user = [self.users objectAtIndex:indexPath.row];
         
         cell.parent = self;
-        cell.user = [self.users objectAtIndex:indexPath.row];
+        cell.user = user;
         cell.chatAction = ^(User *user) {
             // actions
             [Installation payForChatWithUser:user onViewController:self action:^(NSString* message) {
@@ -311,6 +312,13 @@
         cell.profileAction = ^(User *user) {
             [self performSegueWithIdentifier:@"UserProfile" sender:user];
         };
+        if (indexPath.row == self.selectedRow) {
+            cell.expand = YES;
+            cell.mediaCollection.user = user;
+        }
+        else {
+            cell.mediaCollection.user = nil;
+        }
         
         return cell;
     }
@@ -367,14 +375,14 @@
         if (indexPath.row == self.selectedRow) {
             self.selectedRow = -1;
             cell.selected = NO;
-            [cell expand:NO];
+            cell.expand = NO;
         }
         else {
             prevCell.selected = NO;
             prevCell = cell;
             self.selectedRow = indexPath.row;
             cell.selected = YES;
-            [cell expand:YES];
+            cell.expand = YES;
         }
         [tableView beginUpdates];
         [tableView endUpdates];

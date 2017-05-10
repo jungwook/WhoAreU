@@ -112,7 +112,7 @@
 
 - (IBAction)editPhoto:(id)sender
 {
-    [self.photoImageView updateMedia];
+    [self.photoImageView updateMediaOnViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -12,7 +12,7 @@
 @property (strong, nonatomic) User *user;
 @property (weak, nonatomic) UIViewController* parent;
 - (void) clear;
-- (void) updateMedia;
+- (void) updateMediaOnViewController:(UIViewController*)viewController;
 @end
 
 @interface PhotoView : UIView
@@ -21,7 +21,7 @@
 @property (weak, nonatomic) UIViewController* parent;
 
 - (void) clear;
-- (void) updateMedia;
+- (void) updateMediaOnViewController:(UIViewController*)viewController;
 - (void) setUser:(User *)user;
 - (void) setMediaDic:(MediaDic *)mediaDic;
 @end
