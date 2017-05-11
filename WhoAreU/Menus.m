@@ -90,9 +90,7 @@
     else {
         NSString *prevUserName = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
         
-        User *me = [User logInWithUsername:prevUserName password:prevUserName];
-        
-        if (me) {
+        if (prevUserName && [User logInWithUsername:prevUserName password:prevUserName]) {
             NSLog(@"Logged in as previous user");
             initializationHandler();
         }

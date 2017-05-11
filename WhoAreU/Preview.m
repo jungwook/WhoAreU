@@ -8,38 +8,8 @@
 
 #import "Preview.h"
 #import "S3File.h"
-
-@interface CenterScrollView : UIScrollView
-@end
-
-@implementation CenterScrollView
-
--(void)layoutSubviews
-{
-    [super layoutSubviews];
-    UIView* v = [self.delegate viewForZoomingInScrollView:self];
-    CGFloat svw = self.bounds.size.width;
-    CGFloat svh = self.bounds.size.height;
-    CGFloat vw = v.frame.size.width;
-    CGFloat vh = v.frame.size.height;
-    CGFloat off = 64.0f;
-    CGRect f = v.frame;
-    
-    off = 0.0f;
-    
-    if (vw < svw)
-        f.origin.x = (svw - vw) / 2.0;
-    else
-        f.origin.x = 0;
-    
-    if (vh < svh)
-        f.origin.y = (svh - vh) / 2.0 - off;
-    else
-        f.origin.y = -off;
-    v.frame = f;
-}
-
-@end
+#import "CenterScrollView.h"
+#import "MediaView.h"
 
 @interface PreviewUserCell : UICollectionViewCell
 @property (nonatomic, strong) Media* media;
@@ -69,11 +39,9 @@
 {
     _media = media;
     
-    [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        [S3File getImageFromFile:self.media.thumbnail imageBlock:^(UIImage *image) {
-            __drawImage(image, self);
-            [self.activity stopAnimating];
-        }];
+    [S3File getImageFromFile:self.media.thumbnail imageBlock:^(UIImage *image) {
+        __drawImage(image, self);
+        [self.activity stopAnimating];
     }];
 }
 
@@ -87,12 +55,14 @@
 @end
 
 @interface PreviewUser ()
-@property (nonatomic, strong) User *user;
+@property (nonatomic, weak) User *user;
 @property (nonatomic, strong) UIActivityIndicatorView *activity;
 @property (nonatomic, strong) UIView *preview;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSMutableArray *media;
 @property (nonatomic, weak) Media *presentedMedia;
+@property (nonatomic) BOOL toggleView;
+@property (nonatomic, strong) MediaView *mediaView;
 @end
 
 @implementation PreviewUser
@@ -112,7 +82,6 @@
         [self setupPreviewWithBounds:bounds];
         [self setupCollectionViewWithBounds:bounds];
         [self setupMedia];
-        [self selectFirstMedia];
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
     }
     return self;
@@ -127,36 +96,42 @@
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     self.activity.frame = bounds;
     [self.activity startAnimating];
+    
     [self.preview addSubview:self.activity];
+    
+    self.mediaView = [MediaView new];
+    [self.preview addSubview:self.mediaView];
 }
 
 - (void)setupMedia
 {
     self.media = [NSMutableArray array];
     if (self.user.media) {
-        [self.user.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        @synchronized (self.media) {
             [self.media insertObject:self.user.media atIndex:0];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.collectionView reloadData];
-            });
-        }];
+            [self.collectionView reloadData];
+        }
+        [self selectFirstMedia];
     }
     
     [self.user.photos enumerateObjectsUsingBlock:^(Media * _Nonnull photo, NSUInteger idx, BOOL * _Nonnull stop) {
         [photo fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            [self.media addObject:photo];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            @synchronized (self.media) {
+                [self.media addObject:photo];
                 [self.collectionView reloadData];
-            });
+            }
         }];
     }];
 }
 
 - (void)selectFirstMedia
 {
+    __LF
+    
     Media *firstMedia = self.media.firstObject;
+    
     if (firstMedia) {
-        [self showPreview:[[PreviewMedia alloc] initWithMedia:firstMedia exitWithTap:NO]];
+        [self.mediaView setMedia:firstMedia];
         self.presentedMedia = firstMedia;
     }
 }
@@ -185,11 +160,12 @@
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
+    __LF
+    
     self.frame = mainWindow.bounds;
     self.preview.frame = self.bounds;
-    if (self.presentedMedia) {
-        [self showPreview:[[PreviewMedia alloc] initWithMedia:self.presentedMedia exitWithTap:NO]];
-    }
+    self.mediaView.frame = self.bounds;
+    [self.mediaView setNeedsLayout];
 }
 
 - (void)layoutSubviews
@@ -240,25 +216,12 @@
     cell.media = [self.media objectAtIndex:indexPath.row];
     cell.backgroundColor = [UIColor blackColor];
     cell.tapAction = ^(Media *media) {
-        [self showPreview:[[PreviewMedia alloc] initWithMedia:media exitWithTap:NO]];
-        self.presentedMedia = media;
+        if (![media isEqual:self.presentedMedia]) {
+            [self.mediaView setMedia:media];
+            self.presentedMedia = media;
+        }
     };
     return cell;
-}
-
-- (void) showPreview:(PreviewMedia*)preview
-{
-    const CGFloat duration = 0.3f;
-
-    PreviewMedia *subView = self.firstPreview;
-    preview.alpha = 0.0f;
-    [self.preview addSubview:preview];
-    [UIView animateWithDuration:duration animations:^{
-        subView.alpha = 0.0f;
-        preview.alpha = 1.0f;
-    } completion:^(BOOL finished) {
-        [subView killThisView];
-    }];
 }
 
 - (void) tapped:(id)sender
@@ -272,34 +235,24 @@
     }];
 }
 
-- (PreviewMedia*) firstPreview
-{
-    __block PreviewMedia* preview = nil;
-    [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([view isKindOfClass:[PreviewMedia class]]) {
-            preview = view;
-            *stop = YES;
-        }
-    }];
-    return preview;
-}
-
 - (void) killThisView
 {
-    [self.preview.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([view isKindOfClass:[PreviewMedia class]]) {
-            PreviewMedia *pm = (PreviewMedia*) view;
-            [pm killThisView];
-        }
-    }];
+    __LF
+    self.user = nil;
+    [self.mediaView removeFromSuperview];
+    [self.preview removeFromSuperview];
+    [self.collectionView removeFromSuperview];
+    [self.media removeAllObjects];
+    self.media = nil;
+    self.presentedMedia = nil;
     [self removeFromSuperview];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
 - (void)dealloc
 {
-    __LF
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    NSLog(@"Dealloc %s %@", __func__, self.user.nickname);
 }
 
 @end
@@ -308,6 +261,7 @@
 @property (strong, nonatomic) Media* media;
 @property (strong, nonatomic) CenterScrollView *scrollView;
 @property (strong, nonatomic) UIImageView *imageView;
+
 @property (nonatomic, strong) AVPlayerItem *playerItem;
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
@@ -321,6 +275,8 @@
 
 - (instancetype)initWithMedia:(Media *)media exitWithTap:(BOOL)taps
 {
+    NSLog(@"Initializing %s %@", __func__, [media.thumbnail lastPathComponent]);
+
     switch (media.type) {
         case kMediaTypePhoto: {
             self = [self initWithImageFile:media.media exitWithTap:(BOOL)taps];
@@ -530,12 +486,11 @@
 
 - (void) dealloc
 {
-    __LF
+    NSLog(@"Dealloc %s %@", __func__, [self.media.thumbnail lastPathComponent]);
 }
 
 - (void)layoutSubviews
 {
-    __LF
     [super layoutSubviews];
     
     CGFloat w = CGRectGetWidth(self.bounds);
@@ -564,13 +519,16 @@
 
 - (void) initZoomWithImage:(UIImage*)image
 {
-    float minZoom = MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height);
-    if (minZoom > 1) return;
-    
-    self.scrollView.minimumZoomScale = minZoom;
-    self.scrollView.maximumZoomScale = 2.0;
-    self.scrollView.zoomScale = minZoom;
-    self.zoom = minZoom;
+    float minZoom = MIN(MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height), 1.0f);
+    if (minZoom > 1) {
+        return;
+    }
+    else {
+        self.scrollView.minimumZoomScale = MIN(MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height), 1.0f);
+        self.scrollView.maximumZoomScale = 2.0;
+        self.scrollView.zoomScale = minZoom;
+        self.zoom = minZoom;
+    }
 }
 
 //- (void)didReceiveMemoryWarning {

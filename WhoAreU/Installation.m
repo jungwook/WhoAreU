@@ -23,8 +23,6 @@
 
 + (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(StringBlock)actionBlock
 {
-    Installation *install = [Installation currentInstallation];
-    
     if ([Engine userExists:user]) {
         if (actionBlock) {
             actionBlock(nil);
@@ -32,6 +30,7 @@
         }
         return;
     }
+    Installation *install = [Installation currentInstallation];
     
     BOOL enoughCredits = install.credits > install.openChatCredits;
     
@@ -49,8 +48,8 @@
         [viewController presentViewController:vc animated:YES completion:nil];
     };
     void(^okhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
-        
         install.credits -= install.openChatCredits;
+        NSLog(@"Install:%@", install);
         [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
             if (succeeded) {
                 NSString *message = alert.textFields.firstObject.text;

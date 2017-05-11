@@ -56,7 +56,9 @@
 -(void)setUser:(User *)user
 {
     _user = user;
-
+    
+    NSLog(@"PHOTOS:%@", self.user.photos);
+    
     CLLocationDirection heading = __heading([Engine where], user.where);
     [self.userView clear];
     self.nickname.text = user.nickname;
@@ -238,6 +240,11 @@
     PFQuery *query = [User query];
     [query setSkip:self.skip];
     [query setLimit:self.limit];
+    [query includeKey:@"media"];
+    
+    //  No need to include keys... lazy loading when tapped.
+    //  [query includeKey:@"photos"];
+    
     switch (condition) {
         case kSegmentGirls:
             [query whereKey:@"gender" equalTo:@(kGenderTypeFemale)];

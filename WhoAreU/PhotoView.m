@@ -115,7 +115,6 @@
 @interface PhotoView()
 @property (strong, nonatomic) UIActivityIndicatorView *activity;
 @property (strong, nonatomic) User *user;
-@property BOOL hasMedia;
 @end
 
 @implementation PhotoView
@@ -137,7 +136,6 @@
                                
 - (void)setup
 {
-    self.hasMedia = NO;
     self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.activity.frame = self.bounds;
     [self addSubview:self.activity];
@@ -150,26 +148,25 @@
 
 - (void)tapped:(id)sender
 {
-    if (self.hasMedia) {
-        if (self.user) {
+    if (self.user) {
+        [self.user.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             PreviewUser *preview = [[PreviewUser alloc] initWithUser:self.user];
             preview.alpha = 0;
             [mainWindow addSubview:preview];
             [UIView animateWithDuration:0.3 animations:^{
                 preview.alpha = 1.0f;
             }];
-        }
-        else {
+        }];
+    }
+    else {
+        [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:self.media exitWithTap:YES];
             preview.alpha = 0;
             [mainWindow addSubview:preview];
             [UIView animateWithDuration:0.3 animations:^{
                 preview.alpha = 1.0f;
             }];
-        }
-    }
-    else {
-        NSLog(@"No image or no parent view controller set");
+        }];
     }
 }
 
@@ -178,10 +175,6 @@
     _user = user;
     _media = user.media;
     if (self.media) {
-        self.hasMedia = NO;
-        [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            self.hasMedia = YES;
-        }];
         [self.activity startAnimating];
         [S3File getImageFromFile:user.thumbnail imageBlock:^(UIImage *image) {
             self.image = image;
@@ -191,7 +184,6 @@
     else {
         self.media = nil;
         self.image = self.avatar;
-        self.hasMedia = NO;
     }
 }
 
@@ -204,21 +196,17 @@
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
             
-            NSLog(@"====");
             NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
-            NSLog(@"====++++++++");
             
             [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
                 UIImage *photo = [UIImage imageWithData:data];
                 self.image = photo;
-                self.hasMedia = YES;
                 [self.activity stopAnimating];
             }];
         }];
     }
     else {
         self.image = self.avatar;
-        self.hasMedia = NO;
     }
 }
 
@@ -241,7 +229,6 @@
     self.user = nil;
     self.media = nil;
     self.image = self.avatar;
-    self.hasMedia = NO;
 }
 
 - (void)setImage:(UIImage *)image

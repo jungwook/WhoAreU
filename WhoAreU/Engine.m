@@ -125,10 +125,6 @@
 
 #pragma mark Counter
 
-@interface Counter : NSObject
-@property (strong, nonatomic) NSMutableDictionary *counters;
-@end
-
 @implementation Counter
 
 + (instancetype) new
@@ -212,7 +208,6 @@
 
 // Other structures
 @property (nonatomic, strong) NSMutableDictionary *chats;
-
 @end
 @implementation Engine
 
@@ -289,8 +284,6 @@
     self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatFilePath];
 #endif
     
-    
-    
     if (!self.chats) {
         self.chats = [NSMutableDictionary dictionary];
     }
@@ -298,6 +291,8 @@
     NSLog(@"CHATS Loaded with %ld chatrooms.", self.chats.allKeys.count);
     
     self.timeKeeper = [NSTimer scheduledTimerWithTimeInterval:SIMULATOR_FETCH_INTERVAL target:self selector:@selector(timeKeep) userInfo:nil repeats:YES];
+    
+    [self refreshChatUsers];
 }
 
 - (void) timeKeep
@@ -307,32 +302,29 @@
     }
 }
 
-//+ (void) loadMessage:(id)messageId
-//{
-//    NSLog(@"===========================================");
-//    Message *message = [Message objectWithoutDataWithObjectId:messageId];
-//    
-//    [message fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-//        if (!error) {
-//            if (message.media) {
-//                [message.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-//                    if (!error) {
-//                        [[Engine new] addMessageToSystem:message];
-//                    }
-//                    else {
-//                        NSLog(@"ERROR:%@", error.localizedDescription);
-//                    }
-//                }];
-//            }
-//            else {
-//                [[Engine new] addMessageToSystem:message];
-//            }
-//        }
-//        else {
-//            NSLog(@"ERROR:%@", error.localizedDescription);
-//        }
-//    }];
-//}
+- (void) refreshChatUsers
+{
+    PFQuery *query = [Message query];
+    [query whereKey:@"toUser" equalTo:[User me]];
+    [query whereKey:@"read" equalTo:@(FALSE)];
+    [query includeKey:@"toUser"];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
+        
+        [messages enumerateObjectsUsingBlock:^(Message*  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (![[Engine chatUserIds] containsObject:message.objectId]) {
+                [self.chats setObject:[NSMutableArray array] forKey:message.objectId];
+                [Engine save];
+                [Engine postNewUserMessageNotification:nil];
+            }
+        }];
+    }];
+}
+
++ (NSArray *)chatUserIds
+{
+    return [Engine new].chats.allKeys;
+}
 
 + (void)readMessage:(MessageDic *)dictionary
 {
@@ -447,9 +439,6 @@
             [Engine postNewUserMessageNotification:@{
                                                  @"senderId" : message.fromUser.objectId
                                                  }];
-//            [[Engine new] addMessageToSystem:message completion:^{
-//                [counter decreaseCount:countId];
-//            }];
         }];
     }];
 }
@@ -457,7 +446,6 @@
 + (void) loadUnreadMessagesFromUser:(User *)user completion:(VoidBlock)handler
 {
     Counter *counter = [Counter new];
-    
     PFQuery *query = [Message query];
     
     [query whereKey:@"toUser" equalTo:[User me]];
@@ -520,11 +508,6 @@
     }];
 }
 
-+ (NSArray *)chatUserIds
-{
-    return [Engine new].chats.allKeys;
-}
-
 + (NSArray *)messagesFromUser:(User *)user
 {
     NSAssert(user != nil, @"User cannot be nil");
@@ -534,6 +517,17 @@
     
     NSMutableArray *messages = [engine messagesFromUser:user];
     return [messages sortedArrayUsingDescriptors:@[sd]];
+}
+
+- (NSMutableArray*) messagesFromUser:(User*)user
+{
+    NSMutableArray *messages = [self.chats objectForKey:user.objectId];
+    
+    if (!messages) {
+        messages = [NSMutableArray array];
+        [self.chats setObject:messages forKey:user.objectId];
+    }
+    return messages;
 }
 
 + (BOOL)userExists:(User *)user
@@ -548,17 +542,6 @@
         }
     }];
     return ret;
-}
-
-- (NSMutableArray*) messagesFromUser:(User*)user
-{
-    NSMutableArray *messages = [self.chats objectForKey:user.objectId];
-    
-    if (!messages) {
-        messages = [NSMutableArray array];
-        [self.chats setObject:messages forKey:user.objectId];
-    }
-    return messages;
 }
 
 + (void)send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler
@@ -791,7 +774,6 @@
             break;
     }
 }
-
 
 + (UNNotificationPresentationOptions)handlePushUserInfo:(id)info
 {

@@ -22,6 +22,12 @@ typedef enum : NSUInteger {
     kSimulatorStatusDevice,
 } SimulatorStatus;
 
+@interface Counter : NSObject
+@property (strong, nonatomic) NSMutableDictionary *counters;
+- (id) setCount:(NSUInteger)count completion:(VoidBlock)handler;
+- (void) decreaseCount:(id)counterId;
+@end
+
 @interface Queue : NSObject
 @property (nonatomic, readonly) NSArray* objects;
 @property (nonatomic, readonly) NSUInteger count;
@@ -46,7 +52,6 @@ typedef enum : NSUInteger {
 + (void) save;
 + (NSArray*) messagesFromUser:(User*)user;
 + (void) fetchOutstandingMessages;
-//+ (void) loadMessage:(id)messageId;
 + (BOOL) userExists:(User*)user;
 + (NSUInteger) unreadMessagesFromUser:(User*)user;
 + (void) readMessage:(MessageDic*)dictionary;
