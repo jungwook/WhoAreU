@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface Chat : UIViewController
-@property (nonatomic, strong) User *user;
+@property (nonatomic, strong) Channel* channel;
 @end

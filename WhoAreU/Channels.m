@@ -6,7 +6,7 @@
 //  Copyright © 2017년 SMARTLY CO. All rights reserved.
 //
 
-#import "Channel.h"
+#import "Channels.h"
 #import "PhotoView.h"
 #import "IndentedLabel.h"
 #import "BalloonLabel.h"
@@ -63,8 +63,6 @@
     self.distance.text = __distanceString(distance);
     self.compass.heading = heading;
     self.ago.text = updatedAt.timeAgoSimple;
-    
-    NSLog(@"D:%f [%@/%@ - %@] ", distance, where, [User me].where, [Engine where]);
 }
 
 - (void)setParent:(UIViewController *)parent
@@ -74,12 +72,12 @@
 
 @end
 
-@interface Channel ()
+@interface Channels ()
 @property (strong, nonatomic) Queue *messages;
 @property (strong, nonatomic) Refresh *refresh;
 @end
 
-@implementation Channel
+@implementation Channels
 
 - (void)awakeFromNib
 {
@@ -100,7 +98,7 @@
 }
 
 - (IBAction)sendChannelMessage:(id)sender {
-    [Engine sendChannelMessage:@"Testing 123..."];
+//    [Engine sendChannelMessage:@"Testing 123..."];
 }
 
 - (void)newChannelMessage:(id)sender

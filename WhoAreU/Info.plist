@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>material-design-icons.ttf</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -28,7 +32,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This application requires the use of your camera.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application requires the user's location</string>
+	<string>This application requires the user&apos;s location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This application requires the use of your microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

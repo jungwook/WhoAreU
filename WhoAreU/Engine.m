@@ -250,6 +250,13 @@
 //    [self fetchOutstandingMessages];
 }
 
+- (void)setInitialized:(BOOL)initialized
+{
+    _initialized = initialized;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSystemInitialized object:nil];
+}
+
 - (void)setSimulatorStatus:(SimulatorStatus)simulatorStatus
 {
     _simulatorStatus = simulatorStatus;
@@ -292,16 +299,135 @@
     
     self.timeKeeper = [NSTimer scheduledTimerWithTimeInterval:SIMULATOR_FETCH_INTERVAL target:self selector:@selector(timeKeep) userInfo:nil repeats:YES];
     
-    [self refreshChatUsers];
+//    [self refreshChatUsers];
 }
 
 - (void) timeKeep
 {
     if (self.simulatorStatus == kSimulatorStatusSimulator && self.initialized) {
-        [Engine fetchOutstandingMessages];
+//        [Engine fetchOutstandingMessages];
     }
 }
 
++ (PFGeoPoint *)where
+{
+    Engine *engine = [Engine new];
+    return [engine where];
+}
+
+- (PFGeoPoint*) where
+{
+    return POINT_FROM_CLLOCATION(self.currentLocation);
+}
+
+- (void) initLocationServices
+{
+    // Initializing location services.
+    
+    NSLog(@"Initializing Location Services");
+    
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    
+    //    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+    //        NSLog(@"Allowing background location updates");
+    //        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
+    //    }
+    
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusNotDetermined:
+            [self.locationManager requestAlwaysAuthorization];
+            break;
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+        default:
+            break;
+    }
+    
+    //    [self.locationManager startMonitoringSignificantLocationChanges];
+    
+    [self.locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
+    [self.locationManager startUpdatingLocation];
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        NSLog(@"LOCATION SERVICES ENABLED");
+    }
+    else {
+        NSLog(@"LOCATION SERVICES NOT ENABLED");
+    }
+    
+    [self.locationManager startUpdatingHeading];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    self.heading = newHeading.magneticHeading;
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
+{
+    CLLocation* location = [locations lastObject];
+    switch (self.simulatorStatus) {
+        case kSimulatorStatusDevice:
+            self.currentLocation = location;
+            break;
+            
+        case kSimulatorStatusSimulator:
+            self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];
+            
+        default:
+            break;
+    }
+}
+
++ (CLLocationDirection)heading
+{
+    return [Engine new].heading;
+}
+
+- (void)setCurrentLocation:(CLLocation *)currentLocation
+{
+    _currentLocation = currentLocation;
+    
+    self.me.where = POINT_FROM_CLLOCATION(currentLocation);
+    self.me.whereUdatedAt = [NSDate date];
+    [self.me saveInBackground];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    __LF
+    
+    switch (status) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusNotDetermined:
+            [self.locationManager requestAlwaysAuthorization];
+            break;
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            [self.locationManager startMonitoringSignificantLocationChanges];
+            break;
+        default:
+            break;
+    }
+}
+
++ (void) postNewUserMessageNotification:(id)userInfo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewUserMessage object:userInfo];
+}
+
++ (void) postNewChannelMessageNotification:(id)userInfo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewChannelMessage object:userInfo];
+}
+
+/*
 - (void) refreshChatUsers
 {
     PFQuery *query = [Message query];
@@ -406,17 +532,10 @@
 {
     return 0;
 }
+*/
 
-+ (void) postNewUserMessageNotification:(id)userInfo
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewUserMessage object:userInfo];
-}
 
-+ (void) postNewChannelMessageNotification:(id)userInfo
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewChannelMessage object:userInfo];
-}
-
+/*
 + (void) fetchOutstandingMessages
 {
     Counter *counter = [Counter new];
@@ -575,7 +694,7 @@
     }];
 }
 
-+ (void) sendPushMessage:(NSString*)textToSend messageId:(id)messageId toUserId:(id)userId
++ (void) sendPushMessageV2:(NSString*)textToSend messageId:(id)messageId toUserId:(id)userId
 {
     const NSInteger maxLength = 100;
     NSUInteger length = [textToSend length];
@@ -584,74 +703,104 @@
         textToSend = [textToSend stringByAppendingString:@"..."];
     }
     
-    [S3File getDataFromFile:[User me].media.thumbnail dataBlock:^(NSData *data) {
-        NSData *compressed = __compressedImageDataQuality(data, 20, kJPEGCompressionLow);
-        NSLog(@"Thumbnail size:%ld", compressed.length);
-        id params = @{
-                      @"alert" : textToSend,
-                      @"badge" : @"increment",
-                      @"sound" : @"default",
-                      @"recipientId": userId,
-                      @"payload" : @{
-                              @"thumbnail" : compressed,
-                              @"senderId":    [User me].objectId,
-                              @"message":     textToSend,
-                              @"messageId":   messageId,
-                              },
-                      };
-        
-        [PFCloud callFunctionInBackground:@"pushUserMessage" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-            }
-            else {
-                NSLog(@"PUSH SENT:%@", object);
-            }
-        }];
-        
+    id params = @{
+                  @"alert" : textToSend,
+                  @"badge" : @"increment",
+                  @"sound" : @"default",
+                  @"recipientId": userId,
+                  @"payload" : @{
+//                          @"thumbnail" : compressed,
+                          @"senderId":    [User me].objectId,
+                          @"message":     textToSend,
+                          @"messageId":   messageId,
+                          },
+                  };
+    
+    [PFCloud callFunctionInBackground:@"pushUserMessage" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"PUSH SENT:%@", object);
+        }
     }];
+}
+
+NSDictionary* __dictionaryForObject(PFObject* object, NSArray* fields)
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [fields enumerateObjectsUsingBlock:^(id  _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+        id value = [object objectForKey:key];
+        if (value) {
+            [dictionary setObject:value forKey:key];
+        }
+    }];
+    
+    return dictionary;
+}
+
+void __addValue(NSMutableDictionary* dictionary, id key, id value) {
+    if (value) {
+        [dictionary setObject:value forKey:key];
+    }
 }
 
 + (void) sendChannelMessage:(NSString *)message
 {
-    const NSInteger maxLength = 100;
-    NSUInteger length = [message length];
-    if (length >= maxLength) {
-        message = [message substringToIndex:maxLength];
-        message = [message stringByAppendingString:@"..."];
-    }
     User *me = [User me];
     
-    [S3File getDataFromFile:[User me].media.thumbnail dataBlock:^(NSData *data) {
-        
-        NSData *compressed = __compressedImageDataQuality(data, 20, kJPEGCompressionLow);
-        NSLog(@"Thumbnail size:%ld", compressed.length);
-        
-        id params = @{
-                      @"channel" : @"Main",
-                      @"payload" : @{
-                              @"senderId": me.objectId,
-                              @"nickname" : me.nickname,
-                              @"desc" : me.desc,
-                              @"introduction" : me.introduction,
-                              @"age" : me.age,
-                              @"gender" : me.genderTypeString,
-                              @"genderColor" : NSStringFromUIColor(me.genderColor),
-                              @"where" : me.where,
-                              @"message": message,
-                              @"thumbnail" : me.media.thumbnail,
-                              },
-                      };
-        [PFCloud callFunctionInBackground:@"sendMessageToChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-            }
-            else {
-                NSLog(@"PUSH SENT:%@", object);
-            }
-        }];
+    id payload = [NSMutableDictionary dictionary];
+    __addValue(payload, @"senderId", me.objectId);
+    __addValue(payload, @"nickname", me.nickname);
+    __addValue(payload, @"desc", me.desc);
+    __addValue(payload, @"introduction", me.introduction);
+    __addValue(payload, @"age", me.age);
+    __addValue(payload, @"gender", me.genderTypeString);
+    __addValue(payload, @"genderColor", NSStringFromUIColor(me.genderColor));
+    __addValue(payload, @"where", me.where);
+    __addValue(payload, @"message", message);
+    __addValue(payload, @"thumbnail", me.media.thumbnail);
+    
+    id params = @{
+                  @"channel" : @"Main",
+                  @"payload" : payload,
+                  };
+    [PFCloud callFunctionInBackground:@"sendMessageToChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"PUSH SENT:%@", object);
+        }
     }];
 }
+
++ (void) sendPushMessage:(NSString*)textToSend messageId:(id)messageId toUserId:(id)userId
+{
+    id params = @{
+                  @"channel" : userId,
+                  @"alert" : textToSend,
+                  @"badge" : @"increment",
+                  @"sound" : @"default",
+                  @"recipientId": userId,
+                  @"payload" : @{
+                          //                          @"thumbnail" : compressed,
+                          @"senderId":    [User me].objectId,
+                          @"message":     textToSend,
+                          @"messageId":   messageId,
+                          },
+                  };
+    
+    [PFCloud callFunctionInBackground:@"sendMessageToUserChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
+        }
+        else {
+            NSLog(@"PUSH SENT:%@", object);
+        }
+    }];
+}
+
 
 + (void) save
 {
@@ -666,115 +815,10 @@
         NSLog(@"Error saving chat file");
     }
 }
+*/
 
-+ (PFGeoPoint *)where
-{
-    Engine *engine = [Engine new];
-    return [engine where];
-}
 
-- (PFGeoPoint*) where
-{
-    return POINT_FROM_CLLOCATION(self.currentLocation);
-}
-
-- (void) initLocationServices
-{
-    // Initializing location services.
-    
-    NSLog(@"Initializing Location Services");
-    
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    
-//    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
-//        NSLog(@"Allowing background location updates");
-//        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
-//    }
-    
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusNotDetermined:
-            [self.locationManager requestAlwaysAuthorization];
-            break;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        default:
-            break;
-    }
-    
-//    [self.locationManager startMonitoringSignificantLocationChanges];
-    
-    [self.locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
-    [self.locationManager startUpdatingLocation];
-    
-    if ([CLLocationManager locationServicesEnabled]) {
-        NSLog(@"LOCATION SERVICES ENABLED");
-    }
-    else {
-        NSLog(@"LOCATION SERVICES NOT ENABLED");
-    }
-    
-    [self.locationManager startUpdatingHeading];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
-{
-    self.heading = newHeading.magneticHeading;
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
-{
-    CLLocation* location = [locations lastObject];
-    switch (self.simulatorStatus) {
-        case kSimulatorStatusDevice:
-            self.currentLocation = location;
-            break;
-            
-        case kSimulatorStatusSimulator:
-            self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];
-            
-        default:
-            break;
-    }
-}
-
-+ (CLLocationDirection)heading
-{
-    return [Engine new].heading;
-}
-
-- (void)setCurrentLocation:(CLLocation *)currentLocation
-{
-    _currentLocation = currentLocation;
-    
-    self.me.where = POINT_FROM_CLLOCATION(currentLocation);
-    self.me.whereUdatedAt = [NSDate date];
-    [self.me saveInBackground];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-    __LF
-    
-    switch (status) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusNotDetermined:
-            [self.locationManager requestAlwaysAuthorization];
-            break;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            [self.locationManager startMonitoringSignificantLocationChanges];
-            break;
-        default:
-            break;
-    }
-}
-
+/*
 + (UNNotificationPresentationOptions)handlePushUserInfo:(id)info
 {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:info];
@@ -799,6 +843,6 @@
     
     return option;
 }
-
+*/
 
 @end

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="g15-HN-NsY">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bKz-ku-x3A">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -572,7 +572,7 @@
         <!--Root View Controller-->
         <scene sceneID="TwK-6Y-Bll">
             <objects>
-                <tableViewController id="ext-qL-Zxp" customClass="Channel" sceneMemberID="viewController">
+                <tableViewController id="ext-qL-Zxp" customClass="Channels" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="120" sectionHeaderHeight="28" sectionFooterHeight="28" id="OJa-RM-1Vj">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1482,7 +1482,7 @@ GPS</string>
         <!--Menus-->
         <scene sceneID="lkk-lx-imY">
             <objects>
-                <viewController id="g15-HN-NsY" customClass="Menus" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Menus" id="g15-HN-NsY" customClass="Menus" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="k3a-B2-WW4"/>
                         <viewControllerLayoutGuide type="bottom" id="xOU-sf-yka"/>
@@ -1495,7 +1495,7 @@ GPS</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MYc-VO-VuJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-455" y="-2392"/>
+            <point key="canvasLocation" x="241" y="-2320"/>
         </scene>
     </scenes>
     <resources>

@@ -193,13 +193,28 @@
 
 - (void) subscribeToChannelCurrentUser
 {
-    Installation *install = [Installation currentInstallation];
-    BOOL sameUser = [install.user.objectId isEqualToString:[User me].objectId];
+    User *me = [User me];
+
+    PFInstallation *install = [PFInstallation currentInstallation];
+//    install[@"deviceToken"] = install[@"deviceToken"];
+//    install[@"deviceType"] = install.deviceType;
+    [install addUniqueObject:me.objectId forKey:@"channels"];
+    NSLog(@"Installation:%@", install);
+    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR:%@", error.localizedDescription);
+        }
+    }];
+    
+    User *installUser = install[@"user"];
+    BOOL sameUser = [installUser.objectId isEqualToString:me.objectId];
     if (!sameUser) {
-        install.user = [User me];
-        install.credits = install.initialFreeCredits;
+        me.credits = me.initialFreeCredits;
+        NSLog(@"Adding %ld free credits", me.credits);
+        [me saveInBackground];
+        install[@"deviceToken"] = install[@"deviceToken"];
+        install[@"user"] = me;
         NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
-        NSLog(@"Adding %ld free credits", install.credits);
         [install saveInBackground];
     }
     else {

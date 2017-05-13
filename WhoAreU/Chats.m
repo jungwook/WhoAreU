@@ -69,7 +69,8 @@
 
 - (NSArray *)chats
 {
-    return [Engine chatUserIds];
+    return nil;
+//    return [Engine chatUserIds];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -80,10 +81,10 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"Chat"]) {
-        ChatsCell *cell = sender;
+//        ChatsCell *cell = sender;
         Chat *chat = segue.destinationViewController;
         chat.hidesBottomBarWhenPushed = YES;
-        chat.user = cell.user;
+//        chat.user = cell.user;
     }
 }
 
@@ -128,8 +129,8 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         __alert(self, @"Are you sure?", @"All contents will be permanently deleted.", ^(UIAlertAction* action) {
-            id userId = [self.chats objectAtIndex:indexPath.row];
-            [Engine deleteChatWithUserId:userId];
+//            id userId = [self.chats objectAtIndex:indexPath.row];
+//            [Engine deleteChatWithUserId:userId];
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }, ^(UIAlertAction* action) {
             

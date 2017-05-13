@@ -9,10 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface PreviewMedia : UIView
-- (instancetype)initWithMedia:(Media*)media exitWithTap:(BOOL)taps;
-- (void) killThisView;
++ (void)showMedia:(Media*)media;
 @end
 
-@interface PreviewUser : UIView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
-- (instancetype)initWithUser:(User*)user;
+@interface PreviewUser : UIView
++ (void)showUser:(User*)user;
 @end

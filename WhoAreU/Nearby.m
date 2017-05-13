@@ -15,6 +15,7 @@
 #import "Refresh.h"
 #import "MediaCollection.h"
 #import "BalloonLabel.h"
+#import "MessageCenter.h"
 
 @interface NoMoreCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *label;
@@ -37,27 +38,16 @@
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet UILabel *like;
-@property (weak, nonatomic) IBOutlet MediaCollection *mediaCollection;
 @property (weak, nonatomic) UIViewController* parent;
 @property (copy, nonatomic) UserBlock chatAction;
-@property (copy, nonatomic) UserBlock profileAction;
 @property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
-@property (nonatomic) BOOL expand;
 @end
 
 @implementation UserCell
 
--(void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-//    self.backgroundColor = selected ? [UIColor groupTableViewBackgroundColor] : [UIColor clearColor];
-}
-
 -(void)setUser:(User *)user
 {
     _user = user;
-    
-    NSLog(@"PHOTOS:%@", self.user.photos);
     
     CLLocationDirection heading = __heading([Engine where], user.where);
     [self.userView clear];
@@ -69,7 +59,6 @@
     self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
     self.gender.text = user.genderCode;
     self.gender.backgroundColor = user.genderColor;
-    self.mediaCollection.parent = self.parent;
     self.introduction.text = user.introduction;
     self.ago.text = user.updatedAt.timeAgoSimple;
     [self setLikeStatus:[[User me] likes:user]];
@@ -94,12 +83,6 @@
     }
 }
 
-- (IBAction)doProfile:(id)sender {
-    if (self.profileAction) {
-        self.profileAction(self.user);
-    }
-}
-
 - (IBAction)doLike:(id)sender {
     BOOL likes = [[User me] likes:self.user];
     if (likes) {
@@ -111,18 +94,8 @@
     [self setLikeStatus:!likes];
 }
 
-- (void)setExpand:(BOOL)expand
+- (void)clicked
 {
-    _expand = expand;
-    
-    if (self.expand) {
-        self.mediaCollection.user = self.user;
-    }
-    else {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.mediaCollection.user = nil;
-        });
-    }
     [self.layer removeAllAnimations];
     [self.layer addAnimation:[self photoAnimations] forKey:nil];
 }
@@ -141,7 +114,6 @@
     
     return scale;
 }
-
 @end
 
 @interface Nearby ()
@@ -198,8 +170,6 @@
             [array addObjectsFromArray:users];
             self.users = array;
         }
-//        self.users = [self sortUsersByDistance:self.users];
-        
         [self.refresh endRefreshing];
         [self.tableView reloadData];
     } condition:index];
@@ -276,11 +246,16 @@
     }];
 }
 
+- (void)systemInitialized:(id)sender
+{
+    [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.selectedRow = -1;
-    [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    ANOTIF(kNotificationSystemInitialized, @selector(systemInitialized:));
 }
 
 - (void)didReceiveMemoryWarning {
@@ -307,32 +282,31 @@
         UserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
         
         __weak typeof(UserCell*) weakCell = cell;
+        
         User *user = [self.users objectAtIndex:indexPath.row];
         
         cell.parent = self;
         cell.user = user;
         cell.chatAction = ^(User *user) {
             // actions
-            [Installation payForChatWithUser:user onViewController:self action:^(NSString* message) {
-                NSString *textToSend = [message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                
-                [Engine send:textToSend toUser:user completion:^{
-                    [self performSegueWithIdentifier:@"Chat" sender:user];
-                    weakCell.userView.badgeValue = nil;
-                }];
+            [User payForChatWithUser:user onViewController:self action:^(id object) {
+                if ([object isKindOfClass:[Channel class]]) {
+                    NSLog(@"CHANNEL:%@", object);
+                    [self performSegueWithIdentifier:@"Chat" sender:object];
+                    weakCell.badgeValue = nil;
+                }
+                else if ([object isKindOfClass:[NSString class]]) {
+                    NSLog(@"FIRST MESSAGE:%@", object);
+                    [MessageCenter send:object users:@[user] completion:^(Channel *channel) {
+                        [self performSegueWithIdentifier:@"Chat" sender:channel];
+                        weakCell.badgeValue = nil;
+                    }];
+                }
+                else {
+                    NSLog(@"ERROR[%s]:Unknown return", __func__);
+                }
             }];
         };
-        
-        cell.profileAction = ^(User *user) {
-            [self performSegueWithIdentifier:@"UserProfile" sender:user];
-        };
-        if (indexPath.row == self.selectedRow) {
-            cell.expand = YES;
-            cell.mediaCollection.user = user;
-        }
-        else {
-            cell.mediaCollection.user = nil;
-        }
         
         return cell;
     }
@@ -361,7 +335,7 @@
         // other preparations.
         Chat *chat = segue.destinationViewController;
         chat.hidesBottomBarWhenPushed = YES;
-        chat.user = sender;
+        chat.channel = sender;
     }
 }
 
@@ -389,14 +363,16 @@
         if (indexPath.row == self.selectedRow) {
             self.selectedRow = -1;
             cell.selected = NO;
-            cell.expand = NO;
+            
+            [cell clicked];
         }
         else {
             prevCell.selected = NO;
             prevCell = cell;
             self.selectedRow = indexPath.row;
             cell.selected = YES;
-            cell.expand = YES;
+
+            [cell clicked];
         }
         [tableView beginUpdates];
         [tableView endUpdates];

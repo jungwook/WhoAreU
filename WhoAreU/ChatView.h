@@ -13,6 +13,6 @@
 @property (weak, nonatomic) UIViewController *parent;
 @property (copy, nonatomic) StringBlock sendTextAction;
 @property (copy, nonatomic) MediaBlock sendMediaAction;
-@property (nonatomic, strong) User *user;
+@property (nonatomic, strong) Channel* channel;
 - (void)reloadDataAnimated:(BOOL) animated;
 @end

@@ -60,10 +60,9 @@
 		123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF15E1EA1AF7500ED0547 /* Chat.m */; };
 		124587451EBD61CF00746AAF /* Refresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587441EBD61CF00746AAF /* Refresh.m */; };
 		124587481EBD92F400746AAF /* BalloonLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587471EBD92F400746AAF /* BalloonLabel.m */; };
-		1245874B1EBF2FDA00746AAF /* Installation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1245874A1EBF2FDA00746AAF /* Installation.m */; };
 		1245874F1EBF40BD00746AAF /* NSDateTimeAgo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */; };
 		124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */; };
-		124587531EC0248700746AAF /* Channel.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587521EC0248700746AAF /* Channel.m */; };
+		124587531EC0248700746AAF /* Channels.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587521EC0248700746AAF /* Channels.m */; };
 		124587561EC3F2B100746AAF /* MediaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587551EC3F2B100746AAF /* MediaView.m */; };
 		124587591EC3F3E100746AAF /* CenterScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 124587581EC3F3E100746AAF /* CenterScrollView.m */; };
 		1249DD4B1EAC46CA00E9E39F /* MediaCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1249DD4A1EAC46CA00E9E39F /* MediaCollection.m */; };
@@ -75,6 +74,10 @@
 		128C257E1EBAAA950003F502 /* UIView+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = 128C257D1EBAAA950003F502 /* UIView+Badge.m */; };
 		12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A213441EB47DBD00DF79B0 /* Balloon.m */; };
 		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
+		12D0F2EC1EC5644E004F2E3E /* MessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2EB1EC5644E004F2E3E /* MessageCenter.m */; };
+		12D0F2EF1EC5F051004F2E3E /* SimulatedUsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2EE1EC5F051004F2E3E /* SimulatedUsers.m */; };
+		12D0F2F21EC6BA19004F2E3E /* MaterialDesignSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2F11EC6BA18004F2E3E /* MaterialDesignSymbol.m */; };
+		12D0F2F41EC6BFDA004F2E3E /* material-design-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12D0F2F31EC6BA28004F2E3E /* material-design-icons.ttf */; };
 		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
 		12F96D561EB453620054DA6C /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12F96D551EB453620054DA6C /* ChatView.m */; };
 /* End PBXBuildFile section */
@@ -178,13 +181,11 @@
 		124587441EBD61CF00746AAF /* Refresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Refresh.m; sourceTree = "<group>"; };
 		124587461EBD92F400746AAF /* BalloonLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BalloonLabel.h; sourceTree = "<group>"; };
 		124587471EBD92F400746AAF /* BalloonLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BalloonLabel.m; sourceTree = "<group>"; };
-		124587491EBF2FDA00746AAF /* Installation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Installation.h; sourceTree = "<group>"; };
-		1245874A1EBF2FDA00746AAF /* Installation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Installation.m; sourceTree = "<group>"; };
 		1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = NSDateTimeAgo.bundle; sourceTree = "<group>"; };
 		1245874D1EBF40BD00746AAF /* NSDate+TimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeAgo.h"; sourceTree = "<group>"; };
 		1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeAgo.m"; sourceTree = "<group>"; };
-		124587511EC0248700746AAF /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
-		124587521EC0248700746AAF /* Channel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Channel.m; sourceTree = "<group>"; };
+		124587511EC0248700746AAF /* Channels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channels.h; sourceTree = "<group>"; };
+		124587521EC0248700746AAF /* Channels.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Channels.m; sourceTree = "<group>"; };
 		124587541EC3F2B100746AAF /* MediaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaView.h; sourceTree = "<group>"; };
 		124587551EC3F2B100746AAF /* MediaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaView.m; sourceTree = "<group>"; };
 		124587571EC3F3E100746AAF /* CenterScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CenterScrollView.h; sourceTree = "<group>"; };
@@ -207,6 +208,13 @@
 		12A213441EB47DBD00DF79B0 /* Balloon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Balloon.m; sourceTree = "<group>"; };
 		12B796091EAA2C970041AE6C /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		12B7960A1EAA2C970041AE6C /* Engine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Engine.m; sourceTree = "<group>"; };
+		12D0F2EA1EC5644E004F2E3E /* MessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenter.h; sourceTree = "<group>"; };
+		12D0F2EB1EC5644E004F2E3E /* MessageCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenter.m; sourceTree = "<group>"; };
+		12D0F2ED1EC5F051004F2E3E /* SimulatedUsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedUsers.h; sourceTree = "<group>"; };
+		12D0F2EE1EC5F051004F2E3E /* SimulatedUsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatedUsers.m; sourceTree = "<group>"; };
+		12D0F2F01EC6BA18004F2E3E /* MaterialDesignSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialDesignSymbol.h; sourceTree = "<group>"; };
+		12D0F2F11EC6BA18004F2E3E /* MaterialDesignSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialDesignSymbol.m; sourceTree = "<group>"; };
+		12D0F2F31EC6BA28004F2E3E /* material-design-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "material-design-icons.ttf"; sourceTree = "<group>"; };
 		12F96D511EB2C2E10054DA6C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		12F96D531EB2D3910054DA6C /* WhoAreU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhoAreU.entitlements; sourceTree = "<group>"; };
 		12F96D541EB453620054DA6C /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
@@ -284,6 +292,7 @@
 		1222627A1E8B6E8000F51FAE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				12D0F2F31EC6BA28004F2E3E /* material-design-icons.ttf */,
 				1245874C1EBF40BD00746AAF /* NSDateTimeAgo.bundle */,
 				1245874D1EBF40BD00746AAF /* NSDate+TimeAgo.h */,
 				1245874E1EBF40BD00746AAF /* NSDate+TimeAgo.m */,
@@ -348,6 +357,8 @@
 		126154061E8CBBAD00F2AD4F /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				12D0F2F01EC6BA18004F2E3E /* MaterialDesignSymbol.h */,
+				12D0F2F11EC6BA18004F2E3E /* MaterialDesignSymbol.m */,
 				12144DB51E934CEA000828BF /* ListField.h */,
 				12144DB61E934CEA000828BF /* ListField.m */,
 				126154071E8CBBEC00F2AD4F /* User.h */,
@@ -360,8 +371,10 @@
 				121E15B41E95FE59009CCF51 /* MediaPicker.m */,
 				12B796091EAA2C970041AE6C /* Engine.h */,
 				12B7960A1EAA2C970041AE6C /* Engine.m */,
-				124587491EBF2FDA00746AAF /* Installation.h */,
-				1245874A1EBF2FDA00746AAF /* Installation.m */,
+				12D0F2EA1EC5644E004F2E3E /* MessageCenter.h */,
+				12D0F2EB1EC5644E004F2E3E /* MessageCenter.m */,
+				12D0F2ED1EC5F051004F2E3E /* SimulatedUsers.h */,
+				12D0F2EE1EC5F051004F2E3E /* SimulatedUsers.m */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -390,8 +403,8 @@
 				1225F01F1EB07491002763A0 /* Credits.m */,
 				12134D4E1EBC0615001EEC5E /* Chats.h */,
 				12134D4F1EBC0615001EEC5E /* Chats.m */,
-				124587511EC0248700746AAF /* Channel.h */,
-				124587521EC0248700746AAF /* Channel.m */,
+				124587511EC0248700746AAF /* Channels.h */,
+				124587521EC0248700746AAF /* Channels.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -503,6 +516,7 @@
 				122262871E8B6E8000F51FAE /* Assets.xcassets in Resources */,
 				123AF1521E9E0F5300ED0547 /* Menu.xib in Resources */,
 				1245874F1EBF40BD00746AAF /* NSDateTimeAgo.bundle in Resources */,
+				12D0F2F41EC6BFDA004F2E3E /* material-design-icons.ttf in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
 				123AF1531E9E0F5300ED0547 /* MenuCell.xib in Resources */,
 				120775091E9DD29000B02AF6 /* SignUp.xib in Resources */,
@@ -533,9 +547,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
-				124587531EC0248700746AAF /* Channel.m in Sources */,
+				124587531EC0248700746AAF /* Channels.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				12D0F2EC1EC5644E004F2E3E /* MessageCenter.m in Sources */,
 				124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */,
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
@@ -554,7 +569,6 @@
 				124587451EBD61CF00746AAF /* Refresh.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
-				1245874B1EBF2FDA00746AAF /* Installation.m in Sources */,
 				12134D501EBC0615001EEC5E /* Chats.m in Sources */,
 				124587591EC3F3E100746AAF /* CenterScrollView.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
@@ -572,10 +586,12 @@
 				1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */,
 				1215C5AA1EA6F88000BA509E /* Compass.m in Sources */,
 				123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */,
+				12D0F2F21EC6BA19004F2E3E /* MaterialDesignSymbol.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 				120775081E9DD29000B02AF6 /* SignUp.m in Sources */,
 				123AF1561E9E11B400ED0547 /* ToggleButton.m in Sources */,
+				12D0F2EF1EC5F051004F2E3E /* SimulatedUsers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

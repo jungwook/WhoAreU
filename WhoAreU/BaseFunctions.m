@@ -247,4 +247,57 @@ UIColor *UIColorFromNSString(NSString *string)
                            alpha:[(NSString*)components[3] floatValue]];
 }
 
-
+id __dictionary(id object)
+{
+    if ([object isKindOfClass:[PFObject class]]) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        
+        PFObject *o = object;
+        if (o.objectId)
+            dictionary[@"objectId"] = o.objectId;
+        if (o.createdAt)
+            dictionary[@"createdAt"] = o.createdAt;
+        if (o.updatedAt)
+            dictionary[@"updatedAt"] = o.updatedAt;
+        
+        [((PFObject*)object).allKeys enumerateObjectsUsingBlock:^(NSString * _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+            id value = [object objectForKey:key];
+            [dictionary setObject:__dictionary(value) forKey:key];
+        }];
+        
+        return dictionary;
+    }
+    else if ([object isKindOfClass:[NSArray class]]) {
+        NSMutableArray *array = [NSMutableArray array];
+        NSLog(@"@[");
+        [object enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [array addObject:__dictionary(obj)];
+        }];
+        NSLog(@"]");
+        return array;
+    }
+    else if ([object isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        
+        NSLog(@"@{");
+        [((NSDictionary*)object).allKeys enumerateObjectsUsingBlock:^(NSString * _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+            id value = [object objectForKey:key];
+            [dictionary setObject:__dictionary(value) forKey:key];
+        }];
+        NSLog(@"}");
+        return dictionary;
+    }
+    else if ([object isKindOfClass:[PFACL class]]) {
+        NSLog(@">>PFACL");
+        return NSStringFromClass([object class]);
+    }
+    else if ([object isKindOfClass:[PFGeoPoint class]]) {
+        NSLog(@">>PFGeo");
+        PFGeoPoint *w = object;
+        return @{ @"latitude" : @(w.latitude), @"longitude" : @(w.longitude) };
+    }
+    else {
+        NSLog(@">> %@[%@]", NSStringFromClass([object class]), object);
+        return object;
+    }
+}

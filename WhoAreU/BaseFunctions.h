@@ -19,6 +19,11 @@
 #define kVideoThumbnailWidth 320
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 
+#define ANOTIF(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:__Y__ name:__X__ object:nil]
+
+#define RNOTIF(__Y__) [[NSNotificationCenter defaultCenter] removeObserver:self name:__Y__ object:nil]
+
+#define RANOTIF [[NSNotificationCenter defaultCenter] removeObserver:self]
 
 #define POINT_FROM_CLLOCATION(__X__) [PFGeoPoint geoPointWithLocation:__X__]
 #define POINT_FROM_COORDINATES(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
@@ -51,7 +56,8 @@ UIView*     __viewWithTag(UIView *view, NSInteger tag);
 PFGeoPoint* __pointFromCLLocation(CLLocation* location);
 PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
 
-void __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction);
+void        __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction);
+id          __dictionary(id object);
 
 NSString *NSStringFromUIColor(UIColor *color);
 UIColor *UIColorFromNSString(NSString *string);

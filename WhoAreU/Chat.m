@@ -46,17 +46,11 @@
     __LF
 }
 
-- (void)setUser:(User *)user
+- (void)setChannel:(Channel *)channel
 {
-    _user = user;
-    
-    self.chatView.user = user;
-    NSLog(@"SETTING USER TO:%@[%@]", self.user.objectId, self.user.nickname);
-    [Engine loadUnreadMessagesFromUser:self.user completion:^{
-        NSLog(@"Loaded Unread Messages From Chat");
-        [self.chatView reloadDataAnimated:NO];
-        [Engine setSystemBadge];
-    }];
+    _channel = channel;
+    self.chatView.channel = channel;
+    self.navigationItem.title = channel.name;
 }
 
 -(void) viewDidLoad

@@ -54,7 +54,7 @@
 
 @end
 
-@interface PreviewUser ()
+@interface PreviewUser () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 @property (nonatomic, weak) User *user;
 @property (nonatomic, strong) UIActivityIndicatorView *activity;
 @property (nonatomic, strong) UIView *preview;
@@ -67,6 +67,17 @@
 
 @implementation PreviewUser
 
++ (void)showUser:(User *)user
+{
+    [user.media fetched:^{
+        PreviewUser *preview = [[PreviewUser alloc] initWithUser:user];
+        preview.alpha = 0;
+        [mainWindow addSubview:preview];
+        [UIView animateWithDuration:0.3 animations:^{
+            preview.alpha = 1.0f;
+        }];
+    }];
+}
 - (instancetype)initWithUser:(User *)user
 {
     CGRect bounds = mainWindow.bounds;
@@ -257,292 +268,65 @@
 
 @end
 
-@interface PreviewMedia () <UIScrollViewDelegate>
-@property (strong, nonatomic) Media* media;
-@property (strong, nonatomic) CenterScrollView *scrollView;
-@property (strong, nonatomic) UIImageView *imageView;
-
-@property (nonatomic, strong) AVPlayerItem *playerItem;
-@property (nonatomic, strong) AVPlayer *player;
-@property (nonatomic, strong) AVPlayerLayer *playerLayer;
-@property (nonatomic, strong) UIView* playerView;
-@property (nonatomic) CGFloat zoom;
-@property (nonatomic) BOOL videoAlive, exitsWithTap;
-@property (strong, nonatomic) UILabel *real;
+@interface PreviewMedia()
+@property (strong, nonatomic) MediaView *mediaView;
 @end
 
 @implementation PreviewMedia
 
-- (instancetype)initWithMedia:(Media *)media exitWithTap:(BOOL)taps
++ (void)showMedia:(Media *)media
 {
-    NSLog(@"Initializing %s %@", __func__, [media.thumbnail lastPathComponent]);
-
-    switch (media.type) {
-        case kMediaTypePhoto: {
-            self = [self initWithImageFile:media.media exitWithTap:(BOOL)taps];
-        }
-            
-            break;
-        case kMediaTypeVideo:
-        {
-            self = [self initWithVideoURL:media.media exitWithTap:(BOOL)taps];
-        }
-            break;
-    }
-    if (self) {
-        _media = media;
-        self.real = [UILabel new];
-        self.real.textColor = [UIColor whiteColor];
-        self.real.text = media.source == kSourceTaken ? @"From Camera" : @"From Library";
-        [self.real sizeToFit];
-        
-        [self addSubview:self.real];
-    }
-    return self;
-}
-
-- (instancetype)initWithVideoURL:(NSString*)url exitWithTap:(BOOL)taps
-{
-    self = [super initWithFrame:mainWindow.frame];
-    if (self) {
-        self.exitsWithTap = taps;
-        self.videoAlive = NO;
-        [self initializeVideoWithURL:[NSURL URLWithString:[S3LOCATION stringByAppendingString:url]]];
-    }
-    return self;
-}
-
-- (instancetype) initWithImageFile:(id)mediaFile exitWithTap:(BOOL)taps
-{
-    self = [super initWithFrame:mainWindow.frame];
-    if (self) {
-        self.exitsWithTap = taps;
-
-        CGRect frame = self.frame, bounds = self.bounds;
-        self.scrollView = [[CenterScrollView alloc] initWithFrame:frame];
-        self.scrollView.delegate = self;
-        [self addSubview:self.scrollView];
-        
-        self.imageView = [[UIImageView alloc] initWithFrame:bounds];
-        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.scrollView addSubview:self.imageView];
-        
-        // Tap gesture recognizers
-        
-        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
-        doubleTap.numberOfTapsRequired = 2;
-        
-        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
-        
-        if (self.exitsWithTap) {
-            [self.scrollView addGestureRecognizer:singleTap];
-        }
-        [self.scrollView addGestureRecognizer:doubleTap];
-        [S3File getDataFromFile:mediaFile dataBlock:^(NSData *data) {
-            UIImage *image = [UIImage imageWithData:data];
-            NSDictionary *metrics = @{@"height" : @(image.size.height), @"width" : @(image.size.width)};
-            NSDictionary *views = @{@"imageView":self.imageView};
-            [self.scrollView removeConstraints:self.scrollView.constraints];
-            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView(height)]|" options:kNilOptions metrics:metrics views:views]];
-            [self.scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView(width)]|" options:kNilOptions metrics:metrics views:views]];
-            self.imageView.contentMode = UIViewContentModeScaleAspectFill;
-            
-            self.imageView.image = image;
-            [self initZoomWithImage:image];
+    [media fetched:^{
+        PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:media];
+        preview.alpha = 0;
+        [mainWindow addSubview:preview];
+        [UIView animateWithDuration:0.3 animations:^{
+            preview.alpha = 1.0f;
         }];
+    }];
+}
+
+- (instancetype)initWithMedia:(Media *)media
+{
+    CGRect frame = mainWindow.bounds;
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor blackColor];
+        self.mediaView = [MediaView new];
+        
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver: self selector:   @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
+        [self addSubview:self.mediaView];
+        [self.mediaView setMedia:media];
     }
     return self;
 }
 
-- (void) initializeVideoWithURL:(NSURL*)url
+- (void) tapped:(id)sender
 {
-    self.playerItem = [AVPlayerItem playerItemWithURL:url];
-    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
-    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-    
-    [self.playerItem addObserver:self
-                      forKeyPath:@"status"
-                         options:NSKeyValueObservingOptionNew
-                         context:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerItemDidReachEnd:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification
-                                               object:self.playerItem];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerItemStalled:)
-                                                 name:AVPlayerItemPlaybackStalledNotification
-                                               object:self.playerItem];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerItemDidReachEnd:)
-                                                 name:AVPlayerItemFailedToPlayToEndTimeNotification
-                                               object:self.playerItem];
-    
-    self.playerView = [[UIView alloc] initWithFrame:self.bounds];
-    [self addSubview:self.playerView];
-    [self.playerView.layer addSublayer:self.playerLayer];
-    
-    if (self.exitsWithTap) {
-        [self addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToKill:)]];
-    }
+    [self kill];
 }
 
-- (void)tapToKill:(id)sender
-{
-    [self killThisView];
-}
-
-- (void)playerItemDidReachEnd:(NSNotification *)notification
-{
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
     __LF
-    [self.player seekToTime:kCMTimeZero];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.videoAlive = YES;
-        [self.player play];
-    });
+    self.frame = mainWindow.bounds;
+    self.mediaView.frame = self.bounds;
+    [self.mediaView setNeedsLayout];
 }
 
-- (void)playerItemStalled:(NSNotification *)notification
+- (void) kill
 {
-    __LF
-    [self restartPlayingIfLikelyToKeepUp];
-}
-
-- (void) restartPlayingIfLikelyToKeepUp
-{
-    __LF
-    if (self.videoAlive == NO) {
-        return;
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     
-    if (self.playerItem.playbackLikelyToKeepUp) {
-        self.videoAlive = YES;
-        [self.player play];
-    }
-    else {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self restartPlayingIfLikelyToKeepUp];
-        });
-    }
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context
-{
-    if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
-        switch (self.playerItem.status) {
-            case AVPlayerItemStatusReadyToPlay: {
-                CGSize size = self.playerItem.presentationSize;
-                CGFloat w = size.width, h=size.height;
-                CGRect bounds = self.bounds;
-                CGFloat W = CGRectGetWidth(bounds), H = CGRectGetHeight(bounds);
-                CGFloat fW = W, fH = h * W / w;
-                
-                self.playerView.frame = CGRectMake(0, (H-fH)/2, fW, fH);
-                self.playerLayer.frame = self.playerView.bounds;
-                [self.playerLayer removeAllAnimations];
-                // if source == captured.. add subview
-                
-                self.videoAlive = YES;
-                [self.player play];
-            }
-                break;
-            case AVPlayerItemStatusFailed:
-            case AVPlayerItemStatusUnknown:
-            default:
-                self.videoAlive = NO;
-                [self killThisView];
-                break;
-        }
-    }
-}
-
-- (void) killThisView
-{
-    if (self.playerItem) {
-        [self.player pause];
-        [self.playerItem removeObserver:self forKeyPath:@"status"];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemFailedToPlayToEndTimeNotification object:nil];
-    }
-    
-    [self.imageView removeFromSuperview];
-    [self.scrollView removeFromSuperview];
-    [self.playerView removeFromSuperview];
-    
-    self.scrollView = nil;
-    self.imageView = nil;
-    self.playerItem = nil;
-    self.player = nil;
-    self.playerLayer = nil;
-    self.playerView = nil;
-    
-    [self removeFromSuperview];
-}
-
-- (void) dealloc
-{
-    NSLog(@"Dealloc %s %@", __func__, [self.media.thumbnail lastPathComponent]);
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    CGFloat w = CGRectGetWidth(self.bounds);
-    CGFloat h = CGRectGetHeight(self.bounds);
-    CGFloat lw = CGRectGetWidth(self.real.bounds);
-    CGFloat lh = CGRectGetHeight(self.real.bounds);
-    CGFloat inset = 10;
-    
-    self.real.frame = CGRectMake(w-lw-inset, h-lh-inset, lw, lh);
-    self.real.frame = CGRectMake(inset, inset*1.5, lw, lh);
-}
-
-- (void) singleTap:(id)sender {
-    [self killThisView];
-}
-
-- (void) doubleTap:(id)sender {
-    static CGFloat prev = 1;
-    
-    CGFloat zoom = self.scrollView.zoomScale;
-    [UIView animateWithDuration:0.1 animations:^{
-        self.scrollView.zoomScale = prev;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.alpha = 0.0f;
+    } completion:^(BOOL finished) {
+        [self.mediaView removeFromSuperview];
+        [self removeFromSuperview];
     }];
-    prev = zoom;
-}
-
-- (void) initZoomWithImage:(UIImage*)image
-{
-    float minZoom = MIN(MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height), 1.0f);
-    if (minZoom > 1) {
-        return;
-    }
-    else {
-        self.scrollView.minimumZoomScale = MIN(MIN(self.bounds.size.width / image.size.width, self.bounds.size.height / image.size.height), 1.0f);
-        self.scrollView.maximumZoomScale = 2.0;
-        self.scrollView.zoomScale = minZoom;
-        self.zoom = minZoom;
-    }
-}
-
-//- (void)didReceiveMemoryWarning {
-//    [super didReceiveMemoryWarning];
-//}
-//
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
-{
-    self.zoom = scale;
-}
-
-- (UIView*)viewForZoomingInScrollView:(UIScrollView *)scrollView
-{
-    return self.imageView;
 }
 
 @end

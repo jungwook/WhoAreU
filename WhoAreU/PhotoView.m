@@ -77,14 +77,14 @@
 
 - (void)setCount
 {
-    [Engine countUnreadMessagesFromUser:self.user completion:^(NSUInteger count) {
-        if (count >0) {
-            self.badgeValue = [NSString stringWithFormat:@"%ld", count];
-        }
-        else {
-            self.badgeValue = nil;
-        }
-    }];
+//    [Engine countUnreadMessagesFromUser:self.user completion:^(NSUInteger count) {
+//        if (count >0) {
+//            self.badgeValue = [NSString stringWithFormat:@"%ld", count];
+//        }
+//        else {
+//            self.badgeValue = nil;
+//        }
+//    }];
 }
 
 - (void)clear
@@ -149,24 +149,10 @@
 - (void)tapped:(id)sender
 {
     if (self.user) {
-        [self.user.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            PreviewUser *preview = [[PreviewUser alloc] initWithUser:self.user];
-            preview.alpha = 0;
-            [mainWindow addSubview:preview];
-            [UIView animateWithDuration:0.3 animations:^{
-                preview.alpha = 1.0f;
-            }];
-        }];
+        [PreviewUser showUser:self.user];
     }
     else {
-        [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:self.media exitWithTap:YES];
-            preview.alpha = 0;
-            [mainWindow addSubview:preview];
-            [UIView animateWithDuration:0.3 animations:^{
-                preview.alpha = 1.0f;
-            }];
-        }];
+        [PreviewMedia showMedia:self.media];
     }
 }
 
@@ -210,17 +196,18 @@
     }
 }
 
-- (void)setMediaDic:(MediaDic *)mediaDic
+- (void)setDictionary:(id)dictionary
 {
     Media* media = [Media new];
-    media.media = mediaDic.mediaFile;
-    media.thumbnail = mediaDic.thumbnail;
-    media.type = mediaDic.mediaType;
-    media.userId = mediaDic.userId;
-    media.comment = mediaDic.comment;
-    media.source = mediaDic.source;
-    media.size = mediaDic.size;
-
+    
+    media.media = [dictionary objectForKey:@"media"];
+    media.thumbnail = [dictionary objectForKey:@"thumbnail"];
+    media.type = [[dictionary objectForKey:@"type"] integerValue];
+    media.userId = [dictionary objectForKey:@"userId"];
+    media.comment = [dictionary objectForKey:@"comment"];
+    media.source = [[dictionary objectForKey:@"source"] integerValue];
+    media.size = CGSizeFromString([dictionary objectForKey:@"size"]);
+    
     [self setMedia:media];
 }
 

@@ -134,9 +134,9 @@
 
 - (void) completePurchase:(NSUInteger)credits
 {
-    Installation *install = [Installation currentInstallation];
-    install.credits += credits;
-    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+    User *me = [User me];
+    me.credits += credits;
+    [me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if (succeeded) {
             [self dismissViewControllerAnimated:YES completion:nil];
         }

@@ -14,7 +14,6 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.engine = [Engine new];
@@ -22,10 +21,6 @@
     [self setupAWSCredentials];
 
     // register subclasses
-    [User registerSubclass];
-    [Media registerSubclass];
-    [Message registerSubclass];
-    [Installation registerSubclass];
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = @"WhoAreU";
@@ -130,17 +125,18 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     __LF
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation saveInBackground];
-    
-    [PFPush subscribeToChannelInBackground:@"Main" block:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            NSLog(@"application successfully subscribed to push notifications on the broadcast channel.");
-            [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
-        } else {
-            NSLog(@"application failed to subscribe to push notifications on the broadcast channel.");
-        }
+    PFInstallation *install = [PFInstallation currentInstallation];
+    [install setDeviceTokenFromData:deviceToken];
+    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        [install setDeviceTokenFromData:deviceToken];
+        [PFPush subscribeToChannelInBackground:@"Main" block:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"application successfully subscribed to push notifications on the broadcast channel.");
+                [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
+            } else {
+                NSLog(@"application failed to subscribe to push notifications on the broadcast channel.");
+            }
+        }];
     }];
 }
 
@@ -169,7 +165,7 @@
             break;
     }
     
-    [Engine handlePushUserInfo:userInfo];
+//    [Engine handlePushUserInfo:userInfo];
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
@@ -187,7 +183,7 @@
     
     NSLog( @"Handle push from foreground" );
     NSLog(@"%@", userInfo);
-    UNNotificationPresentationOptions option = [Engine handlePushUserInfo:userInfo];
+    UNNotificationPresentationOptions option = UNNotificationPresentationOptionNone; //[Engine handlePushUserInfo:userInfo];
 
     if (completionHandler)
         completionHandler(option);
@@ -202,7 +198,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     NSLog(@"Handle push from background or closed" );
     NSLog(@"%@", userInfo);
 
-    [Engine handlePushUserInfo:userInfo];
+//    [Engine handlePushUserInfo:userInfo];
     completionHandler();
 }
 

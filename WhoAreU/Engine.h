@@ -11,6 +11,7 @@
 #define kNotificationNewUserMessage @"NotificationNewUserMessage"
 #define kNotificationNewChannelMessage @"NotificationNewChannelMessage"
 #define kNotificationUserLoggedInMessage @"NotificationUserLoggedIn"
+#define kNotificationSystemInitialized @"NotifictionSystemInitialized"
 
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define CHAT_FILE_PATH @"Chats"
@@ -48,22 +49,25 @@ typedef enum : NSUInteger {
 @property (nonatomic) SimulatorStatus simulatorStatus;
 + (PFGeoPoint*) where;
 + (void) initializeSystems;
-+ (NSArray*) chatUserIds;
-+ (void) save;
-+ (NSArray*) messagesFromUser:(User*)user;
-+ (void) fetchOutstandingMessages;
-+ (BOOL) userExists:(User*)user;
-+ (NSUInteger) unreadMessagesFromUser:(User*)user;
-+ (void) readMessage:(MessageDic*)dictionary;
-+ (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler;
-+ (void) countUnreadMessages:(CountBlock)handler;
-+ (void) loadUnreadMessagesFromUser:(User*)user completion:(VoidBlock)handler;
++ (CLLocationDirection) heading;
+
 + (void) postNewUserMessageNotification:(id)userInfo;
 + (void) postNewChannelMessageNotification:(id)userInfo;
-+ (void) send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler;
-+ (void) setSystemBadge;
-+ (CLLocationDirection) heading;
-+ (void) deleteChatWithUserId:(id)userId;
-+ (void) sendChannelMessage:(NSString*)message;
-+ (UNNotificationPresentationOptions) handlePushUserInfo:(id)userInfo;
+
+//+ (void) deleteChatWithUserId:(id)userId;
+//+ (void) sendChannelMessage:(NSString*)message;
+//+ (UNNotificationPresentationOptions) handlePushUserInfo:(id)userInfo;
+//+ (NSArray*) chatUserIds;
+//+ (void) save;
+//+ (NSArray*) messagesFromUser:(User*)user;
+//+ (void) fetchOutstandingMessages;
+//+ (BOOL) userExists:(User*)user;
+//+ (NSUInteger) unreadMessagesFromUser:(User*)user;
+//+ (void) readMessage:(MessageDic*)dictionary;
+//+ (void) countUnreadMessagesFromUser:(User*)user completion:(CountBlock)handler;
+//+ (void) countUnreadMessages:(CountBlock)handler;
+//+ (void) loadUnreadMessagesFromUser:(User*)user completion:(VoidBlock)handler;
+//+ (void) send:(id)msgToSend toUser:(User*)user completion:(VoidBlock)handler;
+//+ (void) setSystemBadge;
+
 @end

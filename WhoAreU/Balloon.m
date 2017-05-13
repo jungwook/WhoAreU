@@ -17,16 +17,6 @@
 
 @implementation Balloon
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
- 
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -54,19 +44,20 @@
     [self addSubview:self.mediaView];
 }
 
-- (void)setMessage:(MessageDic *)message
+- (void)setDictionary:(id)dictionary
 {
-    _message = message;
+    _dictionary = dictionary;
     
-    switch (self.message.messageType) {
+    MessageType type = [self.dictionary[@"type"] integerValue];
+    switch (type) {
         case kMessageTypeMedia:
-            self.mediaView.mediaDic = message.media;
+            self.mediaView.dictionary = [self.dictionary objectForKey:@"media"];
             self.label.alpha = 0.0f;
             self.mediaView.alpha = 1.0f;
             break;
             
         case kMessageTypeText:
-            self.label.text = message.message;
+            self.label.text = [self.dictionary objectForKey:@"message"];
             self.label.alpha = 1.0f;
             self.mediaView.alpha = 0.0f;
             break;
@@ -96,7 +87,9 @@
 {
     [super layoutSubviews];
     
-    switch (self.message.messageType) {
+    MessageType type = [[self.dictionary objectForKey:@"type"] integerValue];
+    
+    switch (type) {
         case kMessageTypeText: {
             CGFloat inset = self.balloonInset;
             CGFloat w = CGRectGetWidth(self.bounds);
@@ -117,16 +110,6 @@
     }
     [self setShape];
 }
-
-//- (void)drawRect:(CGRect)rect
-//{
-//    [super drawRect:rect];
-//    
-//    UIBezierPath *path = [self ballonPath];
-//    [[UIColor blackColor] setStroke];
-//    [path setLineWidth:1.0f];
-//    [path stroke];
-//}
 
 - (void)setShape
 {

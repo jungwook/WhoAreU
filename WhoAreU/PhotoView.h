@@ -17,8 +17,9 @@
 @interface PhotoView : UIView
 @property (strong, nonatomic) IBInspectable UIImage* image;
 @property (strong, nonatomic) Media* media;
+@property (strong, nonatomic) id dictionary;
 - (void) clear;
 - (void) updateMediaOnViewController:(UIViewController*)viewController;
 - (void) setUser:(User *)user;
-- (void) setMediaDic:(MediaDic *)mediaDic;
+
 @end

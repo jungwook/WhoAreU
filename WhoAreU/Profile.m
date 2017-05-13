@@ -62,6 +62,11 @@
     self.introduction.delegate = self;
     self.mediaCollection.parent = self;
 
+    ANOTIF(kNotificationSystemInitialized, @selector(systemInitialzed:));
+}
+
+- (void)systemInitialzed:(id)sender
+{
     self.me = [User me];
 }
 
@@ -100,7 +105,7 @@
     self.introduction.text = self.me.introduction;
     self.nicknameLabel.text = self.me.nickname;
     self.sinceLabel.text = [NSString stringWithFormat:@"member since %@", [NSDateFormatter localizedStringFromDate:self.me.createdAt dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle]];
-    self.credits.text = [@([Installation currentInstallation].credits).stringValue stringByAppendingString:@" Credits"];
+    self.credits.text = [@(self.me.credits).stringValue stringByAppendingString:@" Credits"];
     [self.photoImageView setMedia:self.me.media];
 }
 
