@@ -13,19 +13,6 @@
 @class Message;
 @class Channel;
 
-typedef void(^BOOLBlock)(BOOL value);
-typedef void(^AnyBlock)(id object);
-typedef void(^ChannelBlock)(Channel* channel);
-
-typedef void(^VoidBlock)(void);
-typedef void(^CountBlock)(NSUInteger count);
-typedef void(^UserBlock)(User* user);
-typedef void(^ImageBlock)(UIImage* image);
-typedef void(^ArrayBlock)(NSArray* array);
-typedef void(^StringBlock)(NSString* string);
-typedef void(^MediaBlock)(Media *media);
-typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions options, CGRect keyboardFrame);
-typedef void(^FloatEventBlock)(CGFloat value);
 
 typedef NS_OPTIONS(NSUInteger, GenderType)
 {
@@ -55,41 +42,22 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 
 #pragma mark Message
 
-#define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
+@interface NSData (dictionary)
+- (id) uncompressDictionary;
+@end
 
-
-//typedef NSMutableDictionary MessageDic;
-//typedef NSMutableDictionary MediaDic;
-//
-//@interface NSMutableDictionary(Dictionary)
-//@property (nonatomic, assign) NSString* objectId;
-//@property (nonatomic, assign) NSDate*   createdAt;
-//@property (nonatomic, assign) NSDate*   updatedAt;
-//@property (nonatomic, assign) NSString* userId;
-//@property (nonatomic, assign) NSString* channelId;
-//@property (nonatomic, assign) NSString* comment;
-//@property (nonatomic, assign) NSString* thumbnail;
-//@property (nonatomic, assign) NSString* mediaFile;
-//@property MediaType mediaType;
-//@property CGSize size;
-//@property BOOL source;
-//@property BOOL sync;
-//
-//@property (nonatomic, assign) NSString* fromUserId;
-//@property (nonatomic, assign) NSString* toUserId;
-//@property (nonatomic, assign) NSString* message;
-//@property (nonatomic, assign) MediaDic*    media;
-//@property MessageType messageType;
-//@property BOOL read;
-//@end
+@interface NSDictionary (compress)
+-(NSData *)compressDictionary;
+@end
 
 @interface Channel : PFObject <PFSubclassing>
 @property (retain) NSString *name;
 @property (retain) User* createdBy;
 @property (retain) NSArray <User*>*users;
 
-- (id)dictionary;
 
+- (id)dictionary;
+- (void)fetched:(VoidBlock)handler;
 - (void) addUsers:(NSArray<User*>*)users
        completion:(VoidBlock)action;
 - (void) removeUsers:(NSArray<User*>*)users
@@ -98,7 +66,23 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
          completion:(VoidBlock)action;
 
 + (instancetype) newWithUsers:(NSArray*)users;
++ (void)fetch:(id)channelId completion:(ChannelBlock)handler;
 @end
+
+#pragma mark MessageHistory
+
+@interface History : PFObject <PFSubclassing>
+@property (retain) User *user;
+@property (retain) Channel *channel;
+@property (retain) NSString* messageId;
+
++ (instancetype)historyWithChannelId:(id)channelId
+                           messageId:(id)messageId;
+
+@end
+
+
+#pragma mark Message
 
 @interface Message : PFObject <PFSubclassing>
 @property (retain) User *fromUser;
@@ -106,14 +90,16 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (retain) NSString* message;
 @property (retain) Media* media;
 @property MessageType type;
-@property BOOL read;
+@property NSUInteger read;
 
 - (id)dictionary;
 
 + (instancetype)message:(id)object
                   users:(NSArray*)users;
 + (instancetype)message:(id)object
-                channel:(Channel*)channel;
+              channelId:(id)channelId
+                  count:(NSUInteger)userCount;
+
 @end
 
 #pragma mark Media
@@ -140,7 +126,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @interface User : PFUser <PFSubclassing>
 @property (retain) NSString*    nickname;
 @property (retain) PFGeoPoint*  where;
-@property (retain) NSDate*      whereUdatedAt;
+@property (retain) NSDate*      whereUpdatedAt;
 @property (retain) NSString*    age;
 @property (retain) NSString*    desc;
 @property (retain) NSString*    introduction;
@@ -156,8 +142,8 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (readonly) NSUInteger openChatCredits;
 
 - (id)dictionary;
-
-
+- (id)simpleDictionary;
++ (BOOL) meEquals:(id)userId;
 + (User*)me;
 - (BOOL)isMe;
 + (NSArray*) ageGroups;

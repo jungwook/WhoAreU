@@ -10,212 +10,71 @@
 #import "S3File.h"
 #import "BaseFunctions.h"
 #import "MessageCenter.h"
+#import "NSData+GZIP.h"
+
+#pragma mark History
+
+
+@implementation NSDictionary (compress)
+
+- (NSData *)compressDictionary
+{
+    NSError *error = nil;
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:self format:NSPropertyListBinaryFormat_v1_0 options:0 error:&error];
+    NSData *compressed = [data gzippedDataWithCompressionLevel:1.0];
+    NSLog(@"COMPRESSED:%ld->%ld", data.length, compressed.length);
+
+    if (error) {
+        NSLog(@"ERROR:Error compressing dictionary - %@", error.localizedDescription);
+        return nil;
+    }
+    return compressed;
+}
+
+@end
+
+@implementation NSData (dictionary)
+
+- (id)uncompressDictionary
+{
+    NSError *error = nil;
+    NSData *uncompressed = [self gunzippedData];
+    
+    id dic = [NSPropertyListSerialization propertyListWithData:uncompressed options:NSPropertyListMutableContainersAndLeaves format:nil error:&error];
+    
+    NSLog(@"UNCOMPRESS:%ld->%ld", self.length, uncompressed.length);
+    
+    if (error) {
+        NSLog(@"ERROR:Error uncompressing dictionary - %@", error.localizedDescription);
+        return nil;
+    }
+    
+    return dic;
+}
+
+@end
+
+@implementation History
+@dynamic user, channel, messageId;
+
++ (NSString *)parseClassName
+{
+    return @"History";
+}
+
++ (instancetype)historyWithChannelId:(id)channelId
+                           messageId:(id)messageId
+{
+    History *history = [History new];
+    history.channel = [Channel objectWithoutDataWithObjectId:channelId];
+    history.user = [User me];
+    history.messageId = messageId;
+    return history;
+}
+
+@end
 
 #pragma mark Message
-
-//@implementation NSMutableDictionary(Dictionary)
-//
-//- (void)setObjectId:(NSString *)objectId
-//{
-//    if (objectId) {
-//        [self setObject:objectId forKey:@"objectId"];
-//    }
-//}
-//
-//- (NSString *)objectId
-//{
-//    return [self objectForKey:@"objectId"];
-//}
-//
-//- (NSDate *)createdAt
-//{
-//    return [self objectForKey:@"createdAt"];
-//}
-//
-//- (void)setCreatedAt:(NSDate *)createdAt
-//{
-//    if (createdAt) {
-//        [self setObject:createdAt forKey:@"createdAt"];
-//    }
-//}
-//
-//- (NSDate *)updatedAt
-//{
-//    return [self objectForKey:@"updatedAt"];
-//}
-//
-//- (void)setUpdatedAt:(NSDate *)updatedAt
-//{
-//    if (updatedAt) {
-//        [self setObject:updatedAt forKey:@"updatedAt"];
-//    }
-//}
-//
-//- (NSString *)fromUserId
-//{
-//    return [self objectForKey:@"fromUserId"];
-//}
-//
-//- (void)setFromUserId:(NSString *)fromUserId
-//{
-//    if (fromUserId) {
-//        [self setObject:fromUserId forKey:@"fromUserId"];
-//    }
-//}
-//
-//- (NSString *)channelId
-//{
-//    return [self objectForKey:@"channelId"];
-//}
-//
-//- (void)setChannelId:(NSString *)channelId
-//{
-//    if (channelId) {
-//        [self setObject:channelId forKey:@"channelId"];
-//    }
-//}
-//
-//- (NSString *)toUserId
-//{
-//    return [self objectForKey:@"toUserId"];
-//}
-//
-//-(void)setToUserId:(NSString *)toUserId
-//{
-//    if (toUserId) {
-//        [self setObject:toUserId forKey:@"toUserId"];
-//    }
-//}
-//
-//- (NSString *)message
-//{
-//    return [self objectForKey:@"message"];
-//}
-//
-//- (void)setMessage:(NSString *)message
-//{
-//    if (message) {
-//        [self setObject:message forKey:@"message"];
-//    }
-//}
-//
-//- (MediaDic *)media
-//{
-//    return [self objectForKey:@"media"];
-//}
-//
-//- (void)setMedia:(MediaDic *)media
-//{
-//    if (media) {
-//        [self setObject:media forKey:@"media"];
-//    }
-//}
-//
-//- (MessageType)messageType
-//{
-//    return [[self objectForKey:@"messageType"] integerValue];
-//}
-//
-//- (void)setMessageType:(MessageType)messageType
-//{
-//    [self setObject:@(messageType) forKey:@"messageType"];
-//}
-//
-//- (BOOL)read
-//{
-//    return [[self objectForKey:@"read"] integerValue];
-//}
-//
-//- (void)setRead:(BOOL)read
-//{
-//    [self setObject:@(read) forKey:@"read"];
-//}
-//
-//- (NSString *)userId
-//{
-//    return [self objectForKey:@"userId"];
-//}
-//
-//- (void)setUserId:(NSString *)userId
-//{
-//    if (userId)
-//        [self setObject:userId forKey:@"userId"];
-//}
-//
-//- (NSString *)comment
-//{
-//    return [self objectForKey:@"comment"];
-//}
-//
-//- (void)setComment:(NSString *)comment
-//{
-//    if (comment)
-//        [self setObject:comment forKey:@"comment"];
-//}
-//
-//- (NSString *)thumbnail
-//{
-//    return [self objectForKey:@"thumbnail"];
-//}
-//
-//- (void)setThumbnail:(NSString *)thumbnail
-//{
-//    if (thumbnail)
-//        [self setObject:thumbnail forKey:@"thumbnail"];
-//}
-//
-//- (NSString *)mediaFile
-//{
-//    return [self objectForKey:@"mediaFile"];
-//}
-//
-//- (void)setMediaFile:(NSString *)media
-//{
-//    if (media)
-//        [self setObject:media forKey:@"mediaFile"];
-//}
-//
-//- (MediaType)mediaType
-//{
-//    return [[self objectForKey:@"mediaType"] integerValue];
-//}
-//
-//- (void)setMediaType:(MediaType)type
-//{
-//    [self setObject:@(type) forKey:@"mediaType"];
-//}
-//
-//- (BOOL)sync
-//{
-//    return [[self objectForKey:@"sync"] boolValue];
-//}
-//
-//- (void)setSync:(BOOL)sync
-//{
-//    [self setObject:@(sync) forKey:@"sync"];
-//}
-//
-//- (BOOL)source
-//{
-//    return [[self objectForKey:@"source"] boolValue];
-//}
-//
-//-(void)setSource:(BOOL)source
-//{
-//    [self setObject:@(source) forKey:@"source"];
-//}
-//
-//- (CGSize)size
-//{
-//    return CGSizeFromString([self objectForKey:@"size"]);
-//}
-//
-//- (void)setSize:(CGSize)size
-//{
-//    [self setObject:NSStringFromCGSize(size) forKey:@"size"];
-//}
-//
-//@end
 
 @implementation Message
 @dynamic fromUser, channel, message, media, type, read;
@@ -225,15 +84,17 @@
 }
 
 + (instancetype)message:(id)object
-                channel:(Channel*)channel
+              channelId:(id)channelId
+                  count:(NSUInteger)userCount
 {
     Message *message = [Message new];
     message.fromUser = [User me];
-    message.channel = channel;
+    message.channel = [Channel objectWithoutDataWithObjectId:channelId];
+    message.read = userCount;
+
     if ([object isKindOfClass:[NSString class]]) {
         message.message = [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         message.type = kMessageTypeText;
-        message.read = NO;
         
         return message;
     }
@@ -241,7 +102,6 @@
         message.media = object;
         message.type = kMessageTypeMedia;
         message.message = (message.type == kMediaTypePhoto) ? @"new photo message" : @"new video message";
-        message.read = NO;
         
         return message;
     }
@@ -266,10 +126,10 @@ NSString* __usernames(NSArray*users)
     Message *message = [Message new];
     message.fromUser = [User me];
     message.channel = channel;
+    message.read = users.count;
     if ([object isKindOfClass:[NSString class]]) {
         message.message = object;
         message.type = kMessageTypeText;
-        message.read = NO;
         
         return message;
     }
@@ -277,7 +137,6 @@ NSString* __usernames(NSArray*users)
         message.media = object;
         message.type = kMessageTypeMedia;
         message.message = (message.type == kMediaTypePhoto) ? @"new photo message" : @"new video message";
-        message.read = NO;
         
         return message;
     }
@@ -291,22 +150,27 @@ NSString* __usernames(NSArray*users)
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     if (self.objectId)
-        dictionary[@"objectId"] = self.objectId;
+        dictionary[fObjectId] = self.objectId;
     if (self.createdAt)
-        dictionary[@"createdAt"] = self.createdAt;
+        dictionary[fCreatedAt] = self.createdAt;
     if (self.updatedAt)
-        dictionary[@"updatedAt"] = self.updatedAt;
+        dictionary[fUpdatedAt] = self.updatedAt;
     
-    if (self.fromUser)
-        dictionary[@"fromUser"] = self.fromUser.dictionary;
-    if (self.channel)
-        dictionary[@"channel"] = self.channel.dictionary;
-    if (self.message)
-        dictionary[@"message"] = self.message;
-    if (self.media)
-        dictionary[@"media"] = self.media.dictionary;
-    dictionary[@"type"] = @(self.type);
-    dictionary[@"read"] = @(self.read);
+    if (self.dataAvailable) {
+        if (self.fromUser)
+            dictionary[fFromUser] = self.fromUser.simpleDictionary;
+        if (self.channel)
+            dictionary[fChannel] = self.channel.dictionary;
+        if (self.message)
+            dictionary[fMessage] = self.message;
+        if (self.media)
+            dictionary[fMedia] = self.media.dictionary;
+        dictionary[@"type"] = @(self.type);
+        dictionary[@"read"] = @(self.read);
+    }
+    else {
+        NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
+    }
     
     return dictionary;
 }
@@ -327,24 +191,29 @@ NSString* __usernames(NSArray*users)
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     if (self.objectId)
-        dictionary[@"objectId"] = self.objectId;
+        dictionary[fObjectId] = self.objectId;
     if (self.createdAt)
-        dictionary[@"createdAt"] = self.createdAt;
+        dictionary[fCreatedAt] = self.createdAt;
     if (self.updatedAt)
-        dictionary[@"updatedAt"] = self.updatedAt;
+        dictionary[fUpdatedAt] = self.updatedAt;
     
-    if (self.userId)
-        dictionary[@"userId"] = self.userId;
-    if (self.comment)
-        dictionary[@"comment"] = self.comment;
-    if (self.thumbnail)
-        dictionary[@"thumbnail"] = self.thumbnail;
-    if (self.media)
-        dictionary[@"media"] = self.media;
-    
-    dictionary[@"type"] = @(self.type);
-    dictionary[@"source"] = @(self.source);
-    dictionary[@"size"] = NSStringFromCGSize(self.size);
+    if (self.dataAvailable) {
+        if (self.userId)
+            dictionary[@"userId"] = self.userId;
+        if (self.comment)
+            dictionary[@"comment"] = self.comment;
+        if (self.thumbnail)
+            dictionary[fThumbnail] = self.thumbnail;
+        if (self.media)
+            dictionary[fMedia] = self.media;
+        
+        dictionary[@"type"] = @(self.type);
+        dictionary[@"source"] = @(self.source);
+        dictionary[@"size"] = NSStringFromCGSize(self.size);
+    }
+    else {
+        NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
+    }
     
     return dictionary;
 }
@@ -412,11 +281,50 @@ NSString* __usernames(NSArray*users)
 #pragma mark user
 
 @implementation User
-@dynamic nickname, where, whereUdatedAt, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
+@dynamic nickname, where, whereUpdatedAt, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
 
 + (User *)me
 {
     return [User currentUser];
+}
+
++ (BOOL)meEquals:(id)userId
+{
+    return [[User me].objectId isEqualToString:userId];
+}
+
+- (id)simpleDictionary
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    if (self.objectId)
+        dictionary[fObjectId] = self.objectId;
+    if (self.createdAt)
+        dictionary[fCreatedAt] = self.createdAt;
+    if (self.updatedAt)
+        dictionary[fUpdatedAt] = self.updatedAt;
+    
+    if (self.dataAvailable) {
+        if (self.nickname)
+            dictionary[fNickname] = self.nickname;
+        if (self.whereUpdatedAt)
+            dictionary[fWhereUpdatedAt] = self.whereUpdatedAt;
+        if (self.age)
+            dictionary[fAge] = self.age;
+        if (self.desc)
+            dictionary[fDesc] = self.desc;
+        if (self.introduction)
+            dictionary[fIntroduction] = self.introduction;
+        if (self.thumbnail)
+            dictionary[fThumbnail] = self.thumbnail;
+        if (self.where)
+            dictionary[fWhere] = NSStringFromCGSize(CGSizeMake(self.where.latitude, self.where.longitude));
+    }
+    else {
+        NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
+    }
+    
+    return dictionary;
 }
 
 - (id)dictionary
@@ -424,41 +332,46 @@ NSString* __usernames(NSArray*users)
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     if (self.objectId)
-        dictionary[@"objectId"] = self.objectId;
+        dictionary[fObjectId] = self.objectId;
     if (self.createdAt)
-        dictionary[@"createdAt"] = self.createdAt;
+        dictionary[fCreatedAt] = self.createdAt;
     if (self.updatedAt)
-        dictionary[@"updatedAt"] = self.updatedAt;
+        dictionary[fUpdatedAt] = self.updatedAt;
     
-    if (self.nickname)
-        dictionary[@"nickname"] = self.nickname;
-    if (self.whereUdatedAt)
-        dictionary[@"whereUdatedAt"] = self.whereUdatedAt;
-    if (self.age)
-        dictionary[@"age"] = self.age;
-    if (self.desc)
-        dictionary[@"desc"] = self.desc;
-    if (self.introduction)
-        dictionary[@"introduction"] = self.introduction;
-    if (self.thumbnail)
-        dictionary[@"thumbnail"] = self.thumbnail;
-    if (self.media)
-        dictionary[@"media"] = self.media.dictionary;
-    if (self.where)
-        dictionary[@"where"] = NSStringFromCGSize(CGSizeMake(self.where.latitude, self.where.longitude));
-    
-    NSMutableArray *photos = [NSMutableArray array];
-    for (Media *photo in self.photos) {
-        [photos addObject:photo.objectId];
+    if (self.dataAvailable) {
+        if (self.nickname)
+            dictionary[fNickname] = self.nickname;
+        if (self.whereUpdatedAt)
+            dictionary[fWhereUpdatedAt] = self.whereUpdatedAt;
+        if (self.age)
+            dictionary[fAge] = self.age;
+        if (self.desc)
+            dictionary[fDesc] = self.desc;
+        if (self.introduction)
+            dictionary[fIntroduction] = self.introduction;
+        if (self.thumbnail)
+            dictionary[fThumbnail] = self.thumbnail;
+        if (self.media)
+            dictionary[fMedia] = self.media.dictionary;
+        if (self.where)
+            dictionary[fWhere] = NSStringFromCGSize(CGSizeMake(self.where.latitude, self.where.longitude));
+        
+        NSMutableArray *photos = [NSMutableArray array];
+        for (Media *photo in self.photos) {
+            [photos addObject:photo.objectId];
+        }
+        dictionary[fPhotos] = photos;
+        
+        NSMutableArray *likes = [NSMutableArray array];
+        for (User *like in self.likes) {
+            [likes addObject:like.objectId];
+        }
+        dictionary[fLikes] = likes;
     }
-    dictionary[@"photos"] = photos;
+    else {
+        NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
+    }
 
-    NSMutableArray *likes = [NSMutableArray array];
-    for (User *like in self.likes) {
-        [likes addObject:like.objectId];
-    }
-    dictionary[@"likes"] = likes;
-    
     return dictionary;
 }
 
@@ -466,7 +379,7 @@ NSString* __usernames(NSArray*users)
 {
     BOOL likes = [self likes:user];
     if (!likes) {
-        [self addUniqueObject:user forKey:@"likes"];
+        [self addUniqueObject:user forKey:fLikes];
         [self saveInBackground];
     }
 }
@@ -475,7 +388,7 @@ NSString* __usernames(NSArray*users)
 {
     BOOL likes = [self likes:user];
     if (likes) {
-        [self removeObjectsInArray:@[user] forKey:@"likes"];
+        [self removeObjectsInArray:@[user] forKey:fLikes];
         [self saveInBackground];
     }
 }
@@ -581,9 +494,9 @@ NSString* __usernames(NSArray*users)
              ];
 }
 
-- (BOOL)isMe
+- (BOOL) isMe
 {
-    return ([self.objectId isEqualToString:[User me].objectId]);
+    return [User meEquals:self.objectId];
 }
 
 + (NSArray*) ageGroups
@@ -619,13 +532,13 @@ NSString* __usernames(NSArray*users)
 -(void)setMedia:(Media *)media
 {
     if (media) {
-        [self setObject:media forKey:@"media"];
+        [self setObject:media forKey:fMedia];
         self.thumbnail = media.thumbnail;
     }
     else {
         NSLog(@"Removing media and thumbnail");
-        [self removeObjectForKey:@"media"];
-        [self removeObjectForKey:@"thumbnail"];
+        [self removeObjectForKey:fMedia];
+        [self removeObjectForKey:fThumbnail];
     }
 }
 
@@ -636,8 +549,7 @@ NSString* __usernames(NSArray*users)
     id channelId = [MessageCenter channelIdForUser:user];
     if (channelId) {
         NSLog(@"ChannelId:%@", channelId);
-        Channel *channel = [Channel objectWithoutDataWithObjectId:channelId];
-        [channel fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        [Channel fetch:channelId completion:^(Channel *channel) {
             if (actionBlock) {
                 actionBlock(channel);
             }
@@ -704,7 +616,7 @@ NSString* __usernames(NSArray*users)
     if (self) {
         self.name = __usernames(users);
         self.createdBy = [User me];
-        [self addUniqueObjectsFromArray:[users arrayByAddingObject:[User me]] forKey:@"users"];
+        [self addUniqueObjectsFromArray:[users arrayByAddingObject:[User me]] forKey:fUsers];
     }
     return self;
 }
@@ -719,23 +631,38 @@ NSString* __usernames(NSArray*users)
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     if (self.objectId)
-        dictionary[@"objectId"] = self.objectId;
+        dictionary[fObjectId] = self.objectId;
     if (self.createdAt)
-        dictionary[@"createdAt"] = self.createdAt;
+        dictionary[fCreatedAt] = self.createdAt;
     if (self.updatedAt)
-        dictionary[@"updatedAt"] = self.updatedAt;
+        dictionary[fUpdatedAt] = self.updatedAt;
     
-    if (self.name)
-        dictionary[@"name"] = self.name;
-    if (self.createdBy)
-        dictionary[@"createdBy"] = self.createdBy.dictionary;
-    
-    if (self.users) {
-        NSMutableArray *users = [NSMutableArray array];
-        for (User *user in self.users) {
-            [users addObject:user.objectId];
+    if (self.dataAvailable) {
+        if (self.name)
+            dictionary[@"name"] = self.name;
+        if (self.createdBy)
+            dictionary[fCreatedBy] = self.createdBy.objectId;
+        
+        if (self.users) {
+            NSMutableArray *users = [NSMutableArray array];
+            for (User *user in self.users) {
+                NSMutableDictionary *simpleUser = [NSMutableDictionary new];
+                if (user.objectId) {
+                    [simpleUser setObject:user.objectId forKey:fObjectId];
+                }
+                if (user.nickname) {
+                    [simpleUser setObject:user.nickname forKey:fNickname];
+                }
+                if (user.thumbnail) {
+                    [simpleUser setObject:user.thumbnail forKey:fThumbnail];
+                }
+                [users addObject:simpleUser];
+            }
+            dictionary[fUsers] = users;
         }
-        dictionary[@"users"] = users;
+    }
+    else {
+        NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
     }
     
     return dictionary;
@@ -743,7 +670,7 @@ NSString* __usernames(NSArray*users)
 
 - (void) removeUsers:(NSArray<User*>*)users completion:(VoidBlock)action
 {
-    [self removeObjectsInArray:users forKey:@"users"];
+    [self removeObjectsInArray:users forKey:fUsers];
     [self saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if (succeeded && !error) {
             if (action) {
@@ -756,6 +683,38 @@ NSString* __usernames(NSArray*users)
     }];
 }
 
++ (void)fetch:(id)channelId completion:(ChannelBlock)handler
+{
+    Channel *channel = [Channel objectWithoutDataWithObjectId:channelId];
+    [channel fetched:^{
+        handler(channel);
+    }];
+}
+
+- (void)fetched:(VoidBlock)handler
+{
+    Counter *counter = [Counter new];
+    [self fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR:%@", error.localizedDescription);
+        } else {
+            id counterId = [counter setCount:self.users.count completion:^{
+                handler();
+            }];
+            [self.users enumerateObjectsUsingBlock:^(User * _Nonnull user, NSUInteger idx, BOOL * _Nonnull stop) {
+                [user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                    if (!error) {
+                        [counter decreaseCount:counterId];
+                    }
+                    else {
+                        NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+                    }
+                }];
+            }];
+        }
+    }];
+}
+
 - (void) removeUser:(User*)user completion:(VoidBlock)action
 {
     [self removeUsers:@[user] completion:action];
@@ -763,7 +722,7 @@ NSString* __usernames(NSArray*users)
 
 - (void) addUsers:(NSArray<User*>*)users completion:(VoidBlock)action
 {
-    [self addUniqueObjectsFromArray:users forKey:@"users"];
+    [self addUniqueObjectsFromArray:users forKey:fUsers];
     [self saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if (succeeded && !error) {
             if (action) {

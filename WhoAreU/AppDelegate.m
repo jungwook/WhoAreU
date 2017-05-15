@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MessageCenter.h"
 
 @interface AppDelegate ()
 
@@ -165,7 +166,7 @@
             break;
     }
     
-//    [Engine handlePushUserInfo:userInfo];
+    [MessageCenter handlePushUserInfo:userInfo];
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
@@ -183,7 +184,7 @@
     
     NSLog( @"Handle push from foreground" );
     NSLog(@"%@", userInfo);
-    UNNotificationPresentationOptions option = UNNotificationPresentationOptionNone; //[Engine handlePushUserInfo:userInfo];
+    UNNotificationPresentationOptions option =     [MessageCenter handlePushUserInfo:userInfo];
 
     if (completionHandler)
         completionHandler(option);
@@ -198,7 +199,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     NSLog(@"Handle push from background or closed" );
     NSLog(@"%@", userInfo);
 
-//    [Engine handlePushUserInfo:userInfo];
+    [MessageCenter handlePushUserInfo:userInfo];
     completionHandler();
 }
 

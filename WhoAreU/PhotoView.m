@@ -43,15 +43,15 @@
     [self addSubview:self.photoView];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                          selector:@selector(newMessage:)
-                                             name:kNotificationNewUserMessage
+                                             name:kNotificationNewChatMessage
                                            object:nil];
 }
 
 - (void)newMessage:(NSNotification*)notification
 {
     id userInfo = notification.object;
-    id payload = userInfo[@"payload"];
-    id senderId = payload[@"senderId"];
+    id payload = userInfo[fPayload];
+    id senderId = payload[fSenderId];
 
     if ([senderId isEqualToString:self.user.objectId]) {
         [self setCount];
@@ -60,7 +60,7 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewUserMessage object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewChatMessage object:nil];
 }
 
 - (void)setUser:(User *)user
@@ -200,8 +200,8 @@
 {
     Media* media = [Media new];
     
-    media.media = [dictionary objectForKey:@"media"];
-    media.thumbnail = [dictionary objectForKey:@"thumbnail"];
+    media.media = [dictionary objectForKey:fMedia];
+    media.thumbnail = [dictionary objectForKey:fThumbnail];
     media.type = [[dictionary objectForKey:@"type"] integerValue];
     media.userId = [dictionary objectForKey:@"userId"];
     media.comment = [dictionary objectForKey:@"comment"];

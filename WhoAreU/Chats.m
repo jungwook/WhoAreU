@@ -11,45 +11,52 @@
 #import "IndentedLabel.h"
 #import "Compass.h"
 #import "Chat.h"
+#import "MessageCenter.h"
+#import "S3File.h"
 
 #pragma mark ChatsCell
 
 @interface ChatsCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UserView *userView;
-@property (weak, nonatomic) IBOutlet UILabel *nickname;
-@property (weak, nonatomic) IBOutlet UILabel *introduction;
-@property (weak, nonatomic) IBOutlet IndentedLabel *age;
-@property (weak, nonatomic) IBOutlet IndentedLabel *gender;
-@property (weak, nonatomic) IBOutlet IndentedLabel *ago;
-@property (weak, nonatomic) IBOutlet UILabel *distance;
-@property (weak, nonatomic) IBOutlet Compass *compass;
-@property (weak, nonatomic) id userId;
-@property (strong, nonatomic) User* user;
+@property (strong, nonatomic) id dictionary;
+@property (weak, nonatomic) IBOutlet UIView *photoView;
+@property (weak, nonatomic) IBOutlet UILabel *nicknames;
+@property (weak, nonatomic) IBOutlet UIView *badge;
+@property (weak, nonatomic) IBOutlet UILabel *lastMessage;
 @end
 
 @implementation ChatsCell
 
--(void)setUser:(User *)user
+- (void)setDictionary:(id)dictionary
 {
-    _user = user;
-    
-    self.userView.user = user;
-    self.nickname.text = user.nickname;
-    self.introduction.text = user.desc;
-    self.age.text = user.age;
-    self.gender.text = user.genderCode;
-    self.gender.backgroundColor = user.genderColor;
-    self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
-    self.compass.heading = __headingUsers(self.user, [User me]);
-    self.ago.text = user.whereUdatedAt.timeAgoSimple;
-}
+    _dictionary = dictionary;
 
-- (void) setUserId:(id)userId
-{
-    User *user = [User objectWithoutDataWithObjectId:userId];
-    [user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        self.user = user;
-    }];
+    id channelId = self.dictionary[fObjectId];
+    NSArray *users = self.dictionary[fUsers];
+    
+    NSString *selectedThumbnail;
+    for (id user in users) {
+        id userId = user[fObjectId];
+        id thumbnail = user[fThumbnail];
+        
+        if (![User meEquals:userId] && thumbnail) {
+            selectedThumbnail = thumbnail;
+        }
+    }
+    
+    self.nicknames.text = [MessageCenter channelNameForChannelId:channelId];
+    
+    if (selectedThumbnail) {
+        [S3File getImageFromFile:selectedThumbnail imageBlock:^(UIImage *image) {
+            __drawImage(image, self.photoView);
+        }];
+    }
+    else {
+        __drawImage([UIImage imageNamed:@"avatar"], self.photoView);
+    }
+    
+    id last = [[MessageCenter sortedMessagesForChannelId:channelId] lastObject];
+    self.lastMessage.text = last[fMessage];
+    self.badge.badgeValue = @([MessageCenter countUnreadMessagesForChannelId:channelId]).stringValue;
 }
 
 @end
@@ -65,12 +72,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    ANOTIF(kNotificationNewChannelAdded, @selector(notificationNewChannelAdded:));
+    ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
+}
+
+- (void) notificationNewChannelAdded:(id)notification
+{
+    __LF
+    [self.tableView reloadData];
+}
+
+- (void) notificationNewChatMessage:(id)notification
+{
+    __LF
+    [self.tableView reloadData];
 }
 
 - (NSArray *)chats
 {
-    return nil;
-//    return [Engine chatUserIds];
+    return [MessageCenter channels];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -81,10 +101,9 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"Chat"]) {
-//        ChatsCell *cell = sender;
         Chat *chat = segue.destinationViewController;
         chat.hidesBottomBarWhenPushed = YES;
-//        chat.user = cell.user;
+        chat.dictionary = sender;
     }
 }
 
@@ -104,21 +123,23 @@
 {
     ChatsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
     
-    id userId = [self.chats objectAtIndex:indexPath.row];
-    [cell setUserId:userId];
+    id dictionary = [self.chats objectAtIndex:indexPath.row];
+    NSLog(@"Chatrow data:%@", dictionary);
+    cell.dictionary = dictionary;
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    id dictionary = [self.chats objectAtIndex:indexPath.row];    
+    [self performSegueWithIdentifier:@"Chat" sender:dictionary];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     __LF
     [self.tableView reloadData];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    __LF
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -129,11 +150,16 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         __alert(self, @"Are you sure?", @"All contents will be permanently deleted.", ^(UIAlertAction* action) {
-//            id userId = [self.chats objectAtIndex:indexPath.row];
-//            [Engine deleteChatWithUserId:userId];
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }, ^(UIAlertAction* action) {
+            id dictionary = [self.chats objectAtIndex:indexPath.row];
+            id channelId = dictionary[fObjectId];
+            [MessageCenter removeChannelMessages:channelId];
             
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [tableView reloadData];
+                [MessageCenter setSystemBadge];
+            });
+        }, ^(UIAlertAction* action) {
         });
     }
 }

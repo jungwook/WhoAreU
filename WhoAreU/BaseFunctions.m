@@ -254,11 +254,11 @@ id __dictionary(id object)
         
         PFObject *o = object;
         if (o.objectId)
-            dictionary[@"objectId"] = o.objectId;
+            dictionary[fObjectId] = o.objectId;
         if (o.createdAt)
-            dictionary[@"createdAt"] = o.createdAt;
+            dictionary[fCreatedAt] = o.createdAt;
         if (o.updatedAt)
-            dictionary[@"updatedAt"] = o.updatedAt;
+            dictionary[fUpdatedAt] = o.updatedAt;
         
         [((PFObject*)object).allKeys enumerateObjectsUsingBlock:^(NSString * _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
             id value = [object objectForKey:key];

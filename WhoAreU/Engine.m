@@ -57,17 +57,13 @@
 
 - (instancetype)initOnceWithCapacity:(NSUInteger)numItems
 {
-    NSURL *filePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHANNEL_FILE_PATH];
-    
     self = [super init];
     if (self) {
-        self.array = [NSMutableArray arrayWithContentsOfURL:filePath];
-//        self.array = [NSMutableArray array];
+        self.array = [NSMutableArray array];
         if (!self.array) {
             self.array = [NSMutableArray new];
         }
         self.capacity = numItems;
-        self.filePath = filePath;
     }
     return self;
 }
@@ -198,7 +194,6 @@
 
 // Filesystem related
 @property (strong, nonatomic) NSObject *lock;
-@property (strong, nonatomic) NSURL* chatFilePath, *channelFilePath;
 
 // User related
 @property (weak, nonatomic) User *me;
@@ -207,7 +202,6 @@
 @property (nonatomic, strong) NSTimer *timeKeeper;
 
 // Other structures
-@property (nonatomic, strong) NSMutableDictionary *chats;
 @end
 @implementation Engine
 
@@ -283,20 +277,6 @@
 
 - (void) initFilesystemAndDataStructures
 {
-    self.chatFilePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHAT_FILE_PATH];
-    
-    self.channelFilePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:CHANNEL_FILE_PATH];
-    
-#ifndef RESET_CHAT_FILE
-    self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatFilePath];
-#endif
-    
-    if (!self.chats) {
-        self.chats = [NSMutableDictionary dictionary];
-    }
-    
-    NSLog(@"CHATS Loaded with %ld chatrooms.", self.chats.allKeys.count);
-    
     self.timeKeeper = [NSTimer scheduledTimerWithTimeInterval:SIMULATOR_FETCH_INTERVAL target:self selector:@selector(timeKeep) userInfo:nil repeats:YES];
     
 //    [self refreshChatUsers];
@@ -394,7 +374,7 @@
     _currentLocation = currentLocation;
     
     self.me.where = POINT_FROM_CLLOCATION(currentLocation);
-    self.me.whereUdatedAt = [NSDate date];
+    self.me.whereUpdatedAt = [NSDate date];
     [self.me saveInBackground];
 }
 
@@ -415,16 +395,6 @@
         default:
             break;
     }
-}
-
-+ (void) postNewUserMessageNotification:(id)userInfo
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewUserMessage object:userInfo];
-}
-
-+ (void) postNewChannelMessageNotification:(id)userInfo
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationNewChannelMessage object:userInfo];
 }
 
 /*
@@ -556,7 +526,7 @@
         [messages enumerateObjectsUsingBlock:^(Message*  _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
             [counter decreaseCount:countId];
             [Engine postNewUserMessageNotification:@{
-                                                 @"senderId" : message.fromUser.objectId
+                                                 fSenderId : message.fromUser.objectId
                                                  }];
         }];
     }];
@@ -568,9 +538,9 @@
     PFQuery *query = [Message query];
     
     [query whereKey:@"toUser" equalTo:[User me]];
-    [query whereKey:@"fromUser" equalTo:user];
+    [query whereKey:fFromUser equalTo:user];
     [query whereKey:@"read" equalTo:@(NO)];
-    [query orderByAscending:@"createdAt"];
+    [query orderByAscending:fCreatedAt];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable messages, NSError * _Nullable error) {
         NSLog(@"Found %ld messages", messages.count);
@@ -617,7 +587,7 @@
     PFQuery *query = [Message query];
     
     [query whereKey:@"toUser" equalTo:[User me]];
-    [query whereKey:@"fromUser" equalTo:user];
+    [query whereKey:fFromUser equalTo:user];
     [query whereKey:@"read" equalTo:@(NO)];
 
     [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
@@ -632,7 +602,7 @@
     NSAssert(user != nil, @"User cannot be nil");
     Engine *engine = [Engine new];
 
-    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES];
+    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:fCreatedAt ascending:YES];
     
     NSMutableArray *messages = [engine messagesFromUser:user];
     return [messages sortedArrayUsingDescriptors:@[sd]];
@@ -704,15 +674,15 @@
     }
     
     id params = @{
-                  @"alert" : textToSend,
-                  @"badge" : @"increment",
-                  @"sound" : @"default",
+                  fAlert : textToSend,
+                  fBadge : @"increment",
+                  fSound : @"default",
                   @"recipientId": userId,
-                  @"payload" : @{
-//                          @"thumbnail" : compressed,
-                          @"senderId":    [User me].objectId,
-                          @"message":     textToSend,
-                          @"messageId":   messageId,
+                  fPayload : @{
+//                          fThumbnail : compressed,
+                          fSenderId:    [User me].objectId,
+                          fMessage:     textToSend,
+                          fMessageId:   messageId,
                           },
                   };
     
@@ -750,20 +720,20 @@ void __addValue(NSMutableDictionary* dictionary, id key, id value) {
     User *me = [User me];
     
     id payload = [NSMutableDictionary dictionary];
-    __addValue(payload, @"senderId", me.objectId);
-    __addValue(payload, @"nickname", me.nickname);
-    __addValue(payload, @"desc", me.desc);
-    __addValue(payload, @"introduction", me.introduction);
-    __addValue(payload, @"age", me.age);
+    __addValue(payload, fSenderId, me.objectId);
+    __addValue(payload, fNickname, me.nickname);
+    __addValue(payload, fDesc, me.desc);
+    __addValue(payload, fIntroduction, me.introduction);
+    __addValue(payload, fAge, me.age);
     __addValue(payload, @"gender", me.genderTypeString);
     __addValue(payload, @"genderColor", NSStringFromUIColor(me.genderColor));
-    __addValue(payload, @"where", me.where);
-    __addValue(payload, @"message", message);
-    __addValue(payload, @"thumbnail", me.media.thumbnail);
+    __addValue(payload, fWhere, me.where);
+    __addValue(payload, fMessage, message);
+    __addValue(payload, fThumbnail, me.media.thumbnail);
     
     id params = @{
-                  @"channel" : @"Main",
-                  @"payload" : payload,
+                  fChannel : @"Main",
+                  fPayload : payload,
                   };
     [PFCloud callFunctionInBackground:@"sendMessageToChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
         if (error) {
@@ -778,16 +748,16 @@ void __addValue(NSMutableDictionary* dictionary, id key, id value) {
 + (void) sendPushMessage:(NSString*)textToSend messageId:(id)messageId toUserId:(id)userId
 {
     id params = @{
-                  @"channel" : userId,
-                  @"alert" : textToSend,
-                  @"badge" : @"increment",
-                  @"sound" : @"default",
+                  fChannel : userId,
+                  fAlert : textToSend,
+                  fBadge : @"increment",
+                  fSound : @"default",
                   @"recipientId": userId,
-                  @"payload" : @{
-                          //                          @"thumbnail" : compressed,
-                          @"senderId":    [User me].objectId,
-                          @"message":     textToSend,
-                          @"messageId":   messageId,
+                  fPayload : @{
+                          //                          fThumbnail : compressed,
+                          fSenderId:    [User me].objectId,
+                          fMessage:     textToSend,
+                          fMessageId:   messageId,
                           },
                   };
     
@@ -824,8 +794,8 @@ void __addValue(NSMutableDictionary* dictionary, id key, id value) {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:info];
     
     UNNotificationPresentationOptions option;
-    id pushType = userInfo[@"pushType"];
-    [userInfo setObject:[NSDate date] forKey:@"updatedAt"];
+    id pushType = userInfo[fPushType];
+    [userInfo setObject:[NSDate date] forKey:fUpdatedAt];
     
     if ([pushType isEqualToString:@"pushTypeChannel"]) {
         option = UNNotificationPresentationOptionNone;

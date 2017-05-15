@@ -146,7 +146,7 @@
 
         if (data) {
             @synchronized (self.cache) {
-                id cacheItem = @{ @"updatedAt" : [NSDate date],
+                id cacheItem = @{ fUpdatedAt : [NSDate date],
                                   @"data" : data };
                 
                 [self.cache setObject:cacheItem forKey:key];
@@ -170,7 +170,7 @@
     }
     else {
         @synchronized (self.cache) {
-            id cacheItem = @{ @"updatedAt" : [NSDate date],
+            id cacheItem = @{ fUpdatedAt : [NSDate date],
                               @"data" : data };
             
             [self.cache setObject:cacheItem forKey:key];

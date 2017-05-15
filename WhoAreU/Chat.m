@@ -11,9 +11,7 @@
 
 @interface Chat ()
 @property (strong, nonatomic) ChatView *chatView;
-@property (strong, nonatomic) StringBlock sendTextAction;
-@property (strong, nonatomic) MediaBlock sendMediaAction;
-//@property CGFloat baseLine;
+@property (readonly, nonatomic) NSString *name;
 @end
 
 @implementation Chat
@@ -46,19 +44,23 @@
     __LF
 }
 
-- (void)setChannel:(Channel *)channel
+- (NSString*) name
 {
-    _channel = channel;
-    self.chatView.channel = channel;
-    self.navigationItem.title = channel.name;
+    NSArray *users = self.dictionary[fUsers];
+    NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
+    
+    [set removeObject:[User me].nickname];
+    return [[set allObjects] componentsJoinedByString:@", "];
 }
 
--(void) viewDidLoad
+- (void)setDictionary:(id)dictionary
 {
-    [super viewDidLoad];
+    _dictionary = dictionary;
     
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.chatView.channel = self.dictionary;
+    self.navigationItem.title = self.name;
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

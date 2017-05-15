@@ -51,13 +51,13 @@
     MessageType type = [self.dictionary[@"type"] integerValue];
     switch (type) {
         case kMessageTypeMedia:
-            self.mediaView.dictionary = [self.dictionary objectForKey:@"media"];
+            self.mediaView.dictionary = [self.dictionary objectForKey:fMedia];
             self.label.alpha = 0.0f;
             self.mediaView.alpha = 1.0f;
             break;
             
         case kMessageTypeText:
-            self.label.text = [self.dictionary objectForKey:@"message"];
+            self.label.text = [self.dictionary objectForKey:fMessage];
             self.label.alpha = 1.0f;
             self.mediaView.alpha = 0.0f;
             break;

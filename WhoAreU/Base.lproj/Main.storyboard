@@ -424,120 +424,56 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AZM-j2-HsO" customClass="UserView">
-                                            <rect key="frame" x="8" y="8" width="50" height="50"/>
+                                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyv-dr-x9P">
+                                            <rect key="frame" x="8" y="5" width="50" height="50"/>
                                             <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="0d6-xf-MCA"/>
-                                                <constraint firstAttribute="width" constant="50" id="nm9-e2-3UN"/>
+                                                <constraint firstAttribute="height" constant="50" id="Nec-rO-DK4"/>
+                                                <constraint firstAttribute="width" constant="50" id="e9N-1u-tAo"/>
                                             </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                    <real key="value" value="25"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="nickname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v7K-YM-MI4">
-                                            <rect key="frame" x="66" y="22.333333333333336" width="80" height="21.000000000000007"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aSy-kb-1Lw">
+                                            <rect key="frame" x="8" y="5" width="50" height="50"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iphone, do you know me?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qbT-nD-AzY">
+                                            <rect key="frame" x="66" y="9" width="340" height="21"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="함께 드라이브" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pbw-mh-o1Q">
-                                            <rect key="frame" x="66" y="43.333333333333336" width="72" height="16"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iphone, do you know me?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="muv-cR-IRZ">
+                                            <rect key="frame" x="66" y="31" width="340" height="16"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WYU-Om-h6K" customClass="IndentedLabel">
-                                            <rect key="frame" x="146" y="43.333333333333336" width="17" height="16"/>
-                                            <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                    <real key="value" value="4"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </label>
-                                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gb1-5P-WsL" customClass="Compass">
-                                            <rect key="frame" x="386" y="23" width="20" height="20"/>
-                                            <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="1VP-Lf-8vT"/>
-                                                <constraint firstAttribute="width" constant="20" id="ykM-kt-x0L"/>
-                                            </constraints>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
-                                                    <real key="value" value="1"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
-                                                    <color key="value" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                    <real key="value" value="10"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="paneColor">
-                                                    <color key="value" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5km" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q5A-mu-rPo">
-                                            <rect key="frame" x="353" y="25" width="29" height="16"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MALE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hwM-bi-i6v" customClass="IndentedLabel">
-                                            <rect key="frame" x="167" y="43.333333333333336" width="36.333333333333343" height="16"/>
-                                            <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                    <real key="value" value="4"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2s" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0xu-5z-DxJ" customClass="IndentedLabel">
-                                            <rect key="frame" x="207" y="43.333333333333336" width="15.333333333333343" height="16"/>
-                                            <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                    <real key="value" value="4"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Pbw-mh-o1Q" firstAttribute="baseline" secondItem="AZM-j2-HsO" secondAttribute="baseline" constant="-2" id="0Aa-rt-r2A"/>
-                                        <constraint firstItem="v7K-YM-MI4" firstAttribute="leading" secondItem="AZM-j2-HsO" secondAttribute="trailing" constant="8" id="1iv-uz-BUP"/>
-                                        <constraint firstAttribute="leadingMargin" secondItem="AZM-j2-HsO" secondAttribute="leading" id="2Rx-gN-rPI"/>
-                                        <constraint firstItem="Gb1-5P-WsL" firstAttribute="centerY" secondItem="AZM-j2-HsO" secondAttribute="centerY" id="6PF-Mk-gwv"/>
-                                        <constraint firstItem="Gb1-5P-WsL" firstAttribute="leading" secondItem="q5A-mu-rPo" secondAttribute="trailing" constant="4" id="CY8-H6-cHA"/>
-                                        <constraint firstItem="Pbw-mh-o1Q" firstAttribute="top" secondItem="v7K-YM-MI4" secondAttribute="bottom" id="G0X-V2-0m3"/>
-                                        <constraint firstItem="hwM-bi-i6v" firstAttribute="baseline" secondItem="Pbw-mh-o1Q" secondAttribute="baseline" id="HmI-Th-PUz"/>
-                                        <constraint firstItem="Pbw-mh-o1Q" firstAttribute="leading" secondItem="v7K-YM-MI4" secondAttribute="leading" id="O8R-A4-WDx"/>
-                                        <constraint firstItem="0xu-5z-DxJ" firstAttribute="leading" secondItem="hwM-bi-i6v" secondAttribute="trailing" constant="4" id="b2K-Qd-qC6"/>
-                                        <constraint firstItem="hwM-bi-i6v" firstAttribute="leading" secondItem="WYU-Om-h6K" secondAttribute="trailing" constant="4" id="ePG-bB-Oe3"/>
-                                        <constraint firstItem="WYU-Om-h6K" firstAttribute="baseline" secondItem="Pbw-mh-o1Q" secondAttribute="baseline" id="pAM-PA-ykx"/>
-                                        <constraint firstItem="AZM-j2-HsO" firstAttribute="top" secondItem="Tr4-P4-Uvd" secondAttribute="topMargin" id="r3X-5p-XD0"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="Gb1-5P-WsL" secondAttribute="trailing" id="svp-Iy-5eV"/>
-                                        <constraint firstItem="0xu-5z-DxJ" firstAttribute="baseline" secondItem="Pbw-mh-o1Q" secondAttribute="baseline" id="tQN-HW-Yzk"/>
-                                        <constraint firstItem="WYU-Om-h6K" firstAttribute="leading" secondItem="Pbw-mh-o1Q" secondAttribute="trailing" constant="7.6666666666666572" id="zMM-c5-vRA"/>
-                                        <constraint firstItem="q5A-mu-rPo" firstAttribute="centerY" secondItem="AZM-j2-HsO" secondAttribute="centerY" id="zdJ-Wg-g0v"/>
+                                        <constraint firstItem="qbT-nD-AzY" firstAttribute="top" secondItem="xyv-dr-x9P" secondAttribute="top" constant="4" id="5jI-uy-XfU"/>
+                                        <constraint firstItem="qbT-nD-AzY" firstAttribute="leading" secondItem="xyv-dr-x9P" secondAttribute="trailing" constant="8" id="6fk-9Q-HQK"/>
+                                        <constraint firstAttribute="leadingMargin" secondItem="xyv-dr-x9P" secondAttribute="leading" id="NqB-Hs-agk"/>
+                                        <constraint firstItem="muv-cR-IRZ" firstAttribute="leading" secondItem="qbT-nD-AzY" secondAttribute="leading" id="WIU-iy-pHU"/>
+                                        <constraint firstItem="aSy-kb-1Lw" firstAttribute="trailing" secondItem="xyv-dr-x9P" secondAttribute="trailing" id="WSs-z5-X1i"/>
+                                        <constraint firstItem="xyv-dr-x9P" firstAttribute="centerY" secondItem="Tr4-P4-Uvd" secondAttribute="centerY" id="jYr-OR-2Xg"/>
+                                        <constraint firstItem="muv-cR-IRZ" firstAttribute="trailing" secondItem="qbT-nD-AzY" secondAttribute="trailing" id="jpS-pP-93c"/>
+                                        <constraint firstItem="aSy-kb-1Lw" firstAttribute="bottom" secondItem="xyv-dr-x9P" secondAttribute="bottom" id="krA-wr-vEn"/>
+                                        <constraint firstItem="aSy-kb-1Lw" firstAttribute="top" secondItem="xyv-dr-x9P" secondAttribute="top" id="mSB-9V-T85"/>
+                                        <constraint firstItem="aSy-kb-1Lw" firstAttribute="leading" secondItem="xyv-dr-x9P" secondAttribute="leading" id="q9U-c0-Mvh"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="qbT-nD-AzY" secondAttribute="trailing" id="x9B-dL-fNJ"/>
+                                        <constraint firstItem="muv-cR-IRZ" firstAttribute="bottom" secondItem="xyv-dr-x9P" secondAttribute="bottom" constant="-8" id="yW0-pG-3kO"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="age" destination="WYU-Om-h6K" id="IOa-iK-TvA"/>
-                                    <outlet property="ago" destination="0xu-5z-DxJ" id="mI0-hw-oTp"/>
-                                    <outlet property="compass" destination="Gb1-5P-WsL" id="kia-OK-i0a"/>
-                                    <outlet property="distance" destination="q5A-mu-rPo" id="aOe-uO-6k0"/>
-                                    <outlet property="gender" destination="hwM-bi-i6v" id="Ymp-ID-VZg"/>
-                                    <outlet property="introduction" destination="Pbw-mh-o1Q" id="vDv-Pc-I8D"/>
-                                    <outlet property="nickname" destination="v7K-YM-MI4" id="ddv-PA-ydM"/>
-                                    <outlet property="userView" destination="AZM-j2-HsO" id="RCa-2y-VbS"/>
-                                    <segue destination="7DW-gs-Ike" kind="show" identifier="Chat" id="ca7-7E-LGW"/>
+                                    <outlet property="badge" destination="aSy-kb-1Lw" id="T0y-ij-PGh"/>
+                                    <outlet property="lastMessage" destination="muv-cR-IRZ" id="TWa-m5-VXu"/>
+                                    <outlet property="nicknames" destination="qbT-nD-AzY" id="eQK-VZ-B2e"/>
+                                    <outlet property="photoView" destination="xyv-dr-x9P" id="rfi-FN-8C5"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -547,10 +483,13 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Chats" id="PIV-hr-3FC"/>
+                    <connections>
+                        <segue destination="7DW-gs-Ike" kind="show" identifier="Chat" id="QKh-dI-eif"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="meu-9U-RQ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3318.840579710145" y="-68.478260869565219"/>
+            <point key="canvasLocation" x="3317.5999999999999" y="-68.815592203898049"/>
         </scene>
         <!--Chats-->
         <scene sceneID="i0V-U0-y5O">
@@ -605,7 +544,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hkc-Ln-EBM" customClass="IndentedLabel">
-                                            <rect key="frame" x="82" y="87" width="15.666666666666671" height="14.333333333333329"/>
+                                            <rect key="frame" x="82" y="87" width="16" height="14.666666666666671"/>
                                             <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -645,7 +584,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MALE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xf9-2W-j04" customClass="IndentedLabel">
-                                            <rect key="frame" x="101.66666666666666" y="87" width="33.999999999999972" height="14.333333333333329"/>
+                                            <rect key="frame" x="102" y="87" width="34" height="14.666666666666671"/>
                                             <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -657,7 +596,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2s" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tIn-Yz-oL6" customClass="IndentedLabel">
-                                            <rect key="frame" x="139.66666666666666" y="87" width="15" height="14.333333333333329"/>
+                                            <rect key="frame" x="140" y="87" width="15" height="14.666666666666671"/>
                                             <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -669,14 +608,14 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="whatever it takes..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ETX-Yr-w13" customClass="BalloonLabel">
-                                            <rect key="frame" x="50" y="0.0" width="152" height="20.333333333333332"/>
+                                            <rect key="frame" x="50" y="0.0" width="152" height="20.666666666666668"/>
                                             <color key="backgroundColor" red="0.0" green="0.56201171875" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="함께 드라이브" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V7S-Uv-hT1">
-                                            <rect key="frame" x="8" y="87" width="66" height="14.333333333333329"/>
+                                            <rect key="frame" x="8" y="87" width="66" height="14.666666666666671"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -916,7 +855,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="911 km" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XQd-U7-4lo">
-                                            <rect key="frame" x="360" y="53" width="42" height="14.333333333333371"/>
+                                            <rect key="frame" x="360" y="53" width="42" height="14.666666666666629"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                             <color key="textColor" white="0.90152994789999996" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -1027,7 +966,7 @@
                                 <rect key="frame" x="0.0" y="20" width="414" height="716"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Fkt-ld-bca">
-                                        <rect key="frame" x="62" y="215" width="290" height="286"/>
+                                        <rect key="frame" x="62" y="214.66666666666663" width="290" height="286.66666666666674"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Products" textLabel="nDV-pA-UH7" detailTextLabel="rLI-6q-AxS" style="IBUITableViewCellStyleValue1" id="BSC-jq-5XM">
@@ -1061,7 +1000,7 @@
                                         </connections>
                                     </tableView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Credit Store" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RrC-U0-tsP">
-                                        <rect key="frame" x="138" y="174" width="138" height="29"/>
+                                        <rect key="frame" x="138" y="173.66666666666666" width="138" height="29"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -1146,13 +1085,13 @@
                                             </constraints>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="nickname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d03-Hv-NMx">
-                                            <rect key="frame" x="66" y="22.333333333333336" width="80" height="21.000000000000007"/>
+                                            <rect key="frame" x="66" y="22.666666666666664" width="80" height="20.999999999999993"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9yR-QF-frz">
-                                            <rect key="frame" x="66" y="43.333333333333336" width="72" height="16"/>
+                                            <rect key="frame" x="66" y="43.666666666666664" width="72" height="16"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -1180,7 +1119,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20's" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLM-qa-QJj" customClass="IndentedLabel">
-                                            <rect key="frame" x="146" y="43.333333333333336" width="27" height="16"/>
+                                            <rect key="frame" x="146" y="43.666666666666664" width="27" height="16"/>
                                             <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1192,7 +1131,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MALE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xbZ-6u-1EM" customClass="IndentedLabel">
-                                            <rect key="frame" x="177" y="43" width="36.333333333333343" height="16"/>
+                                            <rect key="frame" x="177" y="43" width="36.666666666666657" height="16"/>
                                             <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1204,7 +1143,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2s" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pka-Uq-gs0" customClass="IndentedLabel">
-                                            <rect key="frame" x="217" y="43" width="15.333333333333343" height="15.666666666666664"/>
+                                            <rect key="frame" x="217" y="43.666666666666664" width="15.666666666666657" height="16"/>
                                             <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1269,7 +1208,7 @@
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="whatever it takes..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e3X-hH-FAJ" customClass="BalloonLabel">
-                                            <rect key="frame" x="146" y="14.000000000000002" width="120.66666666666669" height="15.66666666666667"/>
+                                            <rect key="frame" x="146" y="13.666666666666664" width="121" height="16"/>
                                             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1334,7 +1273,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Load More" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfg-aJ-i1w">
-                                            <rect key="frame" x="166.33333333333334" y="11.666666666666664" width="81.333333333333314" height="21"/>
+                                            <rect key="frame" x="166.66666666666666" y="11.666666666666664" width="81" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -1508,6 +1447,6 @@ GPS</string>
         <image name="user" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="1wJ-vB-19p"/>
+        <segue reference="QKh-dI-eif"/>
     </inferredMetricsTieBreakers>
 </document>

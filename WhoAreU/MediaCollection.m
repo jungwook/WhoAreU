@@ -233,7 +233,7 @@
             NSUInteger idx = [self.media indexOfObject:media];
             NSLog(@"Deleting photo at index %ld", idx);
             [self.media removeObject:media];
-            [self.user removeObjectsInArray:@[media] forKey:@"photos"];
+            [self.user removeObjectsInArray:@[media] forKey:fPhotos];
             [self.user saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                 if (succeeded) {
                     if (self.media.count > 0) {
@@ -259,7 +259,7 @@
         [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
             if (picked) {
                 [self.media addObject:media];
-                [self.user addUniqueObject:media forKey:@"photos"];
+                [self.user addUniqueObject:media forKey:fPhotos];
                 [self.user saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                     if (succeeded) {
                         NSUInteger idx = [self.media indexOfObject:media];

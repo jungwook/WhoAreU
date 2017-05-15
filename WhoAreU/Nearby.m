@@ -210,10 +210,10 @@
     PFQuery *query = [User query];
     [query setSkip:self.skip];
     [query setLimit:self.limit];
-    [query includeKey:@"media"];
+    [query includeKey:fMedia];
     
     //  No need to include keys... lazy loading when tapped.
-    //  [query includeKey:@"photos"];
+    //  [query includeKey:fPhotos];
     
     switch (condition) {
         case kSegmentGirls:
@@ -225,19 +225,19 @@
         case kSegmentAll:
             break;
         case kSegmentLikes:
-            [query whereKey:@"objectId" containedIn:[self arrayOfUserIds:[User me].likes]];
+            [query whereKey:fObjectId containedIn:[self arrayOfUserIds:[User me].likes]];
             break;
         default:
             break;
     }
-    [query whereKey:@"objectId" notEqualTo:[User me].objectId];
+    [query whereKey:fObjectId notEqualTo:[User me].objectId];
     if (self.sortby == kNearBySortByLocation) {
         NSLog(@"Querying location");
-        [query whereKey:@"where" nearGeoPoint:[User me].where];
+        [query whereKey:fWhere nearGeoPoint:[User me].where];
     }
     else {
         NSLog(@"Querying by time");
-        [query orderByDescending:@"updatedAt"];
+        [query orderByDescending:fUpdatedAt];
     }
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable users, NSError * _Nullable error) {
         if (block) {
@@ -291,14 +291,15 @@
             // actions
             [User payForChatWithUser:user onViewController:self action:^(id object) {
                 if ([object isKindOfClass:[Channel class]]) {
-                    NSLog(@"CHANNEL:%@", object);
-                    [self performSegueWithIdentifier:@"Chat" sender:object];
+                    Channel *channel = object;
+                    [self performSegueWithIdentifier:@"Chat" sender:channel.dictionary];
                     weakCell.badgeValue = nil;
                 }
                 else if ([object isKindOfClass:[NSString class]]) {
                     NSLog(@"FIRST MESSAGE:%@", object);
                     [MessageCenter send:object users:@[user] completion:^(Channel *channel) {
-                        [self performSegueWithIdentifier:@"Chat" sender:channel];
+                        NSLog(@"Entering Chat with channel:%@", channel.dictionary);
+                        [self performSegueWithIdentifier:@"Chat" sender:channel.dictionary];
                         weakCell.badgeValue = nil;
                     }];
                 }
@@ -335,7 +336,7 @@
         // other preparations.
         Chat *chat = segue.destinationViewController;
         chat.hidesBottomBarWhenPushed = YES;
-        chat.channel = sender;
+        chat.dictionary = sender;
     }
 }
 

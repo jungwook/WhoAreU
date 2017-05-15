@@ -72,7 +72,7 @@
     user.password = usernameAndPassword;
     user.nickname = name;
     user.where = geoLocation;
-    user.whereUdatedAt = [NSDate date];
+    user.whereUpdatedAt = [NSDate date];
     user.simulated = YES;
     
     user.age = [User ageGroups][arc4random()%([User ageGroups].count)];
@@ -92,7 +92,7 @@
             NSString* imageName = [NSString stringWithFormat:@"image%d", idx];
             Media *media = [self mediaFromImage:[UIImage imageNamed:imageName] size:CGSizeMake(1024, 1024)];
             loggedIn.media = media;
-            [loggedIn addObjectsFromArray:[self createPhotos] forKey:@"photos"];
+            [loggedIn addObjectsFromArray:[self createPhotos] forKey:fPhotos];
             
             NSLog(@"User:%@", loggedIn);
             [loggedIn save];

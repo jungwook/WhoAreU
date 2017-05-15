@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface Chat : UIViewController
-@property (nonatomic, strong) Channel* channel;
+//@property (nonatomic, strong) Channel* channel;
+@property (nonatomic, strong) id dictionary;
 @end

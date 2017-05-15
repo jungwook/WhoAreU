@@ -9,32 +9,6 @@
 #ifndef BaseFunctions_h
 #define BaseFunctions_h
 
-#define __LF NSLog(@"%s", __FUNCTION__);
-
-#define kJPEGCompressionLow 0.2f
-#define kJPEGCompressionMedium 0.4f
-#define kJPEGCompressionDefault 0.6f
-#define kJPEGCompressionFull 1.0f
-#define kThumbnailWidth 100
-#define kVideoThumbnailWidth 320
-#define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
-
-#define ANOTIF(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:__Y__ name:__X__ object:nil]
-
-#define RNOTIF(__Y__) [[NSNotificationCenter defaultCenter] removeObserver:self name:__Y__ object:nil]
-
-#define RANOTIF [[NSNotificationCenter defaultCenter] removeObserver:self]
-
-#define POINT_FROM_CLLOCATION(__X__) [PFGeoPoint geoPointWithLocation:__X__]
-#define POINT_FROM_COORDINATES(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
-#define SIMULATOR_LOCATION [PFGeoPoint geoPointWithLatitude:37.515791f longitude:127.027807f]
-
-#define kAppColor [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f]
-#define appScreen [UIScreen mainScreen]
-#define appWindow [UIApplication sharedApplication].keyWindow
-#define mainWindow [[[UIApplication sharedApplication] delegate] window]
-
-typedef void(^AlertAction)(UIAlertAction *action);
 
 CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
 UIImage*    __scaleImage(UIImage* image, CGSize size);

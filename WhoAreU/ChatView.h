@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "Balloon.h"
 
+#define kChatViewHeaderHeight 40.0f
+#define kChatViewHeaderFont [UIFont systemFontOfSize:12 weight:UIFontWeightBold]
+
+
 @interface ChatView : UIView <UITableViewDelegate, UITableViewDataSource>
 @property (weak, nonatomic) UIViewController *parent;
-@property (copy, nonatomic) StringBlock sendTextAction;
-@property (copy, nonatomic) MediaBlock sendMediaAction;
-@property (nonatomic, strong) Channel* channel;
+@property (nonatomic, strong) id channel;
 - (void)reloadDataAnimated:(BOOL) animated;
 @end

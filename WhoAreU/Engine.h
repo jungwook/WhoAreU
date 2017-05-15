@@ -8,14 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define kNotificationNewUserMessage @"NotificationNewUserMessage"
-#define kNotificationNewChannelMessage @"NotificationNewChannelMessage"
-#define kNotificationUserLoggedInMessage @"NotificationUserLoggedIn"
-#define kNotificationSystemInitialized @"NotifictionSystemInitialized"
-
-#define SIMULATOR_FETCH_INTERVAL 10.0f
-#define CHAT_FILE_PATH @"Chats"
-#define CHANNEL_FILE_PATH @"ChannelMessages"
 
 typedef enum : NSUInteger {
     kSimulatorStatusUnknown = 0,
@@ -51,8 +43,6 @@ typedef enum : NSUInteger {
 + (void) initializeSystems;
 + (CLLocationDirection) heading;
 
-+ (void) postNewUserMessageNotification:(id)userInfo;
-+ (void) postNewChannelMessageNotification:(id)userInfo;
 
 //+ (void) deleteChatWithUserId:(id)userId;
 //+ (void) sendChannelMessage:(NSString*)message;

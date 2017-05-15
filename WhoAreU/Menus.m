@@ -206,14 +206,14 @@
         }
     }];
     
-    User *installUser = install[@"user"];
+    User *installUser = install[fUser];
     BOOL sameUser = [installUser.objectId isEqualToString:me.objectId];
     if (!sameUser) {
         me.credits = me.initialFreeCredits;
         NSLog(@"Adding %ld free credits", me.credits);
         [me saveInBackground];
         install[@"deviceToken"] = install[@"deviceToken"];
-        install[@"user"] = me;
+        install[fUser] = me;
         NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
         [install saveInBackground];
     }
@@ -246,7 +246,7 @@
              @"title"   : title,
              @"menu"    : title,
              @"icon"    : iconName,
-             @"badge"   : @(count)
+             fBadge   : @(count)
              };
 }
 

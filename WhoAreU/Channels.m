@@ -36,16 +36,16 @@
 - (void)setUserInfo:(id)userInfo
 {
     _userInfo = userInfo;
-    NSDate *updatedAt = userInfo[@"updatedAt"];
-    id payload = userInfo[@"payload"];
+    NSDate *updatedAt = userInfo[fUpdatedAt];
+    id payload = userInfo[fPayload];
     
-    self.userId = payload[@"senderId"];
-    id whereDic = payload[@"where"];
+    self.userId = payload[fSenderId];
+    id whereDic = payload[fWhere];
     
     NSNumber *latitude = whereDic[@"latitude"];
     NSNumber *longitude = whereDic[@"longitude"];
     
-    id thumbnail = payload[@"thumbnail"];
+    id thumbnail = payload[fThumbnail];
     [S3File getImageFromFile:thumbnail imageBlock:^(UIImage *image) {
         __drawImage(image, self.userView);
     }];
@@ -54,10 +54,10 @@
     CGFloat distance = [where distanceInKilometersTo:[User me].where];
     CLLocationDirection heading = __heading(where, [User me].where);
     
-    self.nickname.text = payload[@"nickname"];
-    self.desc.text = payload[@"desc"];
-    self.introduction.text = payload[@"message"];
-    self.age.text = payload[@"age"];
+    self.nickname.text = payload[fNickname];
+    self.desc.text = payload[fDesc];
+    self.introduction.text = payload[fMessage];
+    self.age.text = payload[fAge];
     self.gender.text = payload[@"gender"];
     self.gender.backgroundColor = UIColorFromNSString(payload[@"genderColor"]);
     self.distance.text = __distanceString(distance);
@@ -92,7 +92,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newChannelMessage:)
-                                                 name:kNotificationNewChannelMessage
+                                                 name:kNotificationNewChatMessage
                                                object:nil];
     
 }
@@ -112,7 +112,7 @@
 {
     __LF
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewChannelMessage object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewChatMessage object:nil];
 }
 
 - (void)viewDidLoad {
