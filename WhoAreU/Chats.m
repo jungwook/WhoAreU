@@ -90,7 +90,7 @@
 
 - (NSArray *)chats
 {
-    return [MessageCenter channels];
+    return [MessageCenter liveChannels];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -124,7 +124,7 @@
     ChatsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
     
     id dictionary = [self.chats objectAtIndex:indexPath.row];
-    NSLog(@"Chatrow data:%@", dictionary);
+//    NSLog(@"Chatrow data:%@", dictionary);
     cell.dictionary = dictionary;
     
     return cell;

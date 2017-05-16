@@ -37,7 +37,7 @@
 
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
-    if (self.text && ![self.text isEqualToString:@""]) {
+    if (self.text && ![self.text isEqualToString:kStringNull]) {
         UIEdgeInsets insets = self.textInsets;
         
         [self invalidateIntrinsicContentSize];

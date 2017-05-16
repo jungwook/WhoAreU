@@ -52,10 +52,10 @@
     int length = 8;
     char *base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     
-    NSString *code = @"";
+    NSString *code = kStringNull;
     
     for (int i=0; i<length; i++) {
-        int rand = arc4random_uniform(36);
+        int rand = arc4random_uniform(62); // 36 before for LARGECAPS
         code = [code stringByAppendingString:[NSString stringWithFormat:@"%c", base62chars[rand]]];
     }
     
@@ -86,7 +86,7 @@
 {
     ObjectIdStore *store = [ObjectIdStore new];
     @synchronized (store.lock) {
-        NSString *randId = @"";
+        NSString *randId = kStringNull;
         do {
             randId = [ObjectIdStore randomId];
         } while ([ObjectIdStore containsObjectId:randId]);

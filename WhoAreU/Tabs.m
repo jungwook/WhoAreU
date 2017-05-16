@@ -49,7 +49,6 @@
 {
     //    [User logOut];
     User *user = [User me];
-    [self dictionaryCompare];
     
     VoidBlock initializationHandler = ^(void) {
         

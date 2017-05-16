@@ -114,19 +114,19 @@
 
 - (IBAction)proceed:(id)sender {
     BOOL notReady = NO;
-    if ([self.nickname.text isEqualToString:@""]) {
+    if ([self.nickname.text isEqualToString:kStringNull]) {
         self.information.text = @"You must enter a unique nickname!";
         notReady = YES;
     }
-    else if ([self.withMe.text isEqualToString:@""]) {
+    else if ([self.withMe.text isEqualToString:kStringNull]) {
         self.information.text = @"Please select why you're here!";
         notReady = YES;
     }
-    else if ([self.ageGroup.text isEqualToString:@""]) {
+    else if ([self.ageGroup.text isEqualToString:kStringNull]) {
         self.information.text = @"Please select an age group";
         notReady = YES;
     }
-    else if ([self.gender.text isEqualToString:@""]) {
+    else if ([self.gender.text isEqualToString:kStringNull]) {
         self.information.text = @"Please select your gender. You cannot change this ever!";
         notReady = YES;
     }
@@ -150,7 +150,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if ([self.nickname.text isEqualToString:@""]) {
+        if ([self.nickname.text isEqualToString:kStringNull]) {
             self.nickname.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
         }
         else {

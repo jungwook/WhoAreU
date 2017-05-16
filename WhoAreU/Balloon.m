@@ -48,7 +48,7 @@
 {
     _dictionary = dictionary;
     
-    MessageType type = [self.dictionary[@"type"] integerValue];
+    MessageType type = [self.dictionary[fType] integerValue];
     switch (type) {
         case kMessageTypeMedia:
             self.mediaView.dictionary = [self.dictionary objectForKey:fMedia];
@@ -87,7 +87,7 @@
 {
     [super layoutSubviews];
     
-    MessageType type = [[self.dictionary objectForKey:@"type"] integerValue];
+    MessageType type = [[self.dictionary objectForKey:fType] integerValue];
     
     switch (type) {
         case kMessageTypeText: {

@@ -39,28 +39,34 @@
 
 
 - (void)applicationWillResignActive:(UIApplication *)application {
+    __LF
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
 }
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    __LF
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
+    __LF
+    PNOTIF(kNotificationApplicationActive, nil);
     // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
 }
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    __LF
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    __LF
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
@@ -152,6 +158,8 @@
 
 -(void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
+    __LF
+
     // iOS 10 will handle notifications through other methods
     
     switch (application.applicationState) {
@@ -172,6 +180,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
+    __LF
     [self application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
     }];
 }
@@ -180,10 +189,12 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
+    __LF
+    
     id userInfo = notification.request.content.userInfo;
     
     NSLog( @"Handle push from foreground" );
-    NSLog(@"%@", userInfo);
+//    NSLog(@"%@", userInfo);
     UNNotificationPresentationOptions option =     [MessageCenter handlePushUserInfo:userInfo];
 
     if (completionHandler)
@@ -194,6 +205,8 @@
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler
 {
+    __LF
+
     id userInfo = response.notification.request.content.userInfo;
 
     NSLog(@"Handle push from background or closed" );

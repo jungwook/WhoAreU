@@ -90,7 +90,7 @@
     Message *message = [Message new];
     message.fromUser = [User me];
     message.channel = [Channel objectWithoutDataWithObjectId:channelId];
-    message.read = userCount;
+    message.read = userCount - 1; // minus myself..
 
     if ([object isKindOfClass:[NSString class]]) {
         message.message = [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -116,7 +116,7 @@ NSString* __usernames(NSArray*users)
     for (User *user in users) {
         [nicknames addObject:user.nickname];
     }
-    return [nicknames componentsJoinedByString:@", "];
+    return [nicknames componentsJoinedByString:kStringCommaSpace];
 }
 
 + (instancetype)message:(id)object users:(NSArray*)users
@@ -126,7 +126,7 @@ NSString* __usernames(NSArray*users)
     Message *message = [Message new];
     message.fromUser = [User me];
     message.channel = channel;
-    message.read = users.count;
+    message.read = users.count - 1; // minus myself..
     if ([object isKindOfClass:[NSString class]]) {
         message.message = object;
         message.type = kMessageTypeText;
@@ -165,8 +165,8 @@ NSString* __usernames(NSArray*users)
             dictionary[fMessage] = self.message;
         if (self.media)
             dictionary[fMedia] = self.media.dictionary;
-        dictionary[@"type"] = @(self.type);
-        dictionary[@"read"] = @(self.read);
+        dictionary[fType] = @(self.type);
+        dictionary[fRead] = @(self.read);
     }
     else {
         NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
@@ -199,17 +199,17 @@ NSString* __usernames(NSArray*users)
     
     if (self.dataAvailable) {
         if (self.userId)
-            dictionary[@"userId"] = self.userId;
+            dictionary[fUserId] = self.userId;
         if (self.comment)
-            dictionary[@"comment"] = self.comment;
+            dictionary[fComment] = self.comment;
         if (self.thumbnail)
             dictionary[fThumbnail] = self.thumbnail;
         if (self.media)
             dictionary[fMedia] = self.media;
         
-        dictionary[@"type"] = @(self.type);
-        dictionary[@"source"] = @(self.source);
-        dictionary[@"size"] = NSStringFromCGSize(self.size);
+        dictionary[fType] = @(self.type);
+        dictionary[fSource] = @(self.source);
+        dictionary[fSize] = NSStringFromCGSize(self.size);
     }
     else {
         NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
@@ -502,11 +502,11 @@ NSString* __usernames(NSArray*users)
 + (NSArray*) ageGroups
 {
     return @[
-             @"Child",
+             @"10s",
              @"20s",
              @"30s",
              @"40s",
-             @"Senior",
+             @"50s",
              ];
 }
 
@@ -533,10 +533,11 @@ NSString* __usernames(NSArray*users)
 {
     if (media) {
         [self setObject:media forKey:fMedia];
-        self.thumbnail = media.thumbnail;
+        if (media.dataAvailable) {
+            self.thumbnail = media.thumbnail;
+        }
     }
     else {
-        NSLog(@"Removing media and thumbnail");
         [self removeObjectForKey:fMedia];
         [self removeObjectForKey:fThumbnail];
     }
@@ -639,7 +640,7 @@ NSString* __usernames(NSArray*users)
     
     if (self.dataAvailable) {
         if (self.name)
-            dictionary[@"name"] = self.name;
+            dictionary[fName] = self.name;
         if (self.createdBy)
             dictionary[fCreatedBy] = self.createdBy.objectId;
         

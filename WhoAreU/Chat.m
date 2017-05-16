@@ -8,10 +8,12 @@
 
 #import "Chat.h"
 #import "ChatView.h"
+#import "MessageCenter.h"
 
 @interface Chat ()
 @property (strong, nonatomic) ChatView *chatView;
 @property (readonly, nonatomic) NSString *name;
+@property (readonly, nonatomic) id channelId;
 @end
 
 @implementation Chat
@@ -28,7 +30,6 @@
     self.chatView = [[ChatView alloc] initWithFrame:self.view.bounds];
     
     [self.view addSubview:self.chatView];
-    
     self.chatView.parent = self;
 }
 
@@ -36,12 +37,13 @@
 {
     __LF
     
+    [MessageCenter acknowledgeReadsForChannelId:self.channelId];
     [self.chatView reloadDataAnimated:NO];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (id)channelId
 {
-    __LF
+    return self.dictionary[fObjectId];
 }
 
 - (NSString*) name
@@ -50,7 +52,7 @@
     NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
     
     [set removeObject:[User me].nickname];
-    return [[set allObjects] componentsJoinedByString:@", "];
+    return [[set allObjects] componentsJoinedByString:kStringCommaSpace];
 }
 
 - (void)setDictionary:(id)dictionary
@@ -58,9 +60,8 @@
     _dictionary = dictionary;
     
     self.chatView.channel = self.dictionary;
-    self.navigationItem.title = self.name;
+    self.navigationItem.title = [MessageCenter channelNameForChannelId:self.channelId];
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

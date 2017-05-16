@@ -9,13 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @interface MessageCenter : NSObject
-+ (NSArray*) channels;
-
 /**
  Sends message to a list of users and returns the channel (fully loaded) back through the completion handler.
  @param msgToSend the message to send
  @param handler channel block handler
  */
+
 + (void)send:(id)msgToSend
        users:(NSArray*)users
   completion:(ChannelBlock)handler;
@@ -25,6 +24,7 @@
        count:(NSUInteger)userCount
   completion:(AnyBlock)handler;
 
++ (NSArray*)    liveChannels;
 + (NSArray *)   sortedMessagesForChannelId:(id)channelId;
 + (id)          channelIdForUser:(User*)user;
 + (void)        removeChannelMessages:(id)channelId;
@@ -33,6 +33,9 @@
 + (void)        saveChats;
 + (NSString*)   channelNameForChannelId:(id)channelId;
 + (void)        processReadMessage:(id)message;
++ (id)          messageWithId:(id)messageId channelId:(id)channelId;
++ (void)        acknowledgeReadsForChannelId:(id)channelId;
+
 /**
  *Asynchronously* get all the channels that this device is subscribed to.
  @param info userInfo retrieved from application delegate.

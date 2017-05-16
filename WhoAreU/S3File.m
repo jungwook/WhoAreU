@@ -278,8 +278,8 @@
 - (NSString*) longnameFrom:(id)filename extension:(id)extension group:(id)group byUser:(BOOL)byUser
 {
     NSString *username = [[User me ] objectId];
-    NSString *longname = @"";
-    if (![group isEqualToString:@""]) {
+    NSString *longname = kStringNull;
+    if (![group isEqualToString:kStringNull]) {
         longname = [longname stringByAppendingPathComponent:group];
     }
     if (byUser == YES) {

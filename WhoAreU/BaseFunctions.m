@@ -112,7 +112,7 @@ NSString* __randomObjectId()
     int length = 8;
     char *base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     
-    NSString *code = @"";
+    NSString *code = kStringNull;
     
     for (int i=0; i<length; i++) {
         int rand = arc4random_uniform(36);
@@ -239,8 +239,8 @@ NSString *NSStringFromUIColor(UIColor *color)
 
 UIColor *UIColorFromNSString(NSString *string)
 {
-    NSString *componentsString = [[string stringByReplacingOccurrencesOfString:@"[" withString:@""] stringByReplacingOccurrencesOfString:@"]" withString:@""];
-    NSArray *components = [componentsString componentsSeparatedByString:@", "];
+    NSString *componentsString = [[string stringByReplacingOccurrencesOfString:@"[" withString:kStringNull] stringByReplacingOccurrencesOfString:@"]" withString:kStringNull];
+    NSArray *components = [componentsString componentsSeparatedByString:kStringCommaSpace];
     return [UIColor colorWithRed:[(NSString*)components[0] floatValue]
                            green:[(NSString*)components[1] floatValue]
                             blue:[(NSString*)components[2] floatValue]

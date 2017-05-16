@@ -11,7 +11,8 @@
 #import "NSData+GZIP.h"
 
 @interface MessageCenter()
-@property (strong, nonatomic) NSMutableDictionary *chats, *channelUsers;
+@property (strong, nonatomic) NSMutableDictionary *chats;
+@property (strong, nonatomic) NSMutableDictionary *channels;
 @property (strong, nonatomic) NSURL *chatsFile, *channelsFile;
 @property (strong, nonatomic) NSMutableDictionary *pushHandlers;
 @end
@@ -42,13 +43,16 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 - (void) setup
 {
+    __LF
+
     [self loadFiles];
     [self setupPushHandlers];
-    
 }
 
 - (void) setupPushHandlers
 {
+    __LF
+
     self.pushHandlers = [NSMutableDictionary dictionary];
     
     PushBlock pushTypeChannel = ^(id userInfo) {
@@ -62,11 +66,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
         id payload = userInfo[fPayload];
         id channelId = payload[fChannelId];
         
-        if (![center.channelUsers objectForKey:channelId]) {
-            [center addToSystemChannelId:channelId];
-        }
-        [MessageCenter processFetchedMessagesForChannelId:channelId];
-        NSLog(@"New chat message:%@", payload[fMessage]);
+        [center addToSystemChannelId:channelId];
+        [MessageCenter processFetchMessagesForChannelId:channelId];
         
         return UNNotificationPresentationOptionSound;
     };
@@ -75,52 +76,66 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
         id payload = userInfo[fPayload];
         id channelId = payload[fChannelId];
         
-        [MessageCenter checkSubscriptionToChannelId:channelId];
         [center addToSystemChannelId:channelId];
-        [MessageCenter processFetchedMessagesForChannelId:channelId];
-        NSLog(@"New chat initiation message:%@", payload[fMessage]);
+        [MessageCenter processFetchMessagesForChannelId:channelId];
         
         return UNNotificationPresentationOptionSound;
     };
     PushBlock pushTypeMessageRead = ^(id userInfo) {
         id payload = userInfo[fPayload];
-        id messageId = payload[fMessageId];
         id channelId = payload[fChannelId];
-        NSLog(@"Need to do something with %@ / %@", messageId, channelId);
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", messageId];
+        NSArray* reads = payload[fMessageIds];
         
-        id message = [[[MessageCenter sortedMessagesForChannelId:channelId] filteredArrayUsingPredicate:predicate] firstObject];
+        NSLog(@"Processing reads for %@", reads);
+        for (id messageId in reads) {
+            id message = [self messageWithId:messageId channelId:channelId];
+            [MessageCenter decreaseReadForMessage:message];
+        }
+        [self saveChatFile];
         
-        message[fRead] = @([message[fRead] integerValue] - 1);
+        id ret = @{
+                   fMessageIds : reads,
+                   fChannelId : channelId,
+                   };
+        PNOTIF(kNotificationReadMessage, ret);
         return UNNotificationPresentationOptionNone;
     };
 
-    [self.pushHandlers setObject:pushTypeChannel forKey:@"pushTypeChannel"];
-    [self.pushHandlers setObject:pushTypeMessage forKey:@"pushTypeMessage"];
-    [self.pushHandlers setObject:pushTypeChatChannel forKey:@"pushTypeChatChannel"];
-    [self.pushHandlers setObject:pushTypeChatInitiation forKey:@"pushTypeChatInitiation"];
-    [self.pushHandlers setObject:pushTypeMessageRead forKey:@"pushTypeMessageRead"];
+    [self.pushHandlers setObject:pushTypeChannel forKey:kPushTypeChannel];
+    [self.pushHandlers setObject:pushTypeMessage forKey:kPushTypeMessage];
+    [self.pushHandlers setObject:pushTypeChatChannel forKey:kPushTypeChatChannel];
+    [self.pushHandlers setObject:pushTypeChatInitiation forKey:kPushTypeChatInitiation];
+    [self.pushHandlers setObject:pushTypeMessageRead forKey:kPushTypeMessageRead];
 }
 
 - (void) loadFiles
 {
+    __LF
+
     self.chatsFile = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"chatFile"];
 
     self.channelsFile = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"channelFile"];
     
     self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatsFile];
-    self.channelUsers = [NSMutableDictionary dictionaryWithContentsOfURL:self.channelsFile];
+    self.channels = [NSMutableDictionary dictionaryWithContentsOfURL:self.channelsFile];
     
     if (!self.chats) {
         self.chats = [NSMutableDictionary dictionary];
     }
     
-    if (!self.channelUsers) {
-        self.channelUsers = [NSMutableDictionary dictionary];
+    if (!self.channels) {
+        self.channels = [NSMutableDictionary dictionary];
+    }
+    
+    for (id channelId in self.chats.allKeys) {
+        if (![self.channels.allKeys containsObject:channelId]) {
+            NSLog(@"Cleaning chats file by removing %@", channelId);
+            [self.channels removeObjectForKey:channelId];
+        }
     }
     
     [self saveChatFile];
-    [self saveChannelUsersFile];
+    [self saveChannelsFile];
 }
 
 + (void)saveChats
@@ -130,20 +145,22 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 - (void) saveChatFile
 {
+    __LF
     BOOL ret = [self.chats writeToURL:self.chatsFile atomically:YES];
     if (ret) {
-        NSLog(@"Saved %@", self.chatsFile);
+//        NSLog(@"Saved %@", self.chatsFile);
     }
     else {
         NSLog(@"ERROR: Writing to %@", self.chatsFile);
     }
 }
 
-- (void) saveChannelUsersFile
+- (void) saveChannelsFile
 {
-    BOOL ret = [self.channelUsers writeToURL:self.channelsFile atomically:YES];
+    __LF
+    BOOL ret = [self.channels writeToURL:self.channelsFile atomically:YES];
     if (ret) {
-        NSLog(@"Saved %@", self.channelsFile);
+//        NSLog(@"Saved %@", self.channelsFile);
     }
     else {
         NSLog(@"ERROR: Writing to %@", self.channelsFile);
@@ -175,12 +192,12 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
     return messages;
 }
 
-- (BOOL) message:(id)objectId exists:(NSArray*)messages
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", objectId];
-    NSArray *filter = [messages filteredArrayUsingPredicate:predicate];
-    return (filter.count > 0);
-}
+//- (BOOL) message:(id)objectId exists:(NSArray*)messages
+//{
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", objectId];
+//    NSArray *filter = [messages filteredArrayUsingPredicate:predicate];
+//    return (filter.count > 0);
+//}
 
 - (NSArray*) userIds:(NSArray<User*>*)users
 {
@@ -205,15 +222,18 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
     id userIds = [self userIds:users];
     id channelId = message.channel.objectId;
     id messageId = message.objectId;
-    id text = message.message;
     id senderId = [User me].objectId;
+    id text = message.message;
     
     id params = @{
                   fUsers : userIds,
-                  fAlert : text,
+                  fAlert : @{
+                          @"title" : [User me].nickname,
+                          @"body" : text,
+                          },
                   fBadge : @"increment",
                   fSound : @"default",
-                  fPushType : @"pushTypeChatInitiation",
+                  fPushType : kPushTypeChatInitiation,
                   fPayload : @{
                           fSenderId: senderId, // must!!!
                           fMessage: message.dictionary,
@@ -249,10 +269,13 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
     id params = @{
                   fChannel : channelId,
-                  fAlert : text,
+                  fAlert : @{
+                          @"title" : [User me].nickname,
+                          @"body" : text,
+                          },
                   fBadge : @"increment",
                   fSound : @"default",
-                  fPushType : @"pushTypeChatChannel",
+                  fPushType : kPushTypeChatChannel,
                   fPayload : @{
                           fSenderId: senderId, //Must!!!!
                           fMessage: message.dictionary,
@@ -273,10 +296,11 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 }
 
 + (void)send:(id)msgToSend
-     channelId:(id)channelId
+   channelId:(id)channelId
        count:(NSUInteger)userCount
   completion:(AnyBlock)handler
 {
+    __LF
     [[MessageCenter new] send:msgToSend
                     channelId:channelId
                         count:userCount
@@ -288,6 +312,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
        count:(NSUInteger)userCount
   completion:(AnyBlock)handler
 {
+    __LF
+
     if (msgToSend == nil) {
         if (handler) {
             handler(nil);
@@ -297,10 +323,12 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
     Message *message = [Message message:msgToSend channelId:channelId count:userCount];
     
+    NSDate *lastCreatedAt = [[self sortedMessagesForChannelId:channelId] lastObject][fCreatedAt];
+    NSDate *now = [NSDate dateWithTimeIntervalSinceReferenceDate:MAX([NSDate date].timeIntervalSinceReferenceDate, lastCreatedAt.timeIntervalSinceReferenceDate)];
+    
     id dictionary = message.dictionary;
     [dictionary setObject:@(NO) forKey:fSync];
-    [dictionary setObject:[NSDate date] forKey:fCreatedAt];
-    [dictionary setObject:[NSDate date] forKey:fUpdatedAt];
+    [dictionary setObject:now forKey:fCreatedAt];
     
     NSMutableArray *messages = [self channelMessagesForChannelId:channelId];
     [messages addObject:dictionary];
@@ -312,16 +340,23 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
         else {
             [self sendPush:message channelId:channelId completion:^{
                 id newDictionary = message.dictionary;
-                [newDictionary setObject:@(YES) forKey:fSync];
-                [messages removeObject:dictionary];
-                [messages addObject:newDictionary];
-                [self saveChatFile];
+
+                newDictionary[fSync] = @(YES);
+                
+                @synchronized (self.chats) {
+                    [messages removeObject:dictionary];
+                    [messages addObject:newDictionary];
+                    [self saveChatFile];
+                }
+                
+                id messageId = newDictionary[fObjectId];
                 if (handler) {
-                    handler(newDictionary);
+                    handler(messageId);
                 }
             }];
         }
     }];
+    return;
 }
 
 /*
@@ -337,12 +372,12 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 - (NSString*) channelNameForChannelId:(id)channelId
 {
-    id dictionary = [self.channelUsers objectForKey:channelId];
+    id dictionary = [self.channels objectForKey:channelId];
     
     NSArray *users = dictionary[fUsers];
     NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
     [set removeObject:[User me].nickname];
-    return [[set allObjects] componentsJoinedByString:@", "];
+    return [[set allObjects] componentsJoinedByString:kStringCommaSpace];
 }
 
 
@@ -350,6 +385,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
        users:(NSArray *)users
   completion:(ChannelBlock)handler
 {
+    __LF
+
     [[MessageCenter new] send:msgToSend users:users completion:handler];
 }
 
@@ -357,6 +394,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
        users:(NSArray *)users
   completion:(ChannelBlock)handler
 {
+    __LF
+    
     if (msgToSend == nil) {
         if (handler) {
             handler(nil);
@@ -378,39 +417,45 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
             
             [self sendPush:message users:users completion:^{
                 id dictionary = message.dictionary;
-                [dictionary setObject:@(YES) forKey:fSync];
+                dictionary[fSync] = @(YES);
                 
+                [self addMessage:dictionary
+                       channelId:channelId
+                            sync:YES];
                 
-                [self addMessage:dictionary channelId:channelId];
                 [self addToSystemChannelId:channelId];
-                [self saveChannelUsersFile];
+                [self saveChannelsFile];
                 if (handler) {
                     handler(channel);
                 }
             }];
         }
     }];
+    
+    return;
 }
 
-- (void) addMessage:(id)dictionary channelId:(id)channelId
+- (void) addMessage:(id)dictionary
+          channelId:(id)channelId
+               sync:(BOOL)sync
 {
+    __LF
+    
     id messageId = dictionary[fObjectId];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", messageId];
-    
     NSMutableArray *messages = [self channelMessagesForChannelId:channelId];
-    NSArray *included = [messages filteredArrayUsingPredicate:predicate];
     
-    if (included.count == 0) {
+    if ([self messageWithId:messageId channelId:channelId]) {
+        NSLog(@"WARNING: Message:%@ already in datastructure", messageId);
+    }
+    else {
         NSLog(@"Adding message:%@ to datastructure", messageId);
-        dictionary[fSync] = @(NO);
+        NSLog(@"##################### SYNC TO %@", sync ? @"YES" : @"NO");
+        dictionary[fSync] = @(sync);
         [messages addObject:dictionary];
         [self saveChatFile];
         PNOTIF(kNotificationNewChatMessage, dictionary);
         [MessageCenter setSystemBadge];
-}
-    else {
-        NSLog(@"WARNING: Message:%@ already in datastructure", messageId);
     }
 }
 
@@ -418,10 +463,17 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 {
     __LF
     
+    [MessageCenter checkSubscriptionToChannelId:channelId];
+
+    // if channelId exists in the system then do nothing.
+    if ([self.channels objectForKey:channelId]) {
+        return;
+    }
+    
     [Channel fetch:channelId completion:^(Channel *channel) {
         id dictionary = channel.dictionary;
-        [self.channelUsers setObject:dictionary forKey:channel.objectId];
-        [self saveChannelUsersFile];
+        [self.channels setObject:dictionary forKey:channel.objectId];
+        [self saveChannelsFile];
         PNOTIF(kNotificationNewChannelAdded, dictionary);
     }];
 }
@@ -435,8 +487,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 {
     id selectedUserId = user.objectId;
     
-    for (id channelId in self.channelUsers.allKeys) {
-        id channel = [self.channelUsers objectForKey:channelId];
+    for (id channelId in self.channels.allKeys) {
+        id channel = [self.channels objectForKey:channelId];
         NSArray *users = channel[fUsers];
         
         BOOL found = NO;
@@ -453,6 +505,7 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 + (UNNotificationPresentationOptions)handlePushUserInfo:(id)userInfo
 {
+    __LF
     MessageCenter *center = [MessageCenter new];
     
     UNNotificationPresentationOptions option = UNNotificationPresentationOptionNone;
@@ -461,7 +514,7 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
     id payload = userInfo[fPayload];
     id senderId = payload[fSenderId];
     
-    NSLog(@"UserInfo:%@", userInfo);
+//    NSLog(@"UserInfo:%@", userInfo);
     
     // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
     
@@ -469,66 +522,124 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
         return option;
     }
     else {
-        // Else parse pushType for handling.
-        
-        if ([pushType isEqualToString:@"pushTypeChannel"]) {
-            option = UNNotificationPresentationOptionNone;
-        }
-        else if ([pushType isEqualToString:@"pushTypeMessage"]){
-            option = UNNotificationPresentationOptionSound;
-        }
-        else if ([pushType isEqualToString:@"pushTypeChatChannel"]){
-            option = UNNotificationPresentationOptionSound;
-            id channelId = payload[fChannelId];
-
-            if (![center.channelUsers objectForKey:channelId]) {
-                [center addToSystemChannelId:channelId];
-            }
-            [self processFetchedMessagesForChannelId:channelId];
-            NSLog(@"New chat message:%@", payload[fMessage]);
-        }
-        else if ([pushType isEqualToString:@"pushTypeChatInitiation"]){
-            option = UNNotificationPresentationOptionSound;
-            id channelId = payload[fChannelId];
-        
-            [self checkSubscriptionToChannelId:channelId];
-            [center addToSystemChannelId:channelId];
-            [self processFetchedMessagesForChannelId:channelId];
-            NSLog(@"New chat initiation message:%@", payload[fMessage]);
-        }
-        else if ([pushType isEqualToString:@"pushTypeMessageRead"]) {
-            id messageId = payload[fMessageId];
-            id channelId = payload[fChannelId];
-            NSLog(@"Need to do something with %@ / %@", messageId, channelId);
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", messageId];
-            
-            id message = [[[MessageCenter sortedMessagesForChannelId:channelId] filteredArrayUsingPredicate:predicate] firstObject];
-            
-            message[fRead] = @([message[fRead] integerValue] - 1);
-        }
-        else {
-            option = UNNotificationPresentationOptionNone;
+        PushBlock handler = [center.pushHandlers objectForKey:pushType];
+        if (handler) {
+            NSLog(@"Processing handler:%@", pushType);
+            option = handler(userInfo);
         }
     }
     
     return option;
 }
 
-+ (void) processFetchedMessagesForChannelId:(id)channelId
++ (void) processFetchMessagesForChannelId:(id)channelId
 {
+    __LF
+    
     MessageCenter *center = [MessageCenter new];
 
     [self fetchMessagesForChannelId:channelId completion:^(NSArray *array) {
+        NSLog(@"Loaded %ld messages to process", array.count);
         for (Message *message in array) {
             id dictionary = message.dictionary;
-            [center addMessage:dictionary channelId:channelId];
-            [[History historyWithChannelId:channelId messageId:message.objectId] saveInBackground];
+            id messageId = message.objectId;
+            [center addMessage:dictionary
+                     channelId:channelId
+                          sync:NO];
+            [[History historyWithChannelId:channelId messageId:messageId] saveInBackground];
         }
     }];
 }
 
++ (void) decreaseReadForMessage:(id)message
+{
+    @synchronized (message) {
+        NSInteger count = MAX((NSInteger)([message[fRead] integerValue] - 1), 0);
+        message[fRead] = @(count);
+        [self saveChats];
+    }
+}
+
++ (void) decreaseReadForMessage:(id)message sync:(BOOL)sync
+{
+    @synchronized (message) {
+        NSInteger count = MAX((NSInteger)([message[fRead] integerValue] - 1), 0);
+        
+        message[fSync] = @(sync);
+        message[fRead] = @(count);
+        [self saveChats];
+    }
+}
+
++ (void) acknowledgeReadsForChannelId:(id)channelId
+{
+    __LF
+    
+    if (channelId) {
+        NSArray *reads = [self readsForChannelId:channelId];
+       
+        if (reads.count == 0) {
+            return;
+        }
+        
+        NSLog(@"ACKing %@", reads);
+        
+        
+        id params = @{
+                      fChannelId : channelId,
+                      fPushType : kPushTypeMessageRead,
+                      fPayload : @{
+                              fSenderId  : [User me].objectId,
+                              fMessageIds: reads,
+                              fChannelId : channelId,
+                              },
+                      };
+        
+        NSLog(@"params:%@", params);
+        [PFCloud callFunctionInBackground:@"sendPushMessageRead" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"ERROR[%s]: SENDING SILENT PUSH:%@",__func__, error.localizedDescription);
+            }
+            else {
+                NSLog(@"SILENT PUSH SENT[%@] FOR:%@", reads, channelId);
+                
+                for (id messageId in reads) {
+                    id message = [self messageWithId:messageId channelId:channelId];
+                    [self decreaseReadForMessage:message sync:YES];
+                }
+                NSLog(@"Remaining reads %@", [self readsForChannelId:channelId]);
+                [self saveChats];
+                
+                id ret = @{
+                           fMessageIds : reads,
+                           fChannelId : channelId,
+                           };
+                PNOTIF(kNotificationReadMessage, ret);
+                [MessageCenter setSystemBadge];
+            }
+        }];
+    }
+    else {
+        NSLog(@"ERROR[%s]: ChannelId %@ missing.", __func__, channelId);
+    }
+
+}
+
++ (NSArray*) readsForChannelId:(id)channelId
+{
+    NSArray *messages = [MessageCenter sortedMessagesForChannelId:channelId];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sync == FALSE"];
+    
+    NSArray *unsynced = [messages filteredArrayUsingPredicate:predicate];
+
+    return [unsynced valueForKey:fObjectId];
+}
+
 + (void) setSystemBadge
 {
+    __LF
+
     NSUInteger count = [self countAllUnreadMessages];
     
     NSLog(@"Counted:%ld unread messages", count);
@@ -539,12 +650,15 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 + (NSUInteger) countAllUnreadMessages
 {
+    __LF
+
     MessageCenter *center = [MessageCenter new];
     NSUInteger count = 0;
-    for (id channelId in center.chats.allKeys) {
-        NSUInteger c = [MessageCenter countUnreadMessagesForChannelId:channelId];
-        count += c;
+    
+    for (id channelId in center.channels.allKeys) {
+        count += [MessageCenter countUnreadMessagesForChannelId:channelId];
     }
+    
     return count;
 }
 
@@ -558,6 +672,8 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 + (void) fetchMessagesForChannelId:(id)channelId completion:(ArrayBlock)handler
 {
+    __LF
+
     Channel *channel = [Channel objectWithoutDataWithObjectId:channelId];
     
     PFQuery *history = [History query];
@@ -583,11 +699,12 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 + (void) checkSubscriptionToChannelId:(id)channelId
 {
+    __LF
+
     if (channelId) {
         PFInstallation *install = [PFInstallation currentInstallation];
         
-        NSArray *channels = install.channels;
-        if (![channels containsObject:channelId]) {
+        if (![install.channels containsObject:channelId]) {
             [PFPush subscribeToChannelInBackground:channelId];
         }
     }
@@ -596,16 +713,32 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
     }
 }
 
-+ (NSArray *)channels
++ (NSArray *)liveChannels
 {
-    return [MessageCenter new].channelUsers.allValues;
+    return [MessageCenter new].channels.allValues;
 }
 
 + (void)removeChannelMessages:(id)channelId
 {
+    __LF
+    
     MessageCenter *center = [MessageCenter new];
-    [center.channelUsers removeObjectForKey:channelId];
-    [center saveChannelUsersFile];
+    [center.channels removeObjectForKey:channelId];
+    [center.chats removeObjectForKey:channelId];
+    [center saveChannelsFile];
+    [center saveChatFile];
+}
+
++ (id) messageWithId:(id)messageId channelId:(id)channelId
+{
+    return [[MessageCenter new] messageWithId:messageId channelId:channelId];
+}
+
+- (id) messageWithId:(id)messageId channelId:(id)channelId
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", messageId];
+ 
+    return [[[self.chats objectForKey:channelId] filteredArrayUsingPredicate:predicate] firstObject];
 }
 
 /*
@@ -649,25 +782,53 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
     updatedAt = "2017-05-14 04:28:36 +0000";
 }
 */
+
+
 + (void) processReadMessage:(id)message
 {
+    return;
+    
     __LF
-    if ([message[fSync] boolValue] == YES) {
+    
+    /*
+     This is the point where a row is read for the first time. So if the message is not mine, and proper then send a silent push to channel providing a the readcount.
+        Read counts are managed separately by each client...
+     This is a nice to have and not a proper value. (i.e. DB value doesn't really mean anything.
+    */
+    
+    id messageId    = message[fObjectId];
+//    id channel      = message[fChannel];
+//    id channelId    = channel[fObjectId];
+    id fromUser     = message[fFromUser];
+    id fromUserId   = fromUser[fObjectId];
+
+    if ([User meEquals:fromUserId]) {
+        NSLog(@">>>push from me... pass");
         return;
     }
+    
+    if ([message[fSync] boolValue] == YES) {
+        NSLog(@">>>Sync == YES");
+        return;
+    }
+    
+    if (messageId == nil) {
+        NSLog(@">>>No messageId. new object before save");
+        return;
+    }
+
+    __LF
+
+    /*
+   
+    // Syncing message as read.
+    NSLog(@"##################### SYNC TO YES");
     message[fSync] = @(YES);
     [MessageCenter saveChats];
-    
-    id channel = message[fChannel];
-    id channelId = channel[fObjectId];
-    id messageId = message[fObjectId];
-    id fromUser = message[fFromUser];
-    id fromUserId = fromUser[fObjectId];
-    
-    if (channelId && messageId && fromUserId) {
+    if (channelId && fromUserId) {
         id params = @{
                       fChannelId : channelId,
-                      fPushType : @"pushTypeMessageRead",
+                      fPushType : kPushTypeMessageRead,
                       fPayload : @{
                               fSenderId : [User me].objectId, // Must!!!!!
                               fMessageId: messageId,
@@ -679,13 +840,23 @@ typedef UNNotificationPresentationOptions(^PushBlock)(id message);
                 NSLog(@"ERROR[%s]: SENDING SILENT PUSH:%@",__func__, error.localizedDescription);
             }
             else {
-                NSLog(@"SILENT PUSH SENT:%@", object);
+                NSLog(@"SILENT PUSH SENT[%@] TO:%@", messageId, channelId);
+                
+                message[fRead] = @([message[fRead] integerValue] - 1);
+                
+                id ret = @{
+                           fMessageId : messageId,
+                           fChannelId : channelId,
+                           };
+                PNOTIF(kNotificationReadMessage, ret);
+                [MessageCenter setSystemBadge];
             }
         }];
     }
     else {
-        NSLog(@"ERROR[%s]: ChannelId %@ or MessageId :%@ or fromUserId %@ missing.", __func__, channelId, messageId, fromUserId);
+        NSLog(@"ERROR[%s]: ChannelId %@ or or fromUserId %@ missing.", __func__, channelId, fromUserId);
     }
+ */
 }
 
 @end

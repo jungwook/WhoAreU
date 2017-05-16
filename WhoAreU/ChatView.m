@@ -34,8 +34,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 
 @interface ChatRow : UITableViewCell
 @property (weak, nonatomic) id dictionary;
-@property (weak, nonatomic) User* user;
-@property (strong, nonatomic) UILabel *nickname, *when;
+@property (strong, nonatomic) UILabel *nickname, *when, *read;
 @property (strong, nonatomic) PhotoView *photoView;
 @property (strong, nonatomic) Balloon *balloon;
 @property BOOL isMine;
@@ -57,25 +56,20 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
         self.nickname.font = [UIFont systemFontOfSize:12];
 
         self.when = [UILabel new];
-        self.when.font = [UIFont systemFontOfSize:8];
+        self.when.font = [UIFont systemFontOfSize:10];
+        
+        self.read = [UILabel new];
+        self.read.font = [UIFont boldSystemFontOfSize:10];
 
         [self addSubview:self.balloon];
         [self addSubview:self.photoView];
         [self addSubview:self.nickname];
         [self addSubview:self.when];
+        [self addSubview:self.read];
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
-}
-
-- (void)setUser:(User *)user
-{
-    _user = user;
-    
-    self.photoView.media = user.media;
-    self.nickname.text = user.nickname;
-    [self.nickname sizeToFit];
 }
 
 - (void)setDictionary:(id)dictionary
@@ -85,6 +79,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     id fromUser = [dictionary objectForKey:fFromUser];
     id fromUserId = fromUser[fObjectId];
     id createdAt = [dictionary objectForKey:fCreatedAt];
+    id nickname = fromUser[fNickname];
     
     BOOL on = [[dictionary objectForKey:fSync] boolValue];
     
@@ -100,13 +95,27 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     MaterialDesignSymbol *sent = [MaterialDesignSymbol iconWithCode:MaterialDesignIconCode.done48px fontSize:8];
     [sent addAttribute:NSForegroundColorAttributeName value:self.balloon.backgroundColor];
     
+    NSUInteger readCount = [self.dictionary[fRead] integerValue];
     
-    NSString *dateString = [[NSDateFormatter localizedStringFromDate:createdAt dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle] stringByAppendingString:@" "];
+    NSString *dateString = [NSDateFormatter localizedStringFromDate:createdAt dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];
     
-    NSMutableAttributedString *status = [[NSMutableAttributedString alloc] initWithString:dateString];
-    [status appendAttributedString:on ? sent.symbolAttributedString : sending.symbolAttributedString];
-    self.when.attributedText = status;
+    if (!isMine) {
+        self.when.text = dateString;
+        self.nickname.text = nickname;
+    }
+    else {
+        NSMutableAttributedString *status = on ? sent.symbolAttributedString : sending.symbolAttributedString;
+        [status appendAttributedString:[[NSMutableAttributedString alloc] initWithString:kStringSpace]];
+        [status appendAttributedString:[[NSMutableAttributedString alloc] initWithString:dateString]];
+        self.when.attributedText = status;
+    }
+    
+    [self.nickname sizeToFit];
     [self.when sizeToFit];
+    
+    self.read.text = readCount > 0 ? @(readCount).stringValue : kStringNull;
+    self.read.textColor = self.balloon.backgroundColor;
+    [self.read sizeToFit];
     
     [self setNeedsLayout];
 }
@@ -122,16 +131,19 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     CGFloat ww = CGRectGetWidth(self.when.frame);
     CGFloat wh = CGRectGetHeight(self.when.frame);
 
+    CGFloat rw = CGRectGetWidth(self.read.frame);
+    CGFloat rh = CGRectGetHeight(self.read.frame);
+
     CGFloat nw = CGRectGetWidth(self.nickname.frame);
     CGFloat nh = CGRectGetHeight(self.nickname.frame);
 
     CGFloat height = 0.f;
     CGFloat width = 0.f, offset = 0.f;
     
-    MessageType type = [[self.dictionary objectForKey:@"type"] integerValue];
+    MessageType type = [[self.dictionary objectForKey:fType] integerValue];
     id message = [self.dictionary objectForKey:fMessage];
     id media = [self.dictionary objectForKey:fMedia];
-    CGSize size = CGSizeFromString([media objectForKey:@"size"]);
+    CGSize size = CGSizeFromString([media objectForKey:fSize]);
     
     switch (type) {
         case kMessageTypeText: {
@@ -156,12 +168,15 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
     
     self.balloon.frame = CGRectMake(offset, INSET, width, height+HINSET*3.0f);
     if (self.isMine) {
-        self.when.frame = CGRectMake(offset - ww - HINSET, height+4*HINSET-wh, ww, wh);
+//        self.when.frame = CGRectMake(offset - ww - HINSET, height+4*HINSET-wh, ww, wh);
+        self.when.frame = CGRectMake(offset - ww - HINSET, 3*HINSET, ww, wh);
+        self.read.frame = CGRectMake(offset - rw - HINSET, 6*HINSET, rw, rh);
     }
     else {
         self.when.frame = CGRectMake(offset + width + HINSET, 3*HINSET, ww, wh);
         self.photoView.frame = CGRectMake(INSET+3, H-PHOTOVIEWSIZE, PHOTOVIEWSIZE, PHOTOVIEWSIZE);
         self.nickname.frame = CGRectMake(leftOffset+self.balloon.balloonInset, H-nh-2, nw, nh);
+        self.read.frame = CGRectMake(offset +width + HINSET, 6*HINSET, rw, rh);
     }
 
     self.photoView.alpha = !self.isMine;
@@ -182,6 +197,7 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 @property (nonatomic) BOOL keyboardUp;
 @property (readonly) NSUInteger numberOfUsers;
 @property (strong, nonatomic) id channelId;
+@property (readonly, nonatomic) NSIndexPath* lastIndexPath;
 @end
 
 @implementation ChatView
@@ -221,11 +237,17 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) scrollToBottomAnimated:(BOOL)animated
 {
+    if (self.messages.count > 0) {
+        [self.tableView scrollToRowAtIndexPath:self.lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    }
+}
+
+- (NSIndexPath*) lastIndexPath
+{
     NSUInteger sections = self.sections.count - 1;
     NSUInteger rows = [self messagesForSection:sections].count - 1;
-    if (self.messages.count > 0) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:rows inSection:sections] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
-    }
+    
+    return [NSIndexPath indexPathForRow:rows inSection:sections];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -256,19 +278,75 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     ANOTIF(UIKeyboardWillShowNotification, @selector(doKeyboardShowEvent:));
     ANOTIF(UIKeyboardWillHideNotification, @selector(doKeyboardHideEvent:));
     ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
+    ANOTIF(kNotificationReadMessage, @selector(notificationReadMessage:));
+    ANOTIF(kNotificationApplicationActive, @selector(notificationApplicationActive:));
+}
+
+- (void)notificationApplicationActive:(NSNotification*)notification
+{
+    __LF
+    
+    [MessageCenter acknowledgeReadsForChannelId:self.channelId];
+}
+
+- (void)notificationReadMessage:(NSNotification*)notification
+{
+    __LF
+    NSLog(@"=======================================");
+    id channelId = notification.object[fChannelId];
+    NSArray* reads = notification.object[fMessageIds];
+    
+    NSLog(@"Refreshing %@", reads);
+    
+    if (![self.channelId isEqualToString:channelId]) {
+        return;
+    }
+    else {
+        [self.tableView reloadData];
+    }
+}
+
+- (NSIndexPath*) indexPathForMessageId:(id)messageId channelId:(id)channelId
+{
+    id message = [MessageCenter messageWithId:messageId channelId:channelId];
+    
+    if (!message || !messageId || !channelId) {
+        return nil;
+    }
+    
+    NSDate *createdAt = message[fCreatedAt];
+    createdAt = createdAt.dateWithoutTime;
+    
+    NSUInteger section = [self.sections indexOfObject:createdAt];
+    __block NSUInteger row = -1;
+
+    [[self messagesForSection:section] enumerateObjectsUsingBlock:^(id  _Nonnull m, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([messageId isEqualToString:m[fObjectId]]) {
+            row = idx;
+            *stop = YES;
+        }
+    }];
+    if (row != -1) {
+        return [NSIndexPath indexPathForRow:row inSection:section];
+    }
+    else {
+        return nil;
+    }
 }
 
 - (void)notificationNewChatMessage:(NSNotification*)notification
 {
     __LF
     NSLog(@"=======================================");
-    NSLog(@"D:%@", notification);
     id message = notification.object;
     id channel = message[fChannel];
-    if (![self.channelId isEqualToString:channel[fObjectId]]) {
+    id channelId = channel[fObjectId];
+    
+    if (![self.channelId isEqualToString:channelId]) {
         return;
     }
     else {
+        [MessageCenter acknowledgeReadsForChannelId:channelId];
         [self reloadDataAnimated:YES];
     }
 }
@@ -281,6 +359,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     RNOTIF(UIKeyboardWillShowNotification);
     RNOTIF(UIKeyboardWillHideNotification);
     RNOTIF(kNotificationNewChatMessage);
+    RNOTIF(kNotificationApplicationActive);
 }
 
 - (void)doKeyboardShowEvent:(NSNotification *)notification
@@ -354,7 +433,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void) addTableView
 {
-    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
     
     self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
     self.tableView.backgroundColor = [UIColor whiteColor];
@@ -403,14 +482,19 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void)sendButPressed:(id)sender
 {
+    if ([self.textView.text isEqualToString:kStringNull]) {
+        return;
+    }
+    
     [MessageCenter send:self.textView.text
               channelId:self.channelId
                   count:self.numberOfUsers
-             completion:^(id object) {
-        [self reloadDataAnimated:YES];
-    }];
+             completion:^(id messageId) {
+                 [self reloadDataAnimated:YES];
+             }];
+    
     [self reloadDataAnimated:YES];
-    self.textView.text = @"";
+    self.textView.text = kStringNull;
     [self textViewDidChange:self.textView];
 }
 
@@ -421,8 +505,8 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
             [MessageCenter send:media
                       channelId:self.channelId
                           count:self.numberOfUsers
-                     completion:^(id object) {
-                [self reloadDataAnimated:YES];
+                     completion:^(id messageId) {
+                         [self reloadDataAnimated:YES];
             }];
         }
     }];
@@ -537,6 +621,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     [MessageCenter processReadMessage:dictionary];
     
     cell.dictionary = dictionary;
+    
     return cell;
 }
 
@@ -546,13 +631,13 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
     id fromUser = [dictionary objectForKey:fFromUser];
     id fromUserId = fromUser[fObjectId];
-    MessageType type = [[dictionary objectForKey:@"type"] integerValue];
+    MessageType type = [[dictionary objectForKey:fType] integerValue];
     id message = [dictionary objectForKey:fMessage];
     id media = [dictionary objectForKey:fMedia];
-    CGSize size = CGSizeFromString([media objectForKey:@"size"]);
+    CGSize size = CGSizeFromString([media objectForKey:fSize]);
     
     BOOL isMine = [User meEquals:fromUserId];
-    CGFloat room = isMine ? 2.5 : 3;
+    CGFloat room = isMine ? 2.5 : 5;
     
     switch (type) {
         case kMessageTypeText: {

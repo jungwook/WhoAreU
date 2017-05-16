@@ -34,17 +34,36 @@
 #define fRead @"read"
 #define fSenderId @"senderId"
 #define fMessageId @"messageId"
+#define fMessageIds @"messageIds"
 #define fPayload @"payload"
 #define fPushType @"pushType"
 #define fAlert @"alert"
 #define fBadge @"badge"
 #define fSound @"sound"
+#define fType @"type"
+#define fSource @"source"
+#define fSize @"size"
+#define fUserId @"userId"
+#define fComment @"comment"
+#define fName @"name"
 
+
+#define kStringNull @""
+#define kStringSpace @" "
+#define kStringCommaSpace @", "
+
+#define kPushTypeMessageRead @"pushTypeMessageRead"
+#define kPushTypeChatInitiation @"pushTypeChatInitiation"
+#define kPushTypeChatChannel @"pushTypeChatChannel"
+#define kPushTypeMessage @"pushTypeMessage"
+#define kPushTypeChannel @"pushTypeChannel"
 
 #define kNotificationUserLoggedInMessage @"NotificationUserLoggedIn"
 #define kNotificationSystemInitialized @"NotifictionSystemInitialized"
 #define kNotificationNewChannelAdded @"NotificationNewChannelAdded"
 #define kNotificationNewChatMessage @"NotificationNewChatMessage"
+#define kNotificationReadMessage @"NotificationReadMessage"
+#define kNotificationApplicationActive @"NotificationApplicationBecameActive"
 
 #define kJPEGCompressionLow 0.2f
 #define kJPEGCompressionMedium 0.4f

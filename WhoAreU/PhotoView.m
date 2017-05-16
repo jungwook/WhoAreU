@@ -202,11 +202,11 @@
     
     media.media = [dictionary objectForKey:fMedia];
     media.thumbnail = [dictionary objectForKey:fThumbnail];
-    media.type = [[dictionary objectForKey:@"type"] integerValue];
-    media.userId = [dictionary objectForKey:@"userId"];
-    media.comment = [dictionary objectForKey:@"comment"];
-    media.source = [[dictionary objectForKey:@"source"] integerValue];
-    media.size = CGSizeFromString([dictionary objectForKey:@"size"]);
+    media.type = [[dictionary objectForKey:fType] integerValue];
+    media.userId = [dictionary objectForKey:fUserId];
+    media.comment = [dictionary objectForKey:fComment];
+    media.source = [[dictionary objectForKey:fSource] integerValue];
+    media.size = CGSizeFromString([dictionary objectForKey:fSize]);
     
     [self setMedia:media];
 }
