@@ -35,6 +35,7 @@
     
     self = [super initWithFrame:frame];
     if (self) {
+        self.collectionViewHeightOffset = 8.0f;
         [self setupSubviewsWithFrame:frame];
     }
     return self;
@@ -79,8 +80,8 @@
     CGFloat lh = CGRectGetHeight(self.source.bounds);
     CGFloat inset = 8;
     
-    self.source.frame = CGRectMake(w-lw-inset, h-lh-inset-80.0f, lw, lh);
-    self.source.frame = CGRectMake(inset, h-lh-80.0f, lw, lh);
+    self.source.frame = CGRectMake(w-lw-inset, h-lh-inset-self.collectionViewHeightOffset, lw, lh);
+    self.source.frame = CGRectMake(inset, h-lh-self.collectionViewHeightOffset, lw, lh);
     
     [self centerPlayerLayer];
 }

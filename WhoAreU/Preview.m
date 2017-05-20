@@ -111,6 +111,7 @@
     [self.preview addSubview:self.activity];
     
     self.mediaView = [MediaView new];
+    self.mediaView.collectionViewHeightOffset = 80.0f;
     [self.preview addSubview:self.mediaView];
 }
 

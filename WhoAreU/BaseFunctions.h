@@ -30,6 +30,8 @@ UIView*     __viewWithTag(UIView *view, NSInteger tag);
 PFGeoPoint* __pointFromCLLocation(CLLocation* location);
 PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
 
+NSString*   __dateString(NSDate* date);
+
 void        __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction);
 id          __dictionary(id object);
 

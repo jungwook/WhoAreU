@@ -46,6 +46,7 @@
 #define fUserId @"userId"
 #define fComment @"comment"
 #define fName @"name"
+#define fOperation @"operation"
 
 
 #define kStringNull @""
@@ -72,6 +73,8 @@
 #define kThumbnailWidth 100
 
 #define kVideoThumbnailWidth 320
+
+#define WSLOCATION @"http://parse.kr:8080"
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
@@ -114,6 +117,6 @@ typedef void(^MediaBlock)(Media *media);
 typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions options, CGRect keyboardFrame);
 typedef void(^FloatEventBlock)(CGFloat value);
 typedef void(^AlertAction)(UIAlertAction *action);
-
+typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 
 #endif /* Definitions_h */

@@ -10,6 +10,7 @@
 #import "ListField.h"
 #import "MediaPicker.h"
 #import "PhotoView.h"
+#import <ParseUI/ParseUI.h>
 
 @interface SignUp ()
 @property (nonatomic, strong) UIVisualEffectView *blurView;

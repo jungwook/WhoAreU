@@ -29,6 +29,12 @@ UIImage* __scaleImage(UIImage* image, CGSize size) {
     return smallImage;
 }
 
+NSString* __dateString(NSDate* date)
+{
+    NSISO8601DateFormatter *formatter = [[NSISO8601DateFormatter alloc] init];
+    return [formatter stringFromDate:date];
+}
+
 void __drawImage(UIImage *image, UIView* view)
 {
     [view.layer setContents:(id)image.CGImage];

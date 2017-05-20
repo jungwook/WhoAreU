@@ -134,17 +134,9 @@
     __LF
     PFInstallation *install = [PFInstallation currentInstallation];
     [install setDeviceTokenFromData:deviceToken];
-    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        [install setDeviceTokenFromData:deviceToken];
-        [PFPush subscribeToChannelInBackground:@"Main" block:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                NSLog(@"application successfully subscribed to push notifications on the broadcast channel.");
-                [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
-            } else {
-                NSLog(@"application failed to subscribe to push notifications on the broadcast channel.");
-            }
-        }];
-    }];
+    [install saveInBackground];
+    [MessageCenter subscribeToChannel:@"Main"];
+    [[Engine new] setSimulatorStatus:kSimulatorStatusDevice];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error

@@ -13,6 +13,7 @@
 #import "S3File.h"
 #import "Menu.h"
 #import "FloatingDrawerSpringAnimator.h"
+#import "MessageCenter.h"
 
 @interface Menus ()
 
@@ -79,7 +80,9 @@
         [self initializeMainViewControllerToScreenId:@"Tabs"];
         
         // Subscribe to channel user
-        [self subscribeToChannelCurrentUser];
+        [MessageCenter subscribeToChannelUser];
+        [MessageCenter setupUserToInstallation];
+        
     };
     
     if (user) {
@@ -126,7 +129,7 @@
                         [PFUser logInWithUsernameInBackground:user.username password:user.password block:^(PFUser * _Nullable user, NSError * _Nullable error) {
                             if (!error) {
                                 [signup dismissViewControllerAnimated:YES completion:nil];
-                                [self subscribeToChannelCurrentUser];
+
                                 initializationHandler();
                                 
                                 if (type == kMediaTypePhoto && mediaSet) {
@@ -188,37 +191,6 @@
             };
             [self presentViewController:signup animated:YES completion:nil];
         }
-    }
-}
-
-- (void) subscribeToChannelCurrentUser
-{
-    User *me = [User me];
-
-    PFInstallation *install = [PFInstallation currentInstallation];
-//    install[@"deviceToken"] = install[@"deviceToken"];
-//    install[@"deviceType"] = install.deviceType;
-    [install addUniqueObject:me.objectId forKey:@"channels"];
-    NSLog(@"Installation:%@", install);
-    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"ERROR:%@", error.localizedDescription);
-        }
-    }];
-    
-    User *installUser = install[fUser];
-    BOOL sameUser = [installUser.objectId isEqualToString:me.objectId];
-    if (!sameUser) {
-        me.credits = me.initialFreeCredits;
-        NSLog(@"Adding %ld free credits", me.credits);
-        [me saveInBackground];
-        install[@"deviceToken"] = install[@"deviceToken"];
-        install[fUser] = me;
-        NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
-        [install saveInBackground];
-    }
-    else {
-        NSLog(@"CURRENT INSTALLATION: Installation is already set to current user. No need to update");
     }
 }
 

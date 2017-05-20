@@ -72,7 +72,6 @@
     user.password = usernameAndPassword;
     user.nickname = name;
     user.where = geoLocation;
-    user.whereUpdatedAt = [NSDate date];
     user.simulated = YES;
     
     user.age = [User ageGroups][arc4random()%([User ageGroups].count)];

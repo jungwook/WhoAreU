@@ -90,11 +90,7 @@
     }];
     [self.tableView addSubview:self.refresh];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newChannelMessage:)
-                                                 name:kNotificationNewChatMessage
-                                               object:nil];
-    
+//    ANOTIF(kNotificationNewChatMessage, @selector(newChannelMessage:));
 }
 
 - (IBAction)sendChannelMessage:(id)sender {
@@ -112,7 +108,7 @@
 {
     __LF
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationNewChatMessage object:nil];
+//    RNOTIF(kNotificationNewChatMessage);
 }
 
 - (void)viewDidLoad {

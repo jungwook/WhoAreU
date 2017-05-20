@@ -46,6 +46,7 @@
 		1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F0191EB02B1E002763A0 /* ModalAnimator.m */; };
 		1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01B1EB02B1E002763A0 /* ModalViewController.m */; };
 		1225F0201EB07491002763A0 /* Credits.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01F1EB07491002763A0 /* Credits.m */; };
+		1233F2281ECC5D9F00154CE6 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1233F2271ECC5D9F00154CE6 /* WebSocket.m */; };
 		123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */; };
 		123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */; };
 		123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1431E9E0C9600ED0547 /* FloatingDrawerViewController.m */; };
@@ -81,6 +82,7 @@
 		12D0F2FB1EC7F5E1004F2E3E /* NSData+GZIP.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2FA1EC7F5E1004F2E3E /* NSData+GZIP.m */; };
 		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
 		12F96D561EB453620054DA6C /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12F96D551EB453620054DA6C /* ChatView.m */; };
+		A206A0F201B0F7145ED3C150 /* libPods-WhoAreU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4A487C12DE9527ADBA9164D /* libPods-WhoAreU.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -155,6 +157,8 @@
 		1225F01B1EB02B1E002763A0 /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
 		1225F01E1EB07491002763A0 /* Credits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credits.h; sourceTree = "<group>"; };
 		1225F01F1EB07491002763A0 /* Credits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Credits.m; sourceTree = "<group>"; };
+		1233F2261ECC5D9F00154CE6 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
+		1233F2271ECC5D9F00154CE6 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
 		123AF13D1E9E0C9600ED0547 /* FloatingDrawerAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerAnimation.h; sourceTree = "<group>"; };
 		123AF13E1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerSpringAnimator.h; sourceTree = "<group>"; };
 		123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingDrawerSpringAnimator.m; sourceTree = "<group>"; };
@@ -224,6 +228,9 @@
 		12F96D531EB2D3910054DA6C /* WhoAreU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhoAreU.entitlements; sourceTree = "<group>"; };
 		12F96D541EB453620054DA6C /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
 		12F96D551EB453620054DA6C /* ChatView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatView.m; sourceTree = "<group>"; };
+		D4A487C12DE9527ADBA9164D /* libPods-WhoAreU.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WhoAreU.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F591752FF2D50F4B997CF9E7 /* Pods-WhoAreU.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhoAreU.release.xcconfig"; path = "Pods/Target Support Files/Pods-WhoAreU/Pods-WhoAreU.release.xcconfig"; sourceTree = "<group>"; };
+		F91BE83C47840D3AA4F39282 /* Pods-WhoAreU.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhoAreU.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WhoAreU/Pods-WhoAreU.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +255,7 @@
 				122262B01E8B6EA600F51FAE /* Parse.framework in Frameworks */,
 				122262B11E8B6EA600F51FAE /* ParseUI.framework in Frameworks */,
 				122262AF1E8B6EA600F51FAE /* Bolts.framework in Frameworks */,
+				A206A0F201B0F7145ED3C150 /* libPods-WhoAreU.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +268,7 @@
 				122262911E8B6E8D00F51FAE /* Frameworks */,
 				122262791E8B6E8000F51FAE /* WhoAreU */,
 				122262781E8B6E8000F51FAE /* Products */,
+				3173A26ECD73B2C210C3C1E2 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -337,6 +346,7 @@
 				1222629F1E8B6EA600F51FAE /* Bolts.framework */,
 				122262A01E8B6EA600F51FAE /* Parse.framework */,
 				122262A11E8B6EA600F51FAE /* ParseUI.framework */,
+				D4A487C12DE9527ADBA9164D /* libPods-WhoAreU.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -366,6 +376,8 @@
 		126154061E8CBBAD00F2AD4F /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				1233F2261ECC5D9F00154CE6 /* WebSocket.h */,
+				1233F2271ECC5D9F00154CE6 /* WebSocket.m */,
 				12D0F2F01EC6BA18004F2E3E /* MaterialDesignSymbol.h */,
 				12D0F2F11EC6BA18004F2E3E /* MaterialDesignSymbol.m */,
 				12144DB51E934CEA000828BF /* ListField.h */,
@@ -449,6 +461,15 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		3173A26ECD73B2C210C3C1E2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F91BE83C47840D3AA4F39282 /* Pods-WhoAreU.debug.xcconfig */,
+				F591752FF2D50F4B997CF9E7 /* Pods-WhoAreU.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -456,11 +477,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1222628E1E8B6E8000F51FAE /* Build configuration list for PBXNativeTarget "WhoAreU" */;
 			buildPhases = (
+				CF40997282C127C983E066F1 /* [CP] Check Pods Manifest.lock */,
 				122262731E8B6E8000F51FAE /* Sources */,
 				122262741E8B6E8000F51FAE /* Frameworks */,
 				122262751E8B6E8000F51FAE /* Resources */,
 				122262D31E8B7E6900F51FAE /* Embed Frameworks */,
 				122262D41E8B810700F51FAE /* ShellScript */,
+				E9E47F210F5B53A9D882AD87 /* [CP] Embed Pods Frameworks */,
+				E3F18C4D1EE55D3FF1209157 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -548,6 +572,51 @@
 			shellPath = /bin/sh;
 			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework/strip-frameworks.sh\"";
 		};
+		CF40997282C127C983E066F1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E3F18C4D1EE55D3FF1209157 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WhoAreU/Pods-WhoAreU-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E9E47F210F5B53A9D882AD87 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WhoAreU/Pods-WhoAreU-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -584,6 +653,7 @@
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
 				12144DB71E934CEA000828BF /* ListField.m in Sources */,
+				1233F2281ECC5D9F00154CE6 /* WebSocket.m in Sources */,
 				12B7960B1EAA2C970041AE6C /* Engine.m in Sources */,
 				1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */,
 				1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */,
@@ -724,6 +794,7 @@
 		};
 		1222628F1E8B6E8000F51FAE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F91BE83C47840D3AA4F39282 /* Pods-WhoAreU.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WhoAreU/WhoAreU.entitlements;
@@ -745,6 +816,7 @@
 		};
 		122262901E8B6E8000F51FAE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F591752FF2D50F4B997CF9E7 /* Pods-WhoAreU.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WhoAreU/WhoAreU.entitlements;

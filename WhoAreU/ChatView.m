@@ -192,12 +192,12 @@ const CGFloat leftOffset = INSET+PHOTOVIEWSIZE+INSET;
 @property (strong, nonatomic) UIView *border;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIView* inputView;
-@property (readonly) NSArray *sections;
 @property (nonatomic) CGFloat height, keyboardHeight;
 @property (nonatomic) BOOL keyboardUp;
 @property (readonly) NSUInteger numberOfUsers;
 @property (strong, nonatomic) id channelId;
 @property (readonly, nonatomic) NSIndexPath* lastIndexPath;
+//@property (readonly) NSArray *sections;
 @end
 
 @implementation ChatView
@@ -209,8 +209,11 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
 
 - (void)reloadDataAnimated:(BOOL) animated
 {
+    NSLog(@"RELOAD START - RELOADDATA");
     [self.tableView reloadData];
+    NSLog(@"RELOAD START - SCROLL");
     [self scrollToBottomAnimated:animated];
+    NSLog(@"RELOAD START - END");
 }
 
 - (void)setChannel:(id)channel
@@ -303,34 +306,6 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     }
     else {
         [self.tableView reloadData];
-    }
-}
-
-- (NSIndexPath*) indexPathForMessageId:(id)messageId channelId:(id)channelId
-{
-    id message = [MessageCenter messageWithId:messageId channelId:channelId];
-    
-    if (!message || !messageId || !channelId) {
-        return nil;
-    }
-    
-    NSDate *createdAt = message[fCreatedAt];
-    createdAt = createdAt.dateWithoutTime;
-    
-    NSUInteger section = [self.sections indexOfObject:createdAt];
-    __block NSUInteger row = -1;
-
-    [[self messagesForSection:section] enumerateObjectsUsingBlock:^(id  _Nonnull m, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([messageId isEqualToString:m[fObjectId]]) {
-            row = idx;
-            *stop = YES;
-        }
-    }];
-    if (row != -1) {
-        return [NSIndexPath indexPathForRow:row inSection:section];
-    }
-    else {
-        return nil;
     }
 }
 
@@ -480,26 +455,30 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     [self.inputView addSubview:self.sendBut];
 }
 
+#define TimeStamp [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970] * 1000]
+
 - (void)sendButPressed:(id)sender
 {
     if ([self.textView.text isEqualToString:kStringNull]) {
         return;
     }
     
-    [MessageCenter send:self.textView.text
+    NSString *string = self.textView.text;
+    
+    [MessageCenter send:string
               channelId:self.channelId
                   count:self.numberOfUsers
              completion:^(id messageId) {
+                 NSLog(@"Last function");
                  [self reloadDataAnimated:YES];
              }];
-    
-    [self reloadDataAnimated:YES];
     self.textView.text = kStringNull;
     [self textViewDidChange:self.textView];
 }
 
 - (void)mediaButPressed:(id)sender
 {
+    [self endEditing:YES];
     [MediaPicker pickMediaOnViewController:self.parent withUserMediaHandler:^(Media *media, BOOL picked) {
         if (picked) {
             [MessageCenter send:media
@@ -507,7 +486,7 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
                           count:self.numberOfUsers
                      completion:^(id messageId) {
                          [self reloadDataAnimated:YES];
-            }];
+                     }];
         }
     }];
 }
@@ -583,35 +562,34 @@ static inline UIViewAnimationOptions AnimationOptionsForCurve(UIViewAnimationCur
     }
 }
 
-- (NSArray*) sections
-{
-    NSMutableOrderedSet *dates = [NSMutableOrderedSet orderedSet];
-    [self.messages enumerateObjectsUsingBlock:^(id _Nonnull dictionary, NSUInteger idx, BOOL * _Nonnull stop) {
-        
-        NSDate *date = [[dictionary objectForKey:fCreatedAt] dateWithoutTime];
-        
-        [dates addObject:date];
-    }];
-
-    return [[dates set] allObjects];
-}
-
-- (NSArray*) messagesForSection:(NSUInteger)section
-{
-    NSArray *sections = self.sections;
-    
-    if (sections.count>0) {
-        NSDate *dateForSection = [sections objectAtIndex:section];
-        NSArray *messages = [self.messages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createdAt.dateWithoutTime == %@", dateForSection]];
-        
-        return messages;
-    }
-    else {
-        return nil;
-    }
-}
-
-
+//- (NSArray*) sections
+//{
+//    NSMutableOrderedSet *dates = [NSMutableOrderedSet orderedSet];
+//    [self.messages enumerateObjectsUsingBlock:^(id _Nonnull dictionary, NSUInteger idx, BOOL * _Nonnull stop) {
+//        
+//        NSDate *date = [[dictionary objectForKey:fCreatedAt] dateWithoutTime];
+//        
+//        [dates addObject:date];
+//    }];
+//
+//    return [[dates set] allObjects];
+//}
+//
+//- (NSArray*) messagesForSection:(NSUInteger)section
+//{
+//    NSArray *sections = self.sections;
+//    
+//    if (sections.count>0) {
+//        NSDate *dateForSection = [sections objectAtIndex:section];
+//        NSArray *messages = [self.messages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createdAt.dateWithoutTime == %@", dateForSection]];
+//        
+//        return messages;
+//    }
+//    else {
+//        return nil;
+//    }
+//}
+//
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ChatRow *cell = [tableView dequeueReusableCellWithIdentifier:@"RowCell" forIndexPath:indexPath];

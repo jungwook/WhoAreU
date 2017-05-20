@@ -281,7 +281,7 @@ NSString* __usernames(NSArray*users)
 #pragma mark user
 
 @implementation User
-@dynamic nickname, where, whereUpdatedAt, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
+@dynamic nickname, where, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
 
 + (User *)me
 {
@@ -303,12 +303,10 @@ NSString* __usernames(NSArray*users)
         dictionary[fCreatedAt] = self.createdAt;
     if (self.updatedAt)
         dictionary[fUpdatedAt] = self.updatedAt;
-    
+
     if (self.dataAvailable) {
         if (self.nickname)
             dictionary[fNickname] = self.nickname;
-        if (self.whereUpdatedAt)
-            dictionary[fWhereUpdatedAt] = self.whereUpdatedAt;
         if (self.age)
             dictionary[fAge] = self.age;
         if (self.desc)
@@ -341,8 +339,6 @@ NSString* __usernames(NSArray*users)
     if (self.dataAvailable) {
         if (self.nickname)
             dictionary[fNickname] = self.nickname;
-        if (self.whereUpdatedAt)
-            dictionary[fWhereUpdatedAt] = self.whereUpdatedAt;
         if (self.age)
             dictionary[fAge] = self.age;
         if (self.desc)
@@ -547,7 +543,7 @@ NSString* __usernames(NSArray*users)
 {
     User *me = [User me];
 
-    id channelId = [MessageCenter channelIdForUser:user];
+    id channelId = [MessageCenter lastJoinedChannelIdForUser:user];
     if (channelId) {
         NSLog(@"ChannelId:%@", channelId);
         [Channel fetch:channelId completion:^(Channel *channel) {

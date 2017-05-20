@@ -10,4 +10,5 @@
 
 @interface MediaView : UIView
 @property (nonatomic, weak) Media* media;
+@property (nonatomic) CGFloat collectionViewHeightOffset;
 @end

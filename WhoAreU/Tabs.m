@@ -10,10 +10,10 @@
 #import "Profile.h"
 #import "SignUp.h"
 #import "S3File.h"
-#import "NSData+GZIP.h"
 #import "MessageCenter.h"
+#import <ParseUI/ParseUI.h>
 
-@interface Tabs ()
+@interface Tabs () <PFLogInViewControllerDelegate>
 
 @end
 
@@ -52,11 +52,24 @@
     
     VoidBlock initializationHandler = ^(void) {
         
+        __LF
+/*
+        PFLogInViewController *logInViewController = [[PFLogInViewController alloc] init];
+        logInViewController.delegate = self;
+        UILabel *logo = [UILabel new];
+        logo.font = [UIFont systemFontOfSize:60 weight:UIFontWeightLight];
+        logo.text = @"Fuck!";
+        logInViewController.logInView.logo = logo;
+ 
+        [self presentViewController:logInViewController animated:YES completion:nil];
+ */
+        
         // User logged in so ready to initialize systems.
         [Engine initializeSystems];
         
         // Subscribe to channel user
-        [self subscribeToChannelCurrentUser];
+        [MessageCenter subscribeToChannelUser];
+        [MessageCenter setupUserToInstallation];
 
         // force load child view controllers
 //        [self forceLoadViewControllers];
@@ -107,7 +120,6 @@
                         [PFUser logInWithUsernameInBackground:user.username password:user.password block:^(PFUser * _Nullable user, NSError * _Nullable error) {
                             if (!error) {
                                 [signup dismissViewControllerAnimated:YES completion:nil];
-                                [self subscribeToChannelCurrentUser];
                                 initializationHandler();
                                 
                                 if (type == kMediaTypePhoto && mediaSet) {
@@ -169,69 +181,6 @@
             };
             [self presentViewController:signup animated:YES completion:nil];
         }
-    }
-}
-
-- (void) subscribeToChannelCurrentUser
-{
-    User *me = [User me];
-    
-    PFInstallation *install = [PFInstallation currentInstallation];
-    //    install[@"deviceToken"] = install[@"deviceToken"];
-    //    install[@"deviceType"] = install.deviceType;
-    [install addUniqueObject:me.objectId forKey:@"channels"];
-    NSLog(@"Installation:%@", install);
-    [install saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"ERROR:%@", error.localizedDescription);
-        }
-    }];
-    
-    User *installUser = install[fUser];
-    BOOL sameUser = [installUser.objectId isEqualToString:me.objectId];
-    if (!sameUser) {
-        me.credits = me.initialFreeCredits;
-        NSLog(@"Adding %ld free credits", me.credits);
-        [me saveInBackground];
-        install[@"deviceToken"] = install[@"deviceToken"];
-        install[fUser] = me;
-        NSLog(@"CURRENT INSTALLATION: saving user to Installation.");
-        [install saveInBackground];
-    }
-    else {
-        NSLog(@"CURRENT INSTALLATION: Installation is already set to current user. No need to update");
-    }
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (void) dictionaryCompare
-{
-    NSDictionary* dic = [User me].dictionary;
-    
-    NSData *data = [NSPropertyListSerialization dataWithPropertyList:dic format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil];
-    NSLog(@"ORIGINAL:%ld", data.length);
-    NSData *compressed = [data gzippedDataWithCompressionLevel:1.0];
-    NSLog(@"COMPRESSED:%ld", compressed.length);
-    NSData *uncompressed = [compressed gunzippedData];
-    NSLog(@"UNCOMPRESSED:%ld", uncompressed.length);
-
-    NSDictionary *n = [NSPropertyListSerialization propertyListWithData:uncompressed options:NSPropertyListMutableContainersAndLeaves format:nil error:nil];
-    
-    if ([n.description compare:dic.description] == NSOrderedSame) {
-        NSLog(@"Good!!%@", n);
-    }
-    else {
-        NSLog(@"User Data:%@", dic);
-        NSLog(@"New Data:%@", n);
     }
 }
 

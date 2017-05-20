@@ -25,16 +25,22 @@
   completion:(AnyBlock)handler;
 
 + (NSArray*)    liveChannels;
-+ (NSArray *)   sortedMessagesForChannelId:(id)channelId;
-+ (id)          channelIdForUser:(User*)user;
++ (NSArray*)    sortedMessagesForChannelId:(id)channelId;
++ (id)          lastJoinedChannelIdForUser:(User*)user;
 + (void)        removeChannelMessages:(id)channelId;
+
 + (NSUInteger)  countUnreadMessagesForChannelId:(id)channelId;
 + (void)        setSystemBadge;
 + (void)        saveChats;
+
 + (NSString*)   channelNameForChannelId:(id)channelId;
+
 + (void)        processReadMessage:(id)message;
-+ (id)          messageWithId:(id)messageId channelId:(id)channelId;
 + (void)        acknowledgeReadsForChannelId:(id)channelId;
+
++ (void)        subscribeToChannelUser;
++ (void)        subscribeToChannel:(id)channel;
++ (void)        setupUserToInstallation;
 
 /**
  *Asynchronously* get all the channels that this device is subscribed to.

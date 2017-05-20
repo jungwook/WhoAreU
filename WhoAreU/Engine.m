@@ -233,6 +233,7 @@
 
 - (void)initializeSystems
 {
+    __LF
     // set me to [User me]. This assumes we've logged on already.
     self.me = [User me];
 
@@ -248,7 +249,7 @@
 {
     _initialized = initialized;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSystemInitialized object:nil];
+    PNOTIF(kNotificationSystemInitialized, nil);
 }
 
 - (void)setSimulatorStatus:(SimulatorStatus)simulatorStatus
@@ -278,8 +279,6 @@
 - (void) initFilesystemAndDataStructures
 {
     self.timeKeeper = [NSTimer scheduledTimerWithTimeInterval:SIMULATOR_FETCH_INTERVAL target:self selector:@selector(timeKeep) userInfo:nil repeats:YES];
-    
-//    [self refreshChatUsers];
 }
 
 - (void) timeKeep
@@ -374,7 +373,6 @@
     _currentLocation = currentLocation;
     
     self.me.where = POINT_FROM_CLLOCATION(currentLocation);
-    self.me.whereUpdatedAt = [NSDate date];
     [self.me saveInBackground];
 }
 

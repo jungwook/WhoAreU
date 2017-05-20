@@ -126,7 +126,6 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @interface User : PFUser <PFSubclassing>
 @property (retain) NSString*    nickname;
 @property (retain) PFGeoPoint*  where;
-@property (retain) NSDate*      whereUpdatedAt;
 @property (retain) NSString*    age;
 @property (retain) NSString*    desc;
 @property (retain) NSString*    introduction;

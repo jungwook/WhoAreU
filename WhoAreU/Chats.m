@@ -98,15 +98,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"Chat"]) {
-        Chat *chat = segue.destinationViewController;
-        chat.hidesBottomBarWhenPushed = YES;
-        chat.dictionary = sender;
-    }
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -124,7 +115,6 @@
     ChatsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
     
     id dictionary = [self.chats objectAtIndex:indexPath.row];
-//    NSLog(@"Chatrow data:%@", dictionary);
     cell.dictionary = dictionary;
     
     return cell;
@@ -132,8 +122,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    __LF
     id dictionary = [self.chats objectAtIndex:indexPath.row];    
     [self performSegueWithIdentifier:@"Chat" sender:dictionary];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    __LF
+    if ([segue.identifier isEqualToString:@"Chat"]) {
+        Chat *chat = segue.destinationViewController;
+        chat.hidesBottomBarWhenPushed = YES;
+        chat.dictionary = sender;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
