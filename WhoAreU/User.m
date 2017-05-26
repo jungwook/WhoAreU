@@ -11,6 +11,7 @@
 #import "BaseFunctions.h"
 #import "MessageCenter.h"
 #import "NSData+GZIP.h"
+#import "MediaPicker.h"
 
 #pragma mark History
 
@@ -281,7 +282,7 @@ NSString* __usernames(NSArray*users)
 #pragma mark user
 
 @implementation User
-@dynamic nickname, where, age, desc, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
+@dynamic nickname, where, age, channel, introduction, thumbnail, media, photos, likes, gender, simulated, credits;
 
 + (User *)me
 {
@@ -299,24 +300,23 @@ NSString* __usernames(NSArray*users)
     
     if (self.objectId)
         dictionary[fObjectId] = self.objectId;
-    if (self.createdAt)
-        dictionary[fCreatedAt] = self.createdAt;
-    if (self.updatedAt)
-        dictionary[fUpdatedAt] = self.updatedAt;
 
     if (self.dataAvailable) {
         if (self.nickname)
             dictionary[fNickname] = self.nickname;
         if (self.age)
             dictionary[fAge] = self.age;
-        if (self.desc)
-            dictionary[fDesc] = self.desc;
+        if (self.channel)
+            dictionary[fChannel] = self.channel;
         if (self.introduction)
             dictionary[fIntroduction] = self.introduction;
         if (self.thumbnail)
             dictionary[fThumbnail] = self.thumbnail;
-        if (self.where)
-            dictionary[fWhere] = NSStringFromCGSize(CGSizeMake(self.where.latitude, self.where.longitude));
+        if (self.where) {
+            dictionary[fLatitude] = @(self.where.latitude);
+            dictionary[fLongitude] = @(self.where.longitude);
+        }
+        dictionary[fGender] = self.genderTypeString;
     }
     else {
         NSLog(@"WARNING[%s] %@ %@ DIRTY", __func__, NSStringFromClass([self class]), self.objectId);
@@ -341,8 +341,8 @@ NSString* __usernames(NSArray*users)
             dictionary[fNickname] = self.nickname;
         if (self.age)
             dictionary[fAge] = self.age;
-        if (self.desc)
-            dictionary[fDesc] = self.desc;
+        if (self.channel)
+            dictionary[fChannel] = self.channel;
         if (self.introduction)
             dictionary[fIntroduction] = self.introduction;
         if (self.thumbnail)
@@ -352,6 +352,7 @@ NSString* __usernames(NSArray*users)
         if (self.where)
             dictionary[fWhere] = NSStringFromCGSize(CGSizeMake(self.where.latitude, self.where.longitude));
         
+        dictionary[fGender] = self.genderTypeString;
         NSMutableArray *photos = [NSMutableArray array];
         for (Media *photo in self.photos) {
             [photos addObject:photo.objectId];
@@ -369,6 +370,12 @@ NSString* __usernames(NSArray*users)
     }
 
     return dictionary;
+}
+
+- (void)setChannel:(NSString *)channel
+{
+    [self setObject:channel forKey:fChannel];
+    [MessageCenter subscribeToUserChannel:channel];
 }
 
 - (void)like:(User *)user
@@ -420,13 +427,27 @@ NSString* __usernames(NSArray*users)
 {
     switch (self.gender) {
         case kGenderTypeMale:
-            return [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f];
+            return [UIColor maleColor];
         case kGenderTypeFemale:
-            return [UIColor colorWithRed:240/255.f green:82/255.f blue:10/255.f alpha:1.0f];
+            return [UIColor femaleColor];
         case kGenderTypeUnknown:
-            return [UIColor colorWithRed:128/255.f green:128/255.f blue:128/255.f alpha:1.0f];
+            return [UIColor unknownGenderColor];
     }
 }
+
++ (UIColor*) genderColorFromTypeString:(id)typeString
+{
+    if ([typeString isEqualToString:@"Male"]) {
+        return [UIColor maleColor];
+    }
+    else if ([typeString isEqualToString:@"Female"]) {
+        return [UIColor femaleColor];
+    }
+    else {
+        return [UIColor unknownGenderColor];
+    }
+}
+
 
 - (NSString *)genderTypeString
 {
@@ -506,7 +527,7 @@ NSString* __usernames(NSArray*users)
              ];
 }
 
-+ (NSArray*) introductions
++ (NSArray*) channels
 {
     return @[
              @"Meet",
@@ -574,20 +595,26 @@ NSString* __usernames(NSArray*users)
         [me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
             if (succeeded) {
                 NSString *message = alert.textFields.firstObject.text;
+                message = [message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (message.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:message forKey:@"LastFirstMessage"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
                 if (actionBlock) {
-                    actionBlock([message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]);
+                    actionBlock(message);
                 }
             }
         }];
     };
     
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Proceed" style:UIAlertActionStyleDefault handler:enoughCredits ? okhandler : buyhandler];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:enoughCredits ? okhandler : buyhandler];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:nil];
     
     if (enoughCredits) {
         [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-            
+            textField.font = [UIFont systemFontOfSize:17];
+            textField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastFirstMessage"];
         }];
     }
     
@@ -596,6 +623,82 @@ NSString* __usernames(NSArray*users)
     
     [viewController presentViewController:alert animated:YES completion:nil];
 }
+
++ (void)payForChatWithChannelOnViewController:(UIViewController *)viewController action:(AnyBlock)actionBlock
+{
+    User *me = [User me];
+    
+    BOOL enoughCredits = me.credits > me.openChatCredits;
+    
+    NSString *message = enoughCredits ?  [NSString stringWithFormat:@"\nYou have a total of %ld credits.\nTo continue %ld credits will be charged.\n\nSay Hi to friends in this channel(%@).", me.credits, me.openChatCredits, me.channel] : [NSString stringWithFormat:@"\nYou need %ld credits to send a message to this channel (%@)!\n\nYou currently have a total of %ld credits. Would you like to buy more credits?", me.openChatCredits, me.channel, me.credits];
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Say Hi!" message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    void(^buyhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
+        NSLog(@"Buy more credits");
+        
+        UIViewController *vc = [viewController.storyboard instantiateViewControllerWithIdentifier:@"Credits"];
+        vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        [viewController presentViewController:vc animated:YES completion:nil];
+        
+    };
+    void(^okhandler)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action) {
+        me.credits -= me.openChatCredits;
+        [me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            if (succeeded) {
+                NSString *message = alert.textFields.firstObject.text;
+                message = [message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (message.length > 0) {
+                    [[NSUserDefaults standardUserDefaults] setObject:message forKey:@"LastFirstMessage"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                if (actionBlock) {
+                    id ret = @{
+                               fMessage : message,
+                               fType : @(kMessageTypeText),
+                               };
+                    actionBlock(ret);
+                }
+            }
+        }];
+    };
+    
+    void(^mediaHandler)(UIAlertAction * _Nonnull action) =  ^(UIAlertAction * _Nonnull action) {
+        [MediaPicker pickMediaOnViewController:viewController withUserMediaHandler:^(Media *media, BOOL picked) {
+            if (picked) {
+                NSString *message = alert.textFields.firstObject.text;
+                message = [message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (actionBlock) {
+                    id ret = @{
+                               fMessage : message,
+                               fType : @(kMessageTypeMedia),
+                               fMedia : media.dictionary
+                               };
+                    actionBlock(ret);
+                }
+            }
+        }];
+    };
+    
+    __unused UIAlertAction *mediaAction = [UIAlertAction actionWithTitle:@"photo" style:UIAlertActionStyleDefault handler:mediaHandler];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:enoughCredits ? okhandler : buyhandler];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:nil];
+    
+    if (enoughCredits) {
+//        [alert addAction:mediaAction];
+        [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastFirstMessage"];
+        }];
+        [alert addAction:okAction];
+    }
+    
+    [alert addAction:cancelAction];
+    
+    [viewController presentViewController:alert animated:YES completion:nil];
+}
+
 
 @end
 
@@ -653,6 +756,10 @@ NSString* __usernames(NSArray*users)
                 if (user.thumbnail) {
                     [simpleUser setObject:user.thumbnail forKey:fThumbnail];
                 }
+                if (user.channel) {
+                    [simpleUser setObject:user.channel forKey:fChannel];
+                }
+                [simpleUser setObject:user.genderTypeString forKey:fGender];
                 [users addObject:simpleUser];
             }
             dictionary[fUsers] = users;

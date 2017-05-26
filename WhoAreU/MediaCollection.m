@@ -131,11 +131,11 @@
 
 - (void)trashMedia:(id)sender
 {
-    __alert(self.parent, @"Confirm Deletion", @"Do you really want to delete this photo?", ^(UIAlertAction *action) {
+    __alert(@"Confirm Deletion", @"Do you really want to delete this photo?", ^(UIAlertAction *action) {
         if (self.deleteBlock) {
             self.deleteBlock(self.media);
         }
-    }, ^(UIAlertAction *action) {});
+    }, ^(UIAlertAction *action) {}, self.parent);
 }
 
 - (void)layoutSubviews

@@ -35,8 +35,8 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    AppDelegate * appDelegate = (id) [[UIApplication sharedApplication] delegate];
-    appDelegate.menuController = self;
+//    AppDelegate * appDelegate = (id) [[UIApplication sharedApplication] delegate];
+//    appDelegate.menuController = self;
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -118,7 +118,7 @@
                 user.password = usernameAndPassword;
                 user.nickname = nickname;
                 user.age = age;
-                user.desc = intro;
+                user.channel = intro;
                 [user setGenderTypeFromString:gender];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:usernameAndPassword forKey:@"username"];

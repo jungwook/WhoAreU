@@ -12,6 +12,7 @@
 @property (strong, nonatomic) User *user;
 - (void) clear;
 - (void) updateMediaOnViewController:(UIViewController*)viewController;
+- (void) setUserId:(id)userId withThumbnail:(id)thumbnail;
 @end
 
 @interface PhotoView : UIView
@@ -21,5 +22,6 @@
 - (void) clear;
 - (void) updateMediaOnViewController:(UIViewController*)viewController;
 - (void) setUser:(User *)user;
-
+- (void) setUserId:(id)userId withThumbnail:(id)thumbnail;
+- (void) setUser:(User*)user thumbnail:(id)thumbnail;
 @end

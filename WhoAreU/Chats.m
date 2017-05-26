@@ -69,6 +69,12 @@
 
 @implementation Chats
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tableView reloadData];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -137,12 +143,6 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    __LF
-    [self.tableView reloadData];
-}
-
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
@@ -150,7 +150,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        __alert(self, @"Are you sure?", @"All contents will be permanently deleted.", ^(UIAlertAction* action) {
+        __alert(@"Are you sure?", @"All contents will be permanently deleted.", ^(UIAlertAction* action) {
             id dictionary = [self.chats objectAtIndex:indexPath.row];
             id channelId = dictionary[fObjectId];
             [MessageCenter removeChannelMessages:channelId];
@@ -161,7 +161,7 @@
                 [MessageCenter setSystemBadge];
             });
         }, ^(UIAlertAction* action) {
-        });
+        }, self);
     }
 }
 

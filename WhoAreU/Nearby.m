@@ -49,10 +49,10 @@
 {
     _user = user;
     
-    CLLocationDirection heading = __heading([Engine where], user.where);
+    CLLocationDirection heading = [[User me].where headingToLocation:user.where];
     [self.userView clear];
     self.nickname.text = user.nickname;
-    self.desc.text = user.desc;
+    self.desc.text = user.channel;
     self.userView.user = user;
     self.age.text = user.age;
     self.compass.heading = heading;

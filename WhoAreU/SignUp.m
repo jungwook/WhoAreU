@@ -55,7 +55,7 @@
     [self.blurView setTranslatesAutoresizingMaskIntoConstraints:YES];
     [self.view insertSubview:self.blurView atIndex:0];
     [self.ageGroup setPickerItems:[User ageGroups] withHandler:nil];
-    [self.withMe setPickerItems:[User introductions] withHandler:^(id item) {
+    [self.withMe setPickerItems:[User channels] withHandler:^(id item) {
         
     }];
     [self.gender setPickerItems:[User genders] withHandler:^(id item) {

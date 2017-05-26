@@ -127,7 +127,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (retain) NSString*    nickname;
 @property (retain) PFGeoPoint*  where;
 @property (retain) NSString*    age;
-@property (retain) NSString*    desc;
+@property (retain) NSString*    channel;
 @property (retain) NSString*    introduction;
 @property (retain) NSString*    thumbnail;
 @property (retain) Media*       media;
@@ -146,7 +146,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 + (User*)me;
 - (BOOL)isMe;
 + (NSArray*) ageGroups;
-+ (NSArray*) introductions;
++ (NSArray*) channels;
 
 // Gender related
 - (void)        setGenderTypeFromString:(NSString*)gender;
@@ -159,7 +159,9 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 - (BOOL)        likes:(User*)user;
 - (void)        like:(User*)user;
 - (void)        unlike:(User*)user;
-+ (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(AnyBlock)actionBlock;
++ (void)        payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(AnyBlock)actionBlock;
++ (void)        payForChatWithChannelOnViewController:(UIViewController *)viewController action:(AnyBlock)actionBlock;
++ (UIColor*)    genderColorFromTypeString:(id)typeString;
 
 @end
 

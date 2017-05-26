@@ -54,7 +54,6 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     __LF
-    PNOTIF(kNotificationApplicationActive, nil);
     // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
 }
 
@@ -186,11 +185,11 @@
     id userInfo = notification.request.content.userInfo;
     
     NSLog( @"Handle push from foreground" );
-//    NSLog(@"%@", userInfo);
     UNNotificationPresentationOptions option =     [MessageCenter handlePushUserInfo:userInfo];
 
-    if (completionHandler)
+    if (completionHandler) {
         completionHandler(option);
+    }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -202,10 +201,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     id userInfo = response.notification.request.content.userInfo;
 
     NSLog(@"Handle push from background or closed" );
-    NSLog(@"%@", userInfo);
-
     [MessageCenter handlePushUserInfo:userInfo];
-    completionHandler();
+    if (completionHandler) {
+        completionHandler();
+    }
 }
 
 @end

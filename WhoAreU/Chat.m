@@ -35,8 +35,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     __LF
-//    [MessageCenter acknowledgeReadsForChannelId:self.channelId];
-//    [self.chatView reloadDataAnimated:NO];
+    [self.chatView reloadDataAnimated:NO];
 }
 
 - (void)viewDidLoad
@@ -62,6 +61,7 @@
     
     self.chatView.channel = self.dictionary;
     self.navigationItem.title = [MessageCenter channelNameForChannelId:self.channelId];
+    [MessageCenter processFetchMessagesForChannelId:self.channelId];
 }
 
 - (void)didReceiveMemoryWarning {

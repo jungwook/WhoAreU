@@ -30,7 +30,7 @@
 
 + (instancetype)listFieldForIntroductionsWithCompletion:(ListFieldBlock)handler
 {
-    return [ListField listFieldWithItems:[User introductions] completion:handler];
+    return [ListField listFieldWithItems:[User channels] completion:handler];
 }
 
 + (instancetype)listFieldForAgeGroupsWithCompletion:(ListFieldBlock)handler
@@ -89,7 +89,7 @@
 
 - (void)setPickerForIntroductionsWithHandler:(ListFieldBlock)handler
 {
-    [self setPickerItems:[User introductions] withHandler:handler];
+    [self setPickerItems:[User channels] withHandler:handler];
 }
 
 - (void)setPickerForAgeGroupsWithHandler:(ListFieldBlock)handler

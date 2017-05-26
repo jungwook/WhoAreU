@@ -28,7 +28,6 @@
 #define fWhereUpdatedAt @"whereUpdatedAt"
 #define fPhotos @"photos"
 #define fAge @"age"
-#define fDesc @"desc"
 #define fIntroduction @"introduction"
 #define fSync @"sync"
 #define fRead @"read"
@@ -47,7 +46,15 @@
 #define fComment @"comment"
 #define fName @"name"
 #define fOperation @"operation"
-
+#define fDescription @"description"
+#define fLatitude @"latitude"
+#define fLongitude @"longitude"
+#define fId @"id"
+#define fWhen @"when"
+#define fMe @"me"
+#define fDistance @"distance"
+#define fGender @"gender"
+#define fChannelType @"channelType"
 
 #define kStringNull @""
 #define kStringSpace @" "
@@ -65,6 +72,8 @@
 #define kNotificationNewChatMessage @"NotificationNewChatMessage"
 #define kNotificationReadMessage @"NotificationReadMessage"
 #define kNotificationApplicationActive @"NotificationApplicationBecameActive"
+#define kNotificationEndEditing @"NotificationEndEditing"
+#define kNotificationChannelMessage @"NotificationChannelMessage"
 
 #define kJPEGCompressionLow 0.2f
 #define kJPEGCompressionMedium 0.4f
@@ -74,14 +83,17 @@
 
 #define kVideoThumbnailWidth 320
 
-#define WSLOCATION @"http://parse.kr:8080"
+//#define WSLOCATION @"http://parse.kr:8080"
+#define WSLOCATION @"http://localhost:8080"
+
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define __LF NSLog(@"%s", __FUNCTION__);
-
+#define degreesToRadians(x) (M_PI * x / 180.0)
+#define radiansToDegrees(x) (x * 180.0 / M_PI)
 
 #define ANOTIF(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:__Y__ name:__X__ object:nil]
 
@@ -118,5 +130,7 @@ typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions option
 typedef void(^FloatEventBlock)(CGFloat value);
 typedef void(^AlertAction)(UIAlertAction *action);
 typedef UNNotificationPresentationOptions(^PushBlock)(id message);
+typedef UNNotificationPresentationOptions(^PushHandlerBlock)(id payload, id senderId, id channelId);
+
 
 #endif /* Definitions_h */

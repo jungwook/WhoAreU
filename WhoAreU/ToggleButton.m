@@ -33,7 +33,7 @@ typedef void (^BulletBlock)(id bullet);
 
 - (void) toggleMenu:(id)sender
 {
-    [((AppDelegate*)[[UIApplication sharedApplication] delegate]).menuController toggleMenu];
+//    [((AppDelegate*)[[UIApplication sharedApplication] delegate]).menuController toggleMenu];
 }
 
 @end

@@ -10,11 +10,14 @@
 		120775081E9DD29000B02AF6 /* SignUp.m in Sources */ = {isa = PBXBuildFile; fileRef = 120775061E9DD29000B02AF6 /* SignUp.m */; };
 		120775091E9DD29000B02AF6 /* SignUp.xib in Resources */ = {isa = PBXBuildFile; fileRef = 120775071E9DD29000B02AF6 /* SignUp.xib */; };
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
+		120A023F1ED7CA3C00547CDA /* PopOverMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 120A023E1ED7CA3C00547CDA /* PopOverMenu.m */; };
+		120A02421ED8602300547CDA /* PopupMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 120A02411ED8602300547CDA /* PopupMenu.m */; };
 		12134D501EBC0615001EEC5E /* Chats.m in Sources */ = {isa = PBXBuildFile; fileRef = 12134D4F1EBC0615001EEC5E /* Chats.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215085B1EAF180E00EAA5E1 /* Tabs.m */; };
 		1215C5A71EA5C43800BA509E /* Nearby.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A61EA5C43800BA509E /* Nearby.m */; };
 		1215C5AA1EA6F88000BA509E /* Compass.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215C5A91EA6F88000BA509E /* Compass.m */; };
+		121723081ECFEEF100494A4E /* ChatRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 121723071ECFEEF100494A4E /* ChatRow.m */; };
 		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
@@ -106,6 +109,10 @@
 		120775071E9DD29000B02AF6 /* SignUp.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignUp.xib; sourceTree = "<group>"; };
 		12082F921E9376D700E8D051 /* ShadowLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowLabel.h; sourceTree = "<group>"; };
 		12082F931E9376D700E8D051 /* ShadowLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowLabel.m; sourceTree = "<group>"; };
+		120A023D1ED7CA3C00547CDA /* PopOverMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopOverMenu.h; sourceTree = "<group>"; };
+		120A023E1ED7CA3C00547CDA /* PopOverMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopOverMenu.m; sourceTree = "<group>"; };
+		120A02401ED8602300547CDA /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
+		120A02411ED8602300547CDA /* PopupMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopupMenu.m; sourceTree = "<group>"; };
 		12134D4E1EBC0615001EEC5E /* Chats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chats.h; sourceTree = "<group>"; };
 		12134D4F1EBC0615001EEC5E /* Chats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chats.m; sourceTree = "<group>"; };
 		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
@@ -116,6 +123,8 @@
 		1215C5A61EA5C43800BA509E /* Nearby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nearby.m; sourceTree = "<group>"; };
 		1215C5A81EA6F88000BA509E /* Compass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compass.h; sourceTree = "<group>"; };
 		1215C5A91EA6F88000BA509E /* Compass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Compass.m; sourceTree = "<group>"; };
+		121723061ECFEEF100494A4E /* ChatRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatRow.h; sourceTree = "<group>"; };
+		121723071ECFEEF100494A4E /* ChatRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatRow.m; sourceTree = "<group>"; };
 		121E15B31E95FE59009CCF51 /* MediaPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPicker.h; sourceTree = "<group>"; };
 		121E15B41E95FE59009CCF51 /* MediaPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPicker.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -443,6 +452,8 @@
 				12A213441EB47DBD00DF79B0 /* Balloon.m */,
 				12F96D541EB453620054DA6C /* ChatView.h */,
 				12F96D551EB453620054DA6C /* ChatView.m */,
+				121723061ECFEEF100494A4E /* ChatRow.h */,
+				121723071ECFEEF100494A4E /* ChatRow.m */,
 				1215C5A81EA6F88000BA509E /* Compass.h */,
 				1215C5A91EA6F88000BA509E /* Compass.m */,
 				1249DD491EAC46CA00E9E39F /* MediaCollection.h */,
@@ -457,6 +468,10 @@
 				124587551EC3F2B100746AAF /* MediaView.m */,
 				124587571EC3F3E100746AAF /* CenterScrollView.h */,
 				124587581EC3F3E100746AAF /* CenterScrollView.m */,
+				120A023D1ED7CA3C00547CDA /* PopOverMenu.h */,
+				120A023E1ED7CA3C00547CDA /* PopOverMenu.m */,
+				120A02401ED8602300547CDA /* PopupMenu.h */,
+				120A02411ED8602300547CDA /* PopupMenu.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -630,6 +645,7 @@
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
 				12D0F2EC1EC5644E004F2E3E /* MessageCenter.m in Sources */,
+				120A02421ED8602300547CDA /* PopupMenu.m in Sources */,
 				124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */,
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
 				123AF1491E9E0C9600ED0547 /* NavigationController.m in Sources */,
@@ -648,6 +664,7 @@
 				124587451EBD61CF00746AAF /* Refresh.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				120A023F1ED7CA3C00547CDA /* PopOverMenu.m in Sources */,
 				12134D501EBC0615001EEC5E /* Chats.m in Sources */,
 				124587591EC3F3E100746AAF /* CenterScrollView.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
@@ -671,6 +688,7 @@
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 				120775081E9DD29000B02AF6 /* SignUp.m in Sources */,
 				123AF1561E9E11B400ED0547 /* ToggleButton.m in Sources */,
+				121723081ECFEEF100494A4E /* ChatRow.m in Sources */,
 				12D0F2EF1EC5F051004F2E3E /* SimulatedUsers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

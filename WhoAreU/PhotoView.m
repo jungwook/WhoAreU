@@ -75,6 +75,15 @@
     }];
 }
 
+- (void)setUserId:(id)userId withThumbnail:(id)thumbnail
+{
+    _user = [User objectWithoutDataWithObjectId:userId];
+    [self.photoView setBackgroundColor:self.user.genderColor];
+    [self.photoView setUser:self.user thumbnail:thumbnail];
+    [self setNeedsLayout];
+    [self setCount];
+}
+
 - (void)setCount
 {
 //    [Engine countUnreadMessagesFromUser:self.user completion:^(NSUInteger count) {
@@ -148,6 +157,7 @@
 
 - (void)tapped:(id)sender
 {
+    PNOTIF(kNotificationEndEditing, nil);
     if (self.user) {
         [PreviewUser showUser:self.user];
     }
@@ -173,9 +183,46 @@
     }
 }
 
+- (void)setUser:(User*)user thumbnail:(id)thumbnail
+{
+    _user = user;
+    if (thumbnail) {
+        [self.activity startAnimating];
+        [S3File getImageFromFile:thumbnail imageBlock:^(UIImage *image) {
+            self.image = image;
+            [self.activity stopAnimating];
+        }];
+    }
+    else {
+        self.media = nil;
+        self.user = nil;
+        self.image = self.avatar;
+    }
+}
+
+- (void)setUserId:(id)userId withThumbnail:(id)thumbnail
+{
+    _user = [User objectWithoutDataWithObjectId:userId];
+    if (thumbnail) {
+        [self.activity startAnimating];
+        [S3File getImageFromFile:thumbnail imageBlock:^(UIImage *image) {
+            self.image = image;
+            [self.activity stopAnimating];
+        }];
+    }
+    else {
+        self.media = nil;
+        self.user = nil;
+        self.image = self.avatar;
+    }
+    [self.user fetchIfNeededInBackground];
+}
+
 - (void)setMedia:(Media *)media
 {
     _media = media;
+
+    self.image = self.avatar;
 
     if (self.media) {
         [self.activity startAnimating];
@@ -190,9 +237,6 @@
                 [self.activity stopAnimating];
             }];
         }];
-    }
-    else {
-        self.image = self.avatar;
     }
 }
 

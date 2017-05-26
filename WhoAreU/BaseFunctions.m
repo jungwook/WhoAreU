@@ -48,45 +48,6 @@ void __circleizeView(UIView* view, CGFloat percent)
     view.layer.masksToBounds = YES;
 }
 
-#define degreesToRadians(x) (M_PI * x / 180.0)
-#define radiansToDegrees(x) (x * 180.0 / M_PI)
-
-float __heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
-{
-    float fLat = degreesToRadians(fromLoc.latitude);
-    float fLng = degreesToRadians(fromLoc.longitude);
-    float tLat = degreesToRadians(toLoc.latitude);
-    float tLng = degreesToRadians(toLoc.longitude);
-    
-    float degree = radiansToDegrees(atan2(sin(tLng-fLng)*cos(tLat), cos(fLat)*sin(tLat)-sin(fLat)*cos(tLat)*cos(tLng-fLng)));
-    
-    if (degree >= 0) {
-        return degree;
-    } else {
-        return 360+degree;
-    }
-}
-
-float __headingRad(PFGeoPoint* fromLoc, PFGeoPoint* toLoc)
-{
-    float fLat = degreesToRadians(fromLoc.latitude);
-    float fLng = degreesToRadians(fromLoc.longitude);
-    float tLat = degreesToRadians(toLoc.latitude);
-    float tLng = degreesToRadians(toLoc.longitude);
-    
-    return atan2(sin(tLng-fLng)*cos(tLat), cos(fLat)*sin(tLat)-sin(fLat)*cos(tLat)*cos(tLng-fLng));
-}
-
-float __headingUsers(User* from, User* to)
-{
-    PFGeoPoint *fromLoc = from.where;
-    PFGeoPoint *toLoc = to.where;
-    if (from != to && (fromLoc.latitude == toLoc.latitude && fromLoc.longitude == toLoc.longitude)) {
-        printf("SAME LOCATION FOR:%s - %s\n", [from.nickname UTF8String], [to.nickname UTF8String]);
-    }
-    return __heading(fromLoc, toLoc);
-}
-
 NSData* __compressedImageDataQuality(NSData* data, CGFloat width, CGFloat compressionRatio)
 {
     UIImage *image = [UIImage imageWithData:data];
@@ -159,7 +120,7 @@ NSString* __headingString(double heading)
 }
 
 
-void __alert(UIViewController* parent, NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction)
+void __alert(NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction, UIViewController* parent)
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:okAction];
@@ -169,7 +130,13 @@ void __alert(UIViewController* parent, NSString* title, NSString* message, Alert
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"CANCEL" style:UIAlertActionStyleCancel handler:cancelAction];
         [alert addAction:cancel];
     }
-    [parent presentViewController:alert animated:YES completion:nil];
+    
+    if (parent) {
+        [parent presentViewController:alert animated:YES completion:nil];
+    }
+    else {
+        [mainWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 NSString* __distanceString(double distance)
@@ -307,3 +274,146 @@ id __dictionary(id object)
         return object;
     }
 }
+
+@implementation NSDate (extensions)
+
+-(NSDate *) dateWithoutTime
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:self];
+    return [calendar dateFromComponents:components];
+}
+
++ (NSDate*) dateFromStringUTC:(NSString*)string
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    return [dateFormatter dateFromString:string];
+}
+
+- (NSString*) stringUTC
+{
+    static NSDateFormatter *dateFormatter = nil;
+    
+    if (!dateFormatter) {
+        dateFormatter = [NSDateFormatter new];
+        NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormatter setLocale:locale];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+    }
+    return [dateFormatter stringFromDate:self];
+}
+
+@end
+
+
+@implementation PFGeoPoint (extensions)
+
+- (CLLocationDegrees)headingToLocation:(PFGeoPoint *)location
+{
+    float fLat = degreesToRadians(self.latitude);
+    float fLng = degreesToRadians(self.longitude);
+    float tLat = degreesToRadians(location.latitude);
+    float tLng = degreesToRadians(location.longitude);
+    
+    float degree = radiansToDegrees(atan2(sin(tLng-fLng)*cos(tLat), cos(fLat)*sin(tLat)-sin(fLat)*cos(tLat)*cos(tLng-fLng)));
+    
+    if (degree >= 0) {
+        return degree;
+    } else {
+        return 360+degree;
+    }
+}
+
+- (CGFloat) headingInRadiansToLocation:(PFGeoPoint*)location
+{
+    float fLat = degreesToRadians(self.latitude);
+    float fLng = degreesToRadians(self.longitude);
+    float tLat = degreesToRadians(location.latitude);
+    float tLng = degreesToRadians(location.longitude);
+    
+    return atan2(sin(tLng-fLng)*cos(tLat), cos(fLat)*sin(tLat)-sin(fLat)*cos(tLat)*cos(tLng-fLng));
+}
+
+- (NSString*) distanceStringToLocation:(PFGeoPoint *)location
+{
+    CGFloat distance = [self distanceInKilometersTo:location];
+    return __distanceString(distance);
+}
+
+@end
+
+@implementation User (extensions)
+
+- (CLLocationDegrees)headingToUser:(User *)user
+{
+    return [self.where headingToLocation:user.where];
+}
+@end
+
+@implementation UIColor (extensions)
+
+- (NSString*) stringValue
+{
+    const CGFloat *components = CGColorGetComponents(self.CGColor);
+    return [NSString stringWithFormat:@"[%f, %f, %f, %f]",
+            components[0],
+            components[1],
+            components[2],
+            components[3]];
+}
+
++ (UIColor*) colorFromString:(NSString*)colorString
+{
+    NSString *componentsString = [[colorString stringByReplacingOccurrencesOfString:@"[" withString:kStringNull] stringByReplacingOccurrencesOfString:@"]" withString:kStringNull];
+    NSArray *components = [componentsString componentsSeparatedByString:kStringCommaSpace];
+    return [UIColor colorWithRed:[(NSString*)components[0] floatValue]
+                           green:[(NSString*)components[1] floatValue]
+                            blue:[(NSString*)components[2] floatValue]
+                           alpha:[(NSString*)components[3] floatValue]];
+}
+
++ (UIColor*) maleColor
+{
+    return [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f];
+}
+
++ (UIColor *)femaleColor
+{
+    return [UIColor colorWithRed:240/255.f green:82/255.f blue:10/255.f alpha:1.0f];
+}
+
++ (UIColor*) appColor
+{
+    return kAppColor;
+}
+
++ (UIColor *)unknownGenderColor
+{
+    return [UIColor colorWithRed:128/255.f green:128/255.f blue:128/255.f alpha:1.0f];
+}
+
+@end
+
+@implementation NSString (extensions)
+
+- (CGFloat) heightWithFont:(UIFont*)font maxWidth:(CGFloat)width
+{
+    return CGRectGetHeight([self boundingRectWithFont:font maxWidth:width]);
+}
+
+- (CGRect) boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width
+{
+    CGSize size = CGSizeMake(width, MAXFLOAT);
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+    id attributes = @{ NSFontAttributeName: font};
+    
+    return CGRectIntegral([self boundingRectWithSize:size
+                                             options:options
+                                          attributes:attributes
+                                             context:nil]);
+}
+@end
+

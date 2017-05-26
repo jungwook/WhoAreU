@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet ListField *desc;
 @property (weak, nonatomic) IBOutlet ListField *gender;
 @property (weak, nonatomic) IBOutlet MediaCollection *mediaCollection;
-
+@property (nonatomic) UIEdgeInsets contentInsets;
 @end
 
 @implementation Profile
@@ -60,9 +60,58 @@
 
     self.nickname.delegate = self;
     self.introduction.delegate = self;
+    self.age.delegate = self;
+    self.desc.delegate = self;
+    self.gender.delegate = self;
+    
     self.mediaCollection.parent = self;
 
     ANOTIF(kNotificationSystemInitialized, @selector(systemInitialzed:));
+    ANOTIF(kNotificationEndEditing, @selector(notificationEndEditing:));
+    ANOTIF(UIKeyboardWillShowNotification, @selector(keyboardWillShow:));
+    ANOTIF(UIKeyboardWillHideNotification, @selector(keyboardWillHide:));
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+    }
+    
+    self.contentInsets = self.tableView.contentInset;
+    
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = contentInsets;
+        self.tableView.scrollIndicatorInsets = contentInsets;
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    const CGFloat navigationBarHeight = 64.0f, tabBarHeight = 49.0f;
+    
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = UIEdgeInsetsMake(navigationBarHeight, 0, keyboardSize.height+tabBarHeight, 0);
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(navigationBarHeight, 0, keyboardSize.height+tabBarHeight, 0);
+    }];
+}
+
+- (void)dealloc
+{
+    RANOTIF;
+}
+
+- (void)notificationEndEditing:(id)sender
+{
+    [self.tableView endEditing:YES];
 }
 
 - (void)systemInitialzed:(id)sender
@@ -91,14 +140,14 @@
         self.me.age = item;
     }];
     [self.desc setPickerForIntroductionsWithHandler:^(id item) {
-        self.me.desc = item;
+        self.me.channel = item;
     }];
     [self.gender setPickerForGendersWithHandler:^(id item) {
         [self.me setGenderTypeFromString:item];
     }];
     
     self.age.text = self.me.age;
-    self.desc.text = self.me.desc;
+    self.desc.text = self.me.channel;
     self.mediaCollection.user = self.me;
     self.gender.text = self.me.genderTypeString;
     self.nickname.text = self.me.nickname;

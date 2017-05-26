@@ -7,9 +7,13 @@
 //
 
 #import "BalloonLabel.h"
+#import "S3File.h"
+
+#define MEDIASIZE 160
 
 @interface BalloonLabel ()
-@property (nonatomic) CGFloat balloonInset, cornerRadius;
+@property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic, strong) UIImage *image;
 @end
 
 @implementation BalloonLabel
@@ -18,31 +22,75 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.type = kBalloonTypeLeft;
-        self.balloonInset = 8;
-        self.cornerRadius = 8;
-        self.textInsets = UIEdgeInsetsMake(5, self.balloonInset+8, 5, 8);
+        [self setupVariables];
     }
     return self;
+}
+
+- (void) setupVariables
+{
+    self.mediaWidth = MEDIASIZE;
+    self.pointerInset = 8;
+    self.cornerRadius = 8;
+    self.verticalSpacing = 5;
+    self.horizontalSpacing = 8;
+    self.type = kBalloonTypeLeft;
 }
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.textInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+        [self setupVariables];
     }
     return self;
 }
 
+- (void)setType:(BalloonType)type
+{
+    _type = type;
+    switch (type) {
+        case kBalloonTypeRight:
+            self.textInsets = UIEdgeInsetsMake(self.verticalSpacing,
+                                               self.horizontalSpacing,
+                                               self.verticalSpacing,
+                                               self.pointerInset+self.horizontalSpacing);
+            break;
+            
+        default:
+            self.textInsets = UIEdgeInsetsMake(self.verticalSpacing,
+                                               self.pointerInset+self.horizontalSpacing,
+                                               self.verticalSpacing,
+                                               self.horizontalSpacing);
+            break;
+    }
+    [self setNeedsLayout];
+    [self setNeedsDisplay];
+}
+
+- (void) setMediaFile:(id)mediaFile
+{
+    if (mediaFile) {
+        [S3File getImageFromFile:mediaFile imageBlock:^(UIImage *image) {
+            self.image = image;
+            [self setNeedsLayout];
+            [self setNeedsDisplay];
+        }];
+    }
+    else {
+        self.image = nil;
+        [self setNeedsLayout];
+        [self setNeedsDisplay];
+    }
+}
+
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
-    if (self.text && ![self.text isEqualToString:kStringNull]) {
+    if (self.image) {
         UIEdgeInsets insets = self.textInsets;
-        
-        [self invalidateIntrinsicContentSize];
-        CGRect rect = [super textRectForBounds:UIEdgeInsetsInsetRect(bounds, insets)
-                        limitedToNumberOfLines:numberOfLines];
+
+        CGSize size = self.image.size;
+        CGRect rect = CGRectMake(0, 0, self.mediaWidth, size.width > 0 ? self.mediaWidth*size.height/size.width : self.mediaWidth);
         
         rect.origin.x    -= insets.left;
         rect.origin.y    -= insets.top;
@@ -52,7 +100,23 @@
         return rect;
     }
     else {
-        return CGRectZero;
+        if (self.text && self.text.length > 0) {
+            UIEdgeInsets insets = self.textInsets;
+            
+            [self invalidateIntrinsicContentSize];
+            CGRect rect = [super textRectForBounds:UIEdgeInsetsInsetRect(bounds, insets)
+                            limitedToNumberOfLines:numberOfLines];
+            
+            rect.origin.x    -= insets.left;
+            rect.origin.y    -= insets.top;
+            rect.size.width  += (insets.left + insets.right);
+            rect.size.height += (insets.top + insets.bottom);
+            
+            return rect;
+        }
+        else {
+            return CGRectZero;
+        }
     }
 }
 
@@ -64,20 +128,22 @@
 
 - (void)drawTextInRect:(CGRect)rect
 {
+    if (self.image) {
+        [self.image drawInRect:rect];
+    }
     [super drawTextInRect:UIEdgeInsetsInsetRect(rect, self.textInsets)];
 }
 
 - (void)setShape
 {
     CAShapeLayer *mask = [CAShapeLayer layer];
-    
     mask.path = [self ballonPath].CGPath;
     self.layer.mask = mask;
 }
 
 - (UIBezierPath*) ballonPath
 {
-    const CGFloat cr = self.cornerRadius, inset = self.balloonInset;
+    const CGFloat cr = self.cornerRadius, inset = self.pointerInset;
     
     CGRect rect = self.frame;
     UIBezierPath *path = [UIBezierPath bezierPath];

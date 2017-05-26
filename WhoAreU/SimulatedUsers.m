@@ -75,7 +75,7 @@
     user.simulated = YES;
     
     user.age = [User ageGroups][arc4random()%([User ageGroups].count)];
-    user.desc = [User introductions][arc4random()%([User introductions].count)];
+    user.channel = [User channels][arc4random()%([User channels].count)];
     user.gender = kGenderTypeFemale;
     
     BOOL ret = [user signUp];

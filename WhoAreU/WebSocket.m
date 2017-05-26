@@ -11,13 +11,15 @@
 #import "ObjectIdStore.h"
 #import "MessageCenter.h"
 
-#define TIMERHANDLER_INTERVAL 10.0f
+#define TIMERHANDLER_INTERVAL 5.0f
 
 @interface WebSocket() <SRWebSocketDelegate>
 @property (strong, nonatomic) SRWebSocket *socket;
 @property (strong, nonatomic) NSTimer *timer;
 @property (nonatomic) BOOL isAlive;
+@property (nonatomic) BOOL isActive;
 @property (nonatomic, readonly) TimerBlock timerHandler;
+@property (nonatomic, strong) NSMutableArray *packets;
 @end
 
 @implementation WebSocket
@@ -27,27 +29,36 @@
     return [[WebSocket alloc] initWithId:userId];
     
 }
+
 - (void) send:(id)packet
 {
-    [self.socket send:packet];
+    if (self.isAlive) {
+        [self.socket send:packet];
+    }
+    else {
+        [self.packets addObject:packet];
+    }
 }
 
 - (void) dealloc
 {
     __LF
-    RNOTIF(UIApplicationWillEnterForegroundNotification);
     RNOTIF(UIApplicationWillResignActiveNotification);
+    RNOTIF(UIApplicationDidBecomeActiveNotification);
 }
 
 - (instancetype)initWithId:(id)userId
 {
-    ANOTIF(UIApplicationWillResignActiveNotification, @selector(notificationApplicationWillResignActive:));
-    ANOTIF(UIApplicationWillEnterForegroundNotification, @selector(notificationApplicationWillEnterForeground:));
     
     self = [super init];
     if (self) {
-        __LF
+        ANOTIF(UIApplicationWillResignActiveNotification, @selector(notificationApplicationWillResignActive:));
+        ANOTIF(UIApplicationDidBecomeActiveNotification, @selector(notificationApplicationDidBecomeActive:));
+        
         _userId = userId;
+        self.isAlive = NO;
+        self.isActive = YES;
+        self.packets = [NSMutableArray new];
         [self initializeSocket];
         [self initializeTimer];
     }
@@ -61,26 +72,24 @@
 
 - (void) initializeSocket
 {
-    SRWebSocket *socket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:WSLOCATION]];
-    [socket setDelegate:self];
-    [socket open];
+    _socket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:WSLOCATION]];
+    [self.socket setDelegate:self];
+    [self.socket open];
+    
     self.isAlive = NO;
 }
 
 - (TimerBlock) timerHandler
 {
     return ^(NSTimer *timer) {
-        if (self.socket && self.isAlive == NO) {
-            [self.socket close];
-            self.socket = nil;
-        } else if (self.socket && self.isAlive == YES) {
-            // need to get pong back within 2.0f seconds.
-            self.isAlive = NO;
-            if (self.socket.readyState == SR_OPEN) {
-                [self.socket sendPing:nil];
-            }
-        } else if (self.socket == nil) {
+        if (self.isActive == YES && self.socket == nil) {
             [self initializeSocket];
+        }
+        else if (self.socket.readyState == SR_CLOSED) {
+            [self initializeSocket];
+        }
+        else if (self.socket.readyState == SR_CLOSING) {
+            [self.socket close];
         }
     };
 }
@@ -88,42 +97,75 @@
 - (void)notificationApplicationWillResignActive:(NSNotification*)notification
 {
     __LF
-    [self.timer invalidate];
-    self.timer = nil;
-    [self.socket close];
+    if (self.isActive == YES) {
+        self.isActive = NO;
+        [self stopTimer];
+        [self.socket close];
+    }
 }
 
-- (void)notificationApplicationWillEnterForeground:(NSNotification*)notification
+- (void)notificationApplicationDidBecomeActive:(NSNotification*)notification
 {
     __LF
-    [self initializeSocket];
-    [self initializeTimer];
+    if (self.isActive == NO) {
+        self.isActive = YES;
+        [self initializeSocket];
+        [self initializeTimer];
+    }
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket
-   didReceivePong:(NSData *)pongPayload
+- (void) stopTimer
 {
-    self.isAlive = YES;
-    self.socket = webSocket;
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
     __LF
-    self.isAlive = YES;
-    self.socket = webSocket;
-    id packet = @{
-                  @"operation" : @"registration",
-                  @"id" : self.userId,
-                  };
+    NSString *message = [NSString stringWithFormat:@"%@ logged in", [User me].nickname];
     
-    [self.socket send:packet];
+    if (self.isActive) {
+        self.isAlive = YES;
+        id packet = @{
+                      fOperation : @"registration",
+                      fId        : self.userId,
+                      fWhen      : [NSDate date].stringUTC,
+                      fMe        : [User me].simpleDictionary,
+                      fChannel   : [User me].channel,
+                      fMessage   : message,
+                      };
+        
+        [self send:packet];
+        
+        [MessageCenter sayHiToNearbyUsers];
+        [MessageCenter sayMessageToNearbyUsers:@"Hi"];
+        
+        if (self.packets.count>0) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                NSLog(@"RE-sending %ld backlog packets", self.packets.count);
+                while (self.packets.count > 0) {
+                    id packet = [self.packets firstObject];
+                    [self send:packet];
+                    [self.packets removeObjectAtIndex:0];
+                }
+            });
+        }
+    }
+    else {
+        self.isAlive = NO;
+        [self.socket close];
+    }
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error
+- (void)webSocket:(SRWebSocket *)webSocket
+ didFailWithError:(NSError *)error
 {
     __LF
-    NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+    NSLog(@"FAILED [%s]:%@", __func__, error.localizedDescription);
+    if (webSocket.data && [webSocket.data isKindOfClass:[NSDictionary class]]) {
+        [self.packets addObject:webSocket.data];
+    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket
@@ -132,7 +174,10 @@
          wasClean:(BOOL)wasClean
 {
     __LF
-    NSLog(@"CLOSED [%ld]:%@", code, reason);
+    NSLog(@"CLOSED [%ld]:%@ - %ld[%@]", code, reason, webSocket.readyState, wasClean ? @"YES" : @"NO");
+    
+    __alert(@"System Warning", @"Chatserver is down.\nMessages will be backlogged", nil, nil, nil);
+
     self.isAlive = NO;
     self.socket = nil;
 }
@@ -168,4 +213,9 @@
     }
 }
 
+- (void)webSocket:(SRWebSocket *)webSocket
+   didReceivePong:(NSData *)pongPayload
+{
+    __LF
+}
 @end

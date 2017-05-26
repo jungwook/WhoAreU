@@ -14,6 +14,8 @@ typedef enum : NSUInteger {
 } BalloonType;
 
 @interface BalloonLabel : UILabel
-@property (nonatomic) IBInspectable UIEdgeInsets textInsets;
 @property (nonatomic) IBInspectable BalloonType type;
+@property (nonatomic) IBInspectable CGFloat pointerInset, cornerRadius, verticalSpacing, horizontalSpacing;
+@property (nonatomic) CGFloat mediaWidth;
+- (void) setMediaFile:(id)mediaFile;
 @end

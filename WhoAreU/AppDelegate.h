@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Menus.h"
+#import "Tabs.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) Engine *engine;
-@property (weak, nonatomic) Menus *menuController;
+//@property (weak, nonatomic) Menus *menuController;
 @end
 

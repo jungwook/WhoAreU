@@ -15,7 +15,7 @@
 @property (strong, nonatomic) NSMutableDictionary *chats;
 @property (strong, nonatomic) NSMutableDictionary *channels;
 @property (strong, nonatomic) NSURL *chatsFile, *channelsFile;
-@property (strong, nonatomic) NSMutableDictionary *pushHandlers;
+@property (strong, nonatomic) NSDictionary *pushHandlers;
 @property (strong, nonatomic) WebSocket *socket;
 @end
 
@@ -90,6 +90,18 @@
     }
 }
 
++ (void) subscribeToUserChannel:(id)channel
+{
+    if (channel) {
+        id param = @{
+                     fOperation : @"setChannel",
+                     fChannel : channel,
+                     };
+        
+        [self send:param];
+    }
+}
+
 - (void) setupSocket
 {
     __LF
@@ -102,57 +114,112 @@
 
     self.pushHandlers = [NSMutableDictionary dictionary];
     
-    PushBlock pushTypeChannel = ^(id userInfo) {
+    PushHandlerBlock pushTypeChannel = ^(id payload, id senderId, id channelId) {
+        
+        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
+        
+//        if ([User meEquals:senderId]) {
+//            return UNNotificationPresentationOptionNone;
+//        }
+        
+        NSLog(@"payload:%@", payload);
+        PNOTIF(kNotificationChannelMessage, payload);
+        
         return UNNotificationPresentationOptionNone;
     };
-    PushBlock pushTypeMessage = ^(id userInfo) {
-        return UNNotificationPresentationOptionSound;
-    };
-    PushBlock pushTypeChatChannel = ^(id userInfo) {
-        MessageCenter *center = [MessageCenter new];
-        id payload = userInfo[fPayload];
-        id channelId = payload[fChannelId];
+    PushHandlerBlock pushTypeMessage = ^(id payload, id senderId, id channelId) {
         
-        [center addToSystemChannelId:channelId];
-        [MessageCenter processFetchMessagesForChannelId:channelId];
+        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
         
-        return UNNotificationPresentationOptionSound;
-    };
-    PushBlock pushTypeChatInitiation = ^(id userInfo) {
-        MessageCenter *center = [MessageCenter new];
-        id payload = userInfo[fPayload];
-        id channelId = payload[fChannelId];
-        
-        [center addToSystemChannelId:channelId];
-        [MessageCenter processFetchMessagesForChannelId:channelId];
-        
-        return UNNotificationPresentationOptionSound;
-    };
-    PushBlock pushTypeMessageRead = ^(id userInfo) {
-        id payload = userInfo[fPayload];
-        id channelId = payload[fChannelId];
-        NSArray* reads = payload[fMessageIds];
-        
-        NSLog(@"Processing reads for %@", reads);
-        for (id messageId in reads) {
-            id message = [self messageWithId:messageId channelId:channelId];
-            [MessageCenter decreaseReadForMessage:message];
+        if ([User meEquals:senderId]) {
+            return UNNotificationPresentationOptionNone;
         }
-        [self saveChatFile];
         
-        id ret = @{
-                   fMessageIds : reads,
-                   fChannelId : channelId,
-                   };
-        PNOTIF(kNotificationReadMessage, ret);
+        return UNNotificationPresentationOptionSound;
+    };
+    PushHandlerBlock pushTypeChatChannel = ^(id payload, id senderId, id channelId) {
+        
+        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
+        
+        if ([User meEquals:senderId] || channelId == nil) {
+            return UNNotificationPresentationOptionNone;
+        }
+        
+        [MessageCenter addChannelToSystem:channelId];
+        [MessageCenter processFetchMessagesForChannelId:channelId];
+        
+        return UNNotificationPresentationOptionSound;
+    };
+    PushHandlerBlock pushTypeChatInitiation = ^(id payload, id senderId, id channelId) {
+
+        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
+        
+        if ([User meEquals:senderId] || channelId == nil) {
+            return UNNotificationPresentationOptionNone;
+        }
+
+        [MessageCenter addChannelToSystem:channelId];
+        [MessageCenter processFetchMessagesForChannelId:channelId];
+        
+        return UNNotificationPresentationOptionSound;
+    };
+    PushHandlerBlock pushTypeMessageRead = ^(id payload, id senderId, id channelId) {
+
+        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
+
+        if ([User meEquals:senderId]) {
+            return UNNotificationPresentationOptionNone;
+        }
+        
+        id messageId = payload[fMessageId];
+        if (messageId) {
+            NSLog(@"Processing reads for %@", messageId);
+            id message = [self messageWithId:messageId channelId:channelId];
+            if (message) {
+                [MessageCenter decreaseReadForMessage:message];
+                [self saveChatFile];
+                
+                id ret = @{
+                           fMessageId : messageId,
+                           fChannelId : channelId,
+                           };
+                PNOTIF(kNotificationReadMessage, ret);
+            }
+        }
+        
         return UNNotificationPresentationOptionNone;
     };
+    
+    self.pushHandlers = @{
+                          kPushTypeChannel : pushTypeChannel,
+                          kPushTypeMessage : pushTypeMessage,
+                          kPushTypeMessageRead : pushTypeMessageRead,
+                          kPushTypeChatChannel : pushTypeChatChannel,
+                          kPushTypeChatInitiation : pushTypeChatInitiation,
+                          };
+}
 
-    [self.pushHandlers setObject:pushTypeChannel forKey:kPushTypeChannel];
-    [self.pushHandlers setObject:pushTypeMessage forKey:kPushTypeMessage];
-    [self.pushHandlers setObject:pushTypeChatChannel forKey:kPushTypeChatChannel];
-    [self.pushHandlers setObject:pushTypeChatInitiation forKey:kPushTypeChatInitiation];
-    [self.pushHandlers setObject:pushTypeMessageRead forKey:kPushTypeMessageRead];
++ (UNNotificationPresentationOptions)handlePushUserInfo:(id)userInfo
+{
+    __LF
+    MessageCenter *center = [MessageCenter new];
+    
+    UNNotificationPresentationOptions option = UNNotificationPresentationOptionNone;
+    
+    id pushType = userInfo[fPushType];
+    id payload = userInfo[fPayload];
+    id senderId = payload[fSenderId];
+    id channelId = payload[fChannelId];
+    
+    NSLog(@"UserInfo:%@", userInfo);
+    
+    PushHandlerBlock handler = [center.pushHandlers objectForKey:pushType];
+    if (handler) {
+        NSLog(@"Processing handler:%@", pushType);
+        option = handler(payload, senderId, channelId);
+    }
+    
+    return option;
 }
 
 - (void) loadFiles
@@ -176,7 +243,6 @@
     
     for (id channelId in self.chats.allKeys) {
         if (![self.channels.allKeys containsObject:channelId]) {
-            NSLog(@"Cleaning chats file by removing %@", channelId);
             [self.channels removeObjectForKey:channelId];
         }
     }
@@ -195,7 +261,7 @@
     __LF
     BOOL ret = [self.chats writeToURL:self.chatsFile atomically:YES];
     if (ret) {
-//        NSLog(@"Saved %@", self.chatsFile);
+        NSLog(@"Saved %@", self.chatsFile);
     }
     else {
         NSLog(@"ERROR: Writing to %@", self.chatsFile);
@@ -207,7 +273,7 @@
     __LF
     BOOL ret = [self.channels writeToURL:self.channelsFile atomically:YES];
     if (ret) {
-//        NSLog(@"Saved %@", self.channelsFile);
+        NSLog(@"Saved %@", self.channelsFile);
     }
     else {
         NSLog(@"ERROR: Writing to %@", self.channelsFile);
@@ -239,22 +305,9 @@
     return messages;
 }
 
-//- (BOOL) message:(id)objectId exists:(NSArray*)messages
-//{
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectId == %@", objectId];
-//    NSArray *filter = [messages filteredArrayUsingPredicate:predicate];
-//    return (filter.count > 0);
-//}
-
 - (NSArray*) userIds:(NSArray<User*>*)users
 {
-    NSMutableArray *array = [NSMutableArray new];
-    
-    for (User *user in users) {
-        [array addObject:user.objectId];
-    }
-    
-    return array;
+    return [users valueForKey:fObjectId];
 }
 
 - (void)sendPush:(Message*)message
@@ -283,6 +336,7 @@
                   fSound : @"default",
                   fPushType : kPushTypeChatInitiation,
                   fSenderId : [User me].objectId,
+                  fDescription : text,
                   fPayload : @{
                           fSenderId: senderId, // must!!!
                           fMessageId: messageId,
@@ -291,20 +345,10 @@
                           },
                   };
     
-    [self.socket send:params];
+    [self send:params];
     if (action) {
         action();
     }
-
-//    [PFCloud callFunctionInBackground:@"sendPushToUsers" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-//        }
-//        else {
-//            NSLog(@"PUSH SENT:%@", object);
-//            action();
-//        }
-//    }];
 }
 
 - (void)sendPush:(Message*)message
@@ -331,6 +375,7 @@
                   fSound : @"default",
                   fPushType : kPushTypeChatChannel,
                   fSenderId : [User me].objectId,
+                  fDescription : text,
                   fPayload : @{
                           fSenderId: senderId, //Must!!!!
                           fMessageId: messageId,
@@ -338,20 +383,10 @@
                           },
                   };
     
-    [self.socket send:params];
+    [self send:params];
     if (action) {
         action();
     }
-
-//    [PFCloud callFunctionInBackground:@"sendPushToChannel" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"ERROR SENDING PUSH:%@", error.localizedDescription);
-//        }
-//        else {
-//            NSLog(@"PUSH SENT:%@", object);
-//            action();
-//        }
-//    }];
 }
 
 + (void)send:(id)msgToSend
@@ -382,39 +417,27 @@
 
     Message *message = [Message message:msgToSend channelId:channelId count:userCount];
     
-    NSDate *lastCreatedAt = [[self sortedMessagesForChannelId:channelId] lastObject][fCreatedAt];
-    NSDate *now = [NSDate dateWithTimeIntervalSinceReferenceDate:MAX([NSDate date].timeIntervalSinceReferenceDate, lastCreatedAt.timeIntervalSinceReferenceDate)];
-    
-    id dictionary = message.dictionary;
-    [dictionary setObject:@(NO) forKey:fSync];
-    [dictionary setObject:now forKey:fCreatedAt];
-    
-    NSMutableArray *messages = [self channelMessagesForChannelId:channelId];
-    [messages addObject:dictionary];
-    
-    NSLog(@"Started");
     [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if (error) {
             NSLog(@"ERROR:[%s]%@", __func__, [error localizedDescription]);
         }
         else {
-            id newDictionary = message.dictionary;
-            
-            newDictionary[fSync] = @(YES);
-            
-            @synchronized (self.chats) {
-                [messages removeObject:dictionary];
-                [messages addObject:newDictionary];
-                [self saveChatFile];
-            }
-            
-            id messageId = newDictionary[fObjectId];
-            NSLog(@"Finished");
+            id dictionary = message.dictionary;
+            id messageId = dictionary[fObjectId];
+
+            // sync = YES to my message
+            [MessageCenter setSyncForMessage:dictionary];
+
+            [self addMessage:dictionary
+                   channelId:channelId
+            postNotification:YES];
+
             if (handler) {
+                // return and run handler with messageId to chatView
                 handler(messageId);
             }
+            
             [self sendPush:message channelId:channelId completion:^{
-                NSLog(@"Pushed");
             }];
         }
     }];
@@ -427,28 +450,12 @@
  @param handler channel block handler
  */
 
-+ (NSString*) channelNameForChannelId:(id)channelId
-{
-    return [[MessageCenter new] channelNameForChannelId:channelId];
-}
-
-- (NSString*) channelNameForChannelId:(id)channelId
-{
-    id dictionary = [self.channels objectForKey:channelId];
-    
-    NSArray *users = dictionary[fUsers];
-    NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
-    [set removeObject:[User me].nickname];
-    return [[set allObjects] componentsJoinedByString:kStringCommaSpace];
-}
-
-
 + (void)send:(id)msgToSend
        users:(NSArray *)users
   completion:(ChannelBlock)handler
 {
     __LF
-
+    
     [[MessageCenter new] send:msgToSend users:users completion:handler];
 }
 
@@ -477,15 +484,18 @@
             [MessageCenter subscribeToChannel:channelId];
             
             id dictionary = message.dictionary;
-            dictionary[fSync] = @(YES);
+
+            // sync = YES to my message
+            [MessageCenter setSyncForMessage:dictionary];
             
             [self addMessage:dictionary
                    channelId:channelId
-                        sync:YES];
+            postNotification:YES];
             
-            [self addToSystemChannelId:channelId];
-            [self saveChannelsFile];
+            [self addChannelToSystem:channelId];
             if (handler) {
+                // return channel so that payFor... can process performsegue to the chat channel.
+                
                 handler(channel);
             }
             
@@ -497,11 +507,30 @@
     return;
 }
 
++ (NSString*) channelNameForChannelId:(id)channelId
+{
+    return [[MessageCenter new] channelNameForChannelId:channelId];
+}
+
+- (NSString*) channelNameForChannelId:(id)channelId
+{
+    id dictionary = [self.channels objectForKey:channelId];
+    
+    NSArray *users = dictionary[fUsers];
+    NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
+    [set removeObject:[User me].nickname];
+    return [[set allObjects] componentsJoinedByString:kStringCommaSpace];
+}
+
 - (void) addMessage:(id)dictionary
           channelId:(id)channelId
-               sync:(BOOL)sync
+   postNotification:(BOOL)postNotification
 {
     __LF
+    
+    if (!channelId) {
+        return;
+    }
     
     id messageId = dictionary[fObjectId];
 
@@ -512,20 +541,24 @@
     }
     else {
         NSLog(@"Adding message:%@ to datastructure", messageId);
-        NSLog(@"##################### SYNC TO %@", sync ? @"YES" : @"NO");
-        dictionary[fSync] = @(sync);
         [messages addObject:dictionary];
         [self saveChatFile];
         [[History historyWithChannelId:channelId messageId:messageId] saveInBackground];
-        PNOTIF(kNotificationNewChatMessage, dictionary);
+        if (postNotification) {
+            PNOTIF(kNotificationNewChatMessage, nil);
+        }
         [MessageCenter setSystemBadge];
     }
 }
 
-- (void) addToSystemChannelId:(id)channelId
++ (void) addChannelToSystem:(id) channelId
+{
+    [[MessageCenter new] addChannelToSystem:channelId];
+}
+
+- (void) addChannelToSystem:(id)channelId
 {
     __LF
-    
     [MessageCenter subscribeToChannel:channelId];
 
     // if channelId exists in the system then do nothing.
@@ -539,6 +572,8 @@
         [self saveChannelsFile];
         PNOTIF(kNotificationNewChannelAdded, dictionary);
     }];
+
+    [[MessageCenter new] saveChannelsFile];
 }
 
 + (id) lastJoinedChannelIdForUser:(User*)user
@@ -566,33 +601,27 @@
     return nil;
 }
 
-+ (UNNotificationPresentationOptions)handlePushUserInfo:(id)userInfo
++ (void) processFetchMessages
 {
     __LF
+    
     MessageCenter *center = [MessageCenter new];
     
-    UNNotificationPresentationOptions option = UNNotificationPresentationOptionNone;
-    
-    id pushType = userInfo[fPushType];
-    id payload = userInfo[fPayload];
-    id senderId = payload[fSenderId];
-    
-    NSLog(@"UserInfo:%@", userInfo);
-    
-    // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
-    
-    if ([User meEquals:senderId]) {
-        return option;
-    }
-    else {
-        PushBlock handler = [center.pushHandlers objectForKey:pushType];
-        if (handler) {
-            NSLog(@"Processing handler:%@", pushType);
-            option = handler(userInfo);
+    [self fetchMessagesWithCompletion:^(NSArray *array) {
+        NSLog(@"Loaded %ld messages to process", array.count);
+        for (Message *message in array) {
+            id dictionary = message.dictionary;
+            
+            NSLog(@"DICT:%@", dictionary);
+            id channelId = message.channel.objectId;
+            [self clearSyncForMessage:dictionary];
+            [center addMessage:dictionary
+                     channelId:channelId
+              postNotification:NO];
         }
-    }
-    
-    return option;
+        PNOTIF(kNotificationNewChatMessage, nil);
+        [self setSystemBadge];
+    }];
 }
 
 + (void) processFetchMessagesForChannelId:(id)channelId
@@ -605,11 +634,28 @@
         NSLog(@"Loaded %ld messages to process", array.count);
         for (Message *message in array) {
             id dictionary = message.dictionary;
+            [self clearSyncForMessage:dictionary];
             [center addMessage:dictionary
                      channelId:channelId
-                          sync:NO];
+              postNotification:NO];
         }
+        PNOTIF(kNotificationNewChatMessage, nil);
+        [self setSystemBadge];
     }];
+}
+
++ (void) clearSyncForMessage:(id)message
+{
+    @synchronized (message) {
+        message[fSync] = @(NO);
+    }
+}
+
++ (void) setSyncForMessage:(id)message
+{
+    @synchronized (message) {
+        message[fSync] = @(YES);
+    }
 }
 
 + (void) decreaseReadForMessage:(id)message
@@ -617,99 +663,7 @@
     @synchronized (message) {
         NSInteger count = MAX((NSInteger)([message[fRead] integerValue] - 1), 0);
         message[fRead] = @(count);
-        [self saveChats];
     }
-}
-
-+ (void) decreaseReadForMessage:(id)message sync:(BOOL)sync
-{
-    @synchronized (message) {
-        NSInteger count = MAX((NSInteger)([message[fRead] integerValue] - 1), 0);
-        
-        message[fSync] = @(sync);
-        message[fRead] = @(count);
-        [self saveChats];
-    }
-}
-
-+ (void) acknowledgeReadsForChannelId:(id)channelId
-{
-    __LF
-    
-    if (channelId) {
-        NSArray *reads = [self readsForChannelId:channelId];
-       
-        if (reads.count == 0) {
-            return;
-        }
-        
-//        NSLog(@"ACKing %@", reads);
-        
-//        id params = @{
-//                      fChannelId : channelId,
-//                      fPushType : kPushTypeMessageRead,
-//                      fPayload : @{
-//                              fSenderId  : [User me].objectId,
-//                              fMessageIds: reads,
-//                              fChannelId : channelId,
-//                              },
-//                      };
-        
-//        NSLog(@"params:%@", params);
-        
-//////////////////////////
-        for (id messageId in reads) {
-            id message = [self messageWithId:messageId channelId:channelId];
-            [self decreaseReadForMessage:message sync:YES];
-        }
-        [self saveChats];
-        id ret = @{
-                   fMessageIds : reads,
-                   fChannelId : channelId,
-                   };
-        PNOTIF(kNotificationReadMessage, ret);
-        [MessageCenter setSystemBadge];
-//////////////////////////
-        
-        
-//        [PFCloud callFunctionInBackground:@"sendPushMessageRead" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-//            if (error) {
-//                NSLog(@"ERROR[%s]: SENDING SILENT PUSH:%@",__func__, error.localizedDescription);
-//            }
-//            else {
-//                NSLog(@"SILENT PUSH SENT[%@] FOR:%@", reads, channelId);
-//                
-//                for (id messageId in reads) {
-//                    id message = [self messageWithId:messageId channelId:channelId];
-//                    [self decreaseReadForMessage:message sync:YES];
-//                }
-//                NSLog(@"Remaining reads %@", [self readsForChannelId:channelId]);
-//                [self saveChats];
-//                
-//                id ret = @{
-//                           fMessageIds : reads,
-//                           fChannelId : channelId,
-//                           };
-//                PNOTIF(kNotificationReadMessage, ret);
-//                [MessageCenter setSystemBadge];
-//            }
-//        }];
-    }
-    else {
-        NSLog(@"ERROR[%s]: ChannelId %@ missing.", __func__, channelId);
-    }
-
-}
-
-+ (NSArray*) readsForChannelId:(id)channelId
-{
-    NSArray *messages = [MessageCenter sortedMessagesForChannelId:channelId];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sync == FALSE AND objectId in SELF"];
-    
-    NSArray *unsynced = [messages filteredArrayUsingPredicate:predicate];
-
-    return [unsynced valueForKey:fObjectId];
 }
 
 + (void) setSystemBadge
@@ -726,8 +680,6 @@
 
 + (NSUInteger) countAllUnreadMessages
 {
-    __LF
-
     MessageCenter *center = [MessageCenter new];
     NSUInteger count = 0;
     
@@ -738,12 +690,20 @@
     return count;
 }
 
++ (NSArray*) unreadMessagesForChannelId:(id)channelId
+{
+    NSArray *messages = [[MessageCenter new ] channelMessagesForChannelId:channelId];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sync == FALSE AND objectId in SELF"];
+    
+    NSArray *unsynced = [messages filteredArrayUsingPredicate:predicate];
+    
+    return [unsynced valueForKey:fObjectId];
+}
+
 + (NSUInteger) countUnreadMessagesForChannelId:(id)channelId
 {
-    NSArray *messages = [MessageCenter sortedMessagesForChannelId:channelId];
-
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sync == FALSE AND objectId in SELF"];
-    return [messages filteredArrayUsingPredicate:predicate].count;
+    return [self unreadMessagesForChannelId:channelId].count;
 }
 
 + (void) fetchMessagesForChannelId:(id)channelId completion:(ArrayBlock)handler
@@ -757,11 +717,36 @@
     [history whereKey:fUser equalTo:[User me]];
     
     PFQuery *query = [Message query];
+    [query whereKey:fFromUser notEqualTo:[User me]];
     [query whereKey:fChannel equalTo:channel];
     [query includeKey:fFromUser];
     [query includeKey:fMedia];
     [query includeKey:fChannel];
 
+    [query whereKey:fObjectId doesNotMatchKey:fMessageId inQuery:history];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if (!error) {
+            handler(objects);
+        }
+        else {
+            NSLog(@"ERROR:[%s]%@", __func__, [error localizedDescription]);
+        }
+    }];
+}
+
++ (void) fetchMessagesWithCompletion:(ArrayBlock)handler
+{
+    __LF
+    
+    PFQuery *history = [History query];
+    [history whereKey:fUser equalTo:[User me]];
+    
+    PFQuery *query = [Message query];
+    [query whereKey:fFromUser notEqualTo:[User me]];
+    [query includeKey:fFromUser];
+    [query includeKey:fMedia];
+    [query includeKey:fChannel];
+    
     [query whereKey:fObjectId doesNotMatchKey:fMessageId inQuery:history];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         if (!error) {
@@ -843,81 +828,80 @@
 }
 */
 
++ (void)sayHiToNearbyUsers
+{
+    NSString *message = @"logged in.";
+    
+    id packet = @{
+                  fOperation    : @"pushHiToUsersNearMe",
+                  fId           : [User me].objectId,
+                  fWhen         : [NSDate date].stringUTC,
+                  fMe           : [User me].simpleDictionary,
+                  fDistance     : @(5.0f),
+                  fMessage      : message,
+                  };
+    
+    [self send:packet];
+}
+
++ (void) sayMessageToNearbyUsers:(id)message
+{
+    id packet = @{
+                  fOperation    : @"pushHiToUsersNearMe",
+                  fWhen         : [NSDate date].stringUTC,
+                  fMessage      : message,
+                  fChannelType : @"message",
+                  };
+    
+    [MessageCenter send:packet];
+}
 
 + (void) processReadMessage:(id)message
 {
-    return;
+    MessageCenter *center = [MessageCenter new];
     
-    __LF
+    id messageId = [message objectForKey:fObjectId];
+    id channel = [message objectForKey:fChannel];
+    id users = [channel objectForKey:fUsers];
+    id channelId = [channel objectForKey:fObjectId];
+    id body = [message objectForKey:fMessage];
     
-    /*
-     This is the point where a row is read for the first time. So if the message is not mine, and proper then send a silent push to channel providing a the readcount.
-        Read counts are managed separately by each client...
-     This is a nice to have and not a proper value. (i.e. DB value doesn't really mean anything.
-    */
-    
-    id messageId    = message[fObjectId];
-//    id channel      = message[fChannel];
-//    id channelId    = channel[fObjectId];
-    id fromUser     = message[fFromUser];
-    id fromUserId   = fromUser[fObjectId];
+    BOOL sync = [message[fSync] boolValue];
+    if (sync == NO && messageId && channelId && body) {
+        [self setSyncForMessage:message];
+        [self decreaseReadForMessage:message];
+        NSLog(@"Read message: %@ (%@)",
+              message[fMessage],
+              message[fRead]);
 
-    if ([User meEquals:fromUserId]) {
-        NSLog(@">>>push from me... pass");
-        return;
-    }
-    
-    if ([message[fSync] boolValue] == YES) {
-        NSLog(@">>>Sync == YES");
-        return;
-    }
-    
-    if (messageId == nil) {
-        NSLog(@">>>No messageId. new object before save");
-        return;
-    }
-
-    __LF
-
-    /*
-   
-    // Syncing message as read.
-    NSLog(@"##################### SYNC TO YES");
-    message[fSync] = @(YES);
-    [MessageCenter saveChats];
-    if (channelId && fromUserId) {
+        [MessageCenter saveChats];
+        id userIds = [center userIds:users];
+        NSLog(@"Sending ReadMessage to %@", userIds);
         id params = @{
-                      fChannelId : channelId,
+                      fOperation : @"pushMessageRead",
                       fPushType : kPushTypeMessageRead,
+                      fUsers : userIds,
+                      fSenderId : [User me].objectId,
+                      fDescription : body,
                       fPayload : @{
-                              fSenderId : [User me].objectId, // Must!!!!!
                               fMessageId: messageId,
-                              fChannelId : channelId,
+                              fChannelId: channelId,
+                              fMessage: body,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                               },
                       };
-        [PFCloud callFunctionInBackground:@"sendPushMessageRead" withParameters:params block:^(id  _Nullable object, NSError * _Nullable error) {
-            if (error) {
-                NSLog(@"ERROR[%s]: SENDING SILENT PUSH:%@",__func__, error.localizedDescription);
-            }
-            else {
-                NSLog(@"SILENT PUSH SENT[%@] TO:%@", messageId, channelId);
-                
-                message[fRead] = @([message[fRead] integerValue] - 1);
-                
-                id ret = @{
-                           fMessageId : messageId,
-                           fChannelId : channelId,
-                           };
-                PNOTIF(kNotificationReadMessage, ret);
-                [MessageCenter setSystemBadge];
-            }
-        }];
+        [center send:params];
     }
-    else {
-        NSLog(@"ERROR[%s]: ChannelId %@ or or fromUserId %@ missing.", __func__, channelId, fromUserId);
-    }
- */
 }
 
+- (void)send:(id)message
+{
+    [self.socket send:message];
+}
+
++ (void)send:(id)message
+{
+    MessageCenter *center = [MessageCenter new];
+    [center send:message];
+}
 @end
 

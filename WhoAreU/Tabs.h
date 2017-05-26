@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface Tabs : UITabBarController 
-
+- (void) setTabItemBadgeValue;
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "WebSocket.h"
 
 @interface MessageCenter : NSObject
 /**
@@ -14,7 +15,6 @@
  @param msgToSend the message to send
  @param handler channel block handler
  */
-
 + (void)send:(id)msgToSend
        users:(NSArray*)users
   completion:(ChannelBlock)handler;
@@ -24,11 +24,20 @@
        count:(NSUInteger)userCount
   completion:(AnyBlock)handler;
 
+/**
+ Sends message to the connected websocket server.
+ @param message either NSString or NSData object to send
+ */
++ (void)        send:(id)message;
+
 + (NSArray*)    liveChannels;
 + (NSArray*)    sortedMessagesForChannelId:(id)channelId;
 + (id)          lastJoinedChannelIdForUser:(User*)user;
 + (void)        removeChannelMessages:(id)channelId;
 
++ (void)        processFetchMessagesForChannelId:(id)channelId;
++ (void)        processFetchMessages;
++ (NSUInteger)  countAllUnreadMessages;
 + (NSUInteger)  countUnreadMessagesForChannelId:(id)channelId;
 + (void)        setSystemBadge;
 + (void)        saveChats;
@@ -36,11 +45,13 @@
 + (NSString*)   channelNameForChannelId:(id)channelId;
 
 + (void)        processReadMessage:(id)message;
-+ (void)        acknowledgeReadsForChannelId:(id)channelId;
 
 + (void)        subscribeToChannelUser;
 + (void)        subscribeToChannel:(id)channel;
++ (void)        subscribeToUserChannel:(id)channel;
 + (void)        setupUserToInstallation;
++ (void)        sayHiToNearbyUsers;
++ (void)        sayMessageToNearbyUsers:(id)message;
 
 /**
  *Asynchronously* get all the channels that this device is subscribed to.

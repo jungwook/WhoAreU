@@ -77,9 +77,14 @@
 @interface Compass()
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic) BOOL hasHeading;
+@property (strong, nonatomic) UIColor *disabledLineColor;
+@property (strong, nonatomic) UIColor *disabledPaneColor;
+@property (strong, nonatomic) UIColor *enabledLineColor;
+@property (strong, nonatomic) UIColor *enabledPaneColor;
 @end
 
 @implementation Compass
+@synthesize lineColor, paneColor;
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -93,13 +98,10 @@
         self.lineColor = [UIColor blackColor];
         self.lineWidth = 1.0f;
         self.backgroundColor = [UIColor clearColor];
-        self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
-
+        
         // displaylink for smooth animation.
-        if (self.hasHeading) {
-            self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateDisplay)];
-            [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-        }
+        self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateDisplay)];
+        [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     }
     return self;
 }
@@ -109,10 +111,12 @@
     static NSUInteger count = 0;
     const int steps = 5;
     
+    self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
+    
     if (!self.hasHeading || (++count)%steps != 0) {
         return;
     }
-
+    
     CLLocationDirection trueHeading = [Engine heading];
     CLLocationDirection h = self.heading - trueHeading;
     self.transform = CGAffineTransformMakeRotation(h * M_PI/180);
@@ -160,17 +164,36 @@
     [self setNeedsDisplay];
 }
 
-- (void)setPaneColor:(UIColor *)paneColor
+- (UIColor *)lineColor
+{
+    self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
+    
+    return self.hasHeading ? self.enabledLineColor : self.disabledLineColor;
+}
+
+- (UIColor *)paneColor
+{
+    self.hasHeading = ([Engine new].simulatorStatus == kSimulatorStatusDevice);
+
+    return self.hasHeading ? self.enabledPaneColor : self.disabledPaneColor;
+}
+
+- (void)setPaneColor:(UIColor *)pColor
 {
     UIColor *color = [UIColor grayColor];
-    self.backgroundColor = self.hasHeading ? paneColor : [color colorWithAlphaComponent:0.2];
+    
+    self.backgroundColor = pColor;
+    _enabledPaneColor = pColor;
+    _disabledPaneColor = [color colorWithAlphaComponent:0.2];
     [self setNeedsDisplay];
 }
 
-- (void)setLineColor:(UIColor *)lineColor
+- (void)setLineColor:(UIColor *)lColor
 {
-    _lineColor = self.hasHeading ? lineColor : [lineColor colorWithAlphaComponent:0.4];
+    _enabledLineColor = lColor;
+    _disabledLineColor = [lColor colorWithAlphaComponent:0.4];
     [self setNeedsDisplay];
 }
+
 
 @end

@@ -13,68 +13,154 @@
 #import "Compass.h"
 #import "S3File.h"
 #import "Refresh.h"
+#import "MessageCenter.h"
+#import "PopOverMenu.h"
 
-@interface ChannelRow : UITableViewCell
-@property (strong, nonatomic) id userInfo;
-@property (strong, nonatomic) User *user;
-@property (strong, nonatomic) id userId;
+#define CHATMAXWIDTH 200
+#define MEDIASIZE 160
 
-@property (weak, nonatomic) UIViewController* parent;
-@property (weak, nonatomic) IBOutlet UIView *userView;
-@property (weak, nonatomic) IBOutlet UILabel *nickname;
-@property (weak, nonatomic) IBOutlet UILabel *desc;
-@property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
-@property (weak, nonatomic) IBOutlet IndentedLabel *age;
-@property (weak, nonatomic) IBOutlet IndentedLabel *gender;
-@property (weak, nonatomic) IBOutlet IndentedLabel *ago;
-@property (weak, nonatomic) IBOutlet UILabel *distance;
-@property (weak, nonatomic) IBOutlet Compass *compass;
+#define INSET 8
+#define chatFont [UIFont systemFontOfSize:14]
+
+@interface SetupRow : UITableViewCell
+@property (strong, nonatomic) id info;
+@property (weak, nonatomic) IBOutlet UILabel *systemLog;
+@property (weak, nonatomic) IBOutlet UserView *userView;
+@property (weak, nonatomic) IBOutlet UILabel *when;
+@property (weak, nonatomic) IBOutlet UIView *setupView;
 @end
 
-@implementation ChannelRow
+@implementation SetupRow
 
-- (void)setUserInfo:(id)userInfo
+- (void)setInfo:(id)info
 {
-    _userInfo = userInfo;
-    NSDate *updatedAt = userInfo[fUpdatedAt];
-    id payload = userInfo[fPayload];
+    _info = info;
     
-    self.userId = payload[fSenderId];
-    id whereDic = payload[fWhere];
+    id me = info[fMe];
+    id nickname = me[fNickname];
+    id when = info[fWhen];
+    id userId = me[fObjectId];
+    id thumbnail = me[fThumbnail];
     
-    NSNumber *latitude = whereDic[@"latitude"];
-    NSNumber *longitude = whereDic[@"longitude"];
+    NSDate *date = [NSDate dateFromStringUTC:when];
+    NSString *msg = info[fMessage];
     
-    id thumbnail = payload[fThumbnail];
-    [S3File getImageFromFile:thumbnail imageBlock:^(UIImage *image) {
-        __drawImage(image, self.userView);
-    }];
+    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:nickname ? nickname : @"UNKNOWN" attributes:@{                                                                                                                   NSFontAttributeName : [UIFont boldSystemFontOfSize:14],}];
+    [attr appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@", msg] attributes:@{NSFontAttributeName : chatFont,}]];
+    
+    self.systemLog.attributedText = attr;
+    self.when.text = date.timeAgo;
+    self.setupView.backgroundColor = [User me].genderColor;
+    [self.userView setUserId:userId withThumbnail:thumbnail];
+}
+@end
 
-    PFGeoPoint *where = [PFGeoPoint geoPointWithLatitude:latitude.floatValue longitude:longitude.floatValue];
-    CGFloat distance = [where distanceInKilometersTo:[User me].where];
-    CLLocationDirection heading = __heading(where, [User me].where);
+@interface SystemRow : UITableViewCell
+@property (nonatomic, strong) id info;
+@property (weak, nonatomic) IBOutlet UILabel *systemLog;
+@property (weak, nonatomic) IBOutlet UserView *userView;
+@property (weak, nonatomic) IBOutlet UILabel *when;
+@end
+
+@implementation SystemRow
+
+- (void)setInfo:(id)info
+{
+    _info = info;
     
-    self.nickname.text = payload[fNickname];
-    self.desc.text = payload[fDesc];
-    self.introduction.text = payload[fMessage];
-    self.age.text = payload[fAge];
-    self.gender.text = payload[@"gender"];
-    self.gender.backgroundColor = UIColorFromNSString(payload[@"genderColor"]);
-    self.distance.text = __distanceString(distance);
-    self.compass.heading = heading;
-    self.ago.text = updatedAt.timeAgoSimple;
+    id me = info[fMe];
+    id nickname = me[fNickname];
+    id when = info[fWhen];
+    id userId = me[fObjectId];
+    id thumbnail = me[fThumbnail];
+    
+    
+    NSDate *date = [NSDate dateFromStringUTC:when];
+    NSString *msg = info[fMessage];
+    
+    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:nickname ? nickname : @"UNKNOWN" attributes:@{                                                                                                                   NSFontAttributeName : [UIFont boldSystemFontOfSize:14],}];
+    [attr appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@", msg] attributes:@{NSFontAttributeName : chatFont,}]];
+
+    self.systemLog.attributedText = attr;
+    self.when.text = date.timeAgo;
+    [self.userView setUserId:userId withThumbnail:thumbnail];
 }
 
-- (void)setParent:(UIViewController *)parent
+@end
+
+@interface ChannelRow : UITableViewCell
+@property (strong, nonatomic) id message;
+
+@property (weak, nonatomic) IBOutlet UserView *userView;
+@property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
+@property (weak, nonatomic) IBOutlet UILabel *distance;
+@property (weak, nonatomic) IBOutlet UILabel *when;
+@property (weak, nonatomic) IBOutlet Compass *compass;
+@property (weak, nonatomic) IBOutlet UILabel *nickname;
+@end
+
+/*
+object = {
+    distance = 0;
+    me =     {
+        age = 20s;
+        channel = Flirt;
+        gender = Male;
+        introduction = "i am such a hunk";
+        latitude = "37.5060899262235";
+        longitude = "127.063861573541";
+        nickname = iphone;
+        objectId = GFjHKP0CsY;
+        thumbnail = "ProfileMedia/GFjHKP0CsY/JtIFZTzI.jpg";
+    };
+    message = "iphone logged in.";
+    senderId = GFjHKP0CsY;
+    when = "2017-05-24T02:24:02.035Z";
+    where =     {
+        latitude = "37.5060899262235";
+        longitude = "127.063861573541";
+    };
+}}
+ */
+@implementation ChannelRow
+
+- (void)setMessage:(id)message
 {
-//    self.userView.parent = parent;
+    _message = message;
+    
+    id distance = message[fDistance];
+    id me = message[fMe];
+    
+    NSDate *date = [NSDate dateFromStringUTC:message[fWhen]];
+    
+    PFGeoPoint *where = [PFGeoPoint geoPointWithLatitude:[message[fLatitude] floatValue] longitude:[message[fLongitude] floatValue]];
+    self.nickname.text = me[fNickname];
+    self.distance.text = __distanceString([distance floatValue]);
+    self.compass.heading = [[User me].where headingToLocation:where];
+    self.introduction.backgroundColor = [User genderColorFromTypeString:me[fGender]];
+
+    id thumbnail = me[fThumbnail];
+    id userId = me[fObjectId];
+    [self.userView setUserId:userId withThumbnail:thumbnail];
+    
+    self.introduction.text = message[fMessage];
+    self.when.text = date.timeAgoSimple;
+    id media = message[fMedia];
+    
+    if (media && media[fMedia]) {
+        self.introduction.mediaFile = media[fMedia];
+    }
+    else {
+        self.introduction.mediaFile = nil;
+    }
 }
 
 @end
 
 @interface Channels ()
-@property (strong, nonatomic) Queue *messages;
+@property (strong, nonatomic) NSMutableArray *messages;
 @property (strong, nonatomic) Refresh *refresh;
+@property (strong, nonatomic) NSURL *filePath;
 @end
 
 @implementation Channels
@@ -82,7 +168,13 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
-    self.messages = [Queue new];
+    self.filePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"channelMessagesFile"];
+    
+    self.messages = [NSMutableArray arrayWithContentsOfURL:self.filePath];
+    if (!self.messages) {
+        self.messages = [NSMutableArray new];
+    }
+
     self.refresh = [Refresh initWithCompletionBlock:^(UIRefreshControl *refreshControl) {
         [self.tableView reloadData];
         if ([self.refresh isRefreshing])
@@ -90,30 +182,127 @@
     }];
     [self.tableView addSubview:self.refresh];
     
-//    ANOTIF(kNotificationNewChatMessage, @selector(newChannelMessage:));
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"message2"] style:UIBarButtonItemStyleDone target:self action:@selector(onNavButtonTapped:event:)];
+    [bbi setTintColor:[UIColor blackColor]];
+    
+    [self.navigationItem setRightBarButtonItem:bbi];
+    
+    ANOTIF(kNotificationChannelMessage, @selector(newChannelMessage:));
+    ANOTIF(kNotificationUserLoggedInMessage, @selector(notificationUserLoggedIn:));
+    
+    
+    PopOverMenuConfiguration *configuration = [PopOverMenuConfiguration defaultConfiguration];
+//    configuration.menuRowHeight = ...
+    configuration.menuWidth = 200.0f;
+    configuration.textColor = [UIColor darkGrayColor];
+//    configuration.textFont = ...
+    configuration.tintColor = [UIColor whiteColor];
+    configuration.borderColor = [UIColor whiteColor];
+//    configuration.borderWidth = ...
+    configuration.textAlignment = NSTextAlignmentLeft;
+    configuration.ignoreImageOriginalColor = YES; // set 'ignoreImageOriginalColor' to YES, images color will be same as textColor
+    configuration.allowRoundedArrow = NO; // Default is 'NO', if sets to 'YES', the arrow will be drawn with round corner.
+}
+
+- (void) notificationUserLoggedIn:(id)sender
+{
+    self.navigationItem.title = [User me].channel;
+}
+
+-(void)onNavButtonTapped:(UIBarButtonItem *)sender event:(UIEvent *)event
+{
+    id menu = @[
+                @"I'm lonely tonight",
+                @"Let's meet",
+                @"How about dinner?",
+                @"Anyone interested in a movie?",
+                @"Drive away with me",
+                ];
+    id images = @[
+                  @"message2",
+                  @"camera",
+                  @"message2",
+                  @"camera",
+                  @"message2",
+                  ];
+    
+    [PopOverMenu showFromEvent:event
+                   withMenuArray:menu
+                      imageArray:images
+                       doneBlock:^(NSInteger selectedIndex)
+    {
+        id message = menu[selectedIndex];
+        id packet = @{
+                      fOperation    : @"pushHiToUsersNearMe",
+                      fWhen         : [NSDate date].stringUTC,
+                      fMessage      : message,
+                      fChannelType : @"message",
+                      fType : @(kMessageTypeText),
+                      fMedia : @{},
+                      };
+        [MessageCenter send:packet];
+    } dismissBlock:^{
+        
+    }];
 }
 
 - (IBAction)sendChannelMessage:(id)sender {
-//    [Engine sendChannelMessage:@"Testing 123..."];
+    [User payForChatWithChannelOnViewController:self action:^(id ret) {
+        id message = ret[fMessage];
+        id type = ret[fType];
+        id media = ret[fMedia] ? ret[fMedia] : @{};
+        id packet = @{
+                      fOperation    : @"pushHiToUsersNearMe",
+                      fWhen         : [NSDate date].stringUTC,
+                      fMessage      : message,
+                      fChannelType : @"message",
+                      fType : type,
+                      fMedia : media,
+                      };
+        
+        [MessageCenter send:packet];
+    }];
 }
 
-- (void)newChannelMessage:(id)sender
+- (void) addMessageToMessages:(id)message
+{
+    [self.messages insertObject:message atIndex:0];
+    BOOL ret = [self.messages writeToURL:self.filePath atomically:YES];
+    if (!ret) {
+        NSLog(@"ERROR SAVING TO %@", self.filePath);
+    }
+    else {
+        NSLog(@"SAVED TO %@", self.filePath);
+    }
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
+    [self.tableView endUpdates];
+    [self.tableView reloadData];
+}
+
+- (void)newChannelMessage:(NSNotification*)notification
 {
     __LF
-    NSLog(@"Channel Message:%@", sender);
-    [self.tableView reloadData];
+    NSLog(@"Channel Message:%@", notification.object);
+    [self addMessageToMessages:notification.object];
 }
 
 - (void) dealloc
 {
     __LF
-    
-//    RNOTIF(kNotificationNewChatMessage);
+
+    RANOTIF;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    __LF
+    self.navigationItem.title = [User me].channel;
+    [self.tableView reloadData];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -133,59 +322,59 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    id userInfo = [self.messages objectAtIndex:indexPath.row];
+    id message = [self.messages objectAtIndex:indexPath.row];
     
-    ChannelRow *cell = [tableView dequeueReusableCellWithIdentifier:@"ChannelRow" forIndexPath:indexPath];
+    id channelType = message[fChannelType];
+    if ([channelType isEqualToString:@"system"]) {
+        SystemRow *cell = [tableView dequeueReusableCellWithIdentifier:@"SystemRow" forIndexPath:indexPath];
+        
+        cell.info = message;
+        return cell;
+    }
+    else if ([channelType isEqualToString:@"setup"]) {
+        SetupRow *cell = [tableView dequeueReusableCellWithIdentifier:@"SetupRow" forIndexPath:indexPath];
+        
+        cell.info = message;
+        return cell;
+    }
+    else {
+        ChannelRow *cell = [tableView dequeueReusableCellWithIdentifier:@"ChannelRow" forIndexPath:indexPath];
+        
+        cell.message = message;
+        
+        return cell;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    id message = [self.messages objectAtIndex:indexPath.row];
     
-    cell.parent = self;
-    cell.userInfo = userInfo;
-    
-    return cell;
+    id channelType = message[fChannelType];
+    if ([channelType isEqualToString:@"system"]) {
+        return 30.0f;
+    }
+    else if ([channelType isEqualToString:@"setup"]) {
+        return 30.0f;
+    }
+    else {
+        MessageType type = [[message objectForKey:fType] integerValue];
+        
+        CGFloat room = 4.75;
+        switch (type) {
+            case kMessageTypeMedia: {
+                id media = [message objectForKey:fMedia];
+                CGSize size = CGSizeFromString([media objectForKey:fSize]);
+                CGFloat h = MEDIASIZE * size.height / size.width;
+                return h+room*INSET;
+            }
+            default:
+            case kMessageTypeText: {
+                id messageString = message[fMessage];
+                return [messageString heightWithFont:chatFont maxWidth:CHATMAXWIDTH+2*INSET+10]+room*INSET;
+            }
+        }
+    }
 }
-
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

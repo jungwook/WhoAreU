@@ -63,6 +63,7 @@
 @property (nonatomic, weak) Media *presentedMedia;
 @property (nonatomic) BOOL toggleView;
 @property (nonatomic, strong) MediaView *mediaView;
+@property (nonatomic, strong) UIView *container;
 @end
 
 @implementation PreviewUser
@@ -71,13 +72,90 @@
 {
     [user.media fetched:^{
         PreviewUser *preview = [[PreviewUser alloc] initWithUser:user];
+        
+        /*
         preview.alpha = 0;
         [mainWindow addSubview:preview];
         [UIView animateWithDuration:0.3 animations:^{
             preview.alpha = 1.0f;
         }];
+        */
+        
+        CGRect finalFrame = mainWindow.bounds;
+        
+        preview.container = [[UIView alloc] initWithFrame:mainWindow.bounds];
+        
+        UIView *backgroundView = [[UIView alloc] initWithFrame:mainWindow.bounds];
+        backgroundView.backgroundColor = [UIColor blackColor];
+        backgroundView.alpha = 0.0f;
+        backgroundView.tag = 1199;
+        
+        preview.container.backgroundColor = [UIColor darkGrayColor];
+        preview.container.backgroundColor = kAppColor;
+        UIView *screenshot = [[UIApplication sharedApplication].keyWindow snapshotViewAfterScreenUpdates:NO];
+        screenshot.radius = 4.0f;
+        screenshot.clipsToBounds = YES;
+        screenshot.tag = 1299;
+        
+        [preview.container addSubview:screenshot];
+        [preview.container addSubview:backgroundView];
+
+        preview.frame = CGRectMake(0, CGRectGetHeight(preview.frame), CGRectGetWidth(preview.frame), CGRectGetHeight(preview.frame));
+        
+        [preview.container addSubview:preview];
+        [mainWindow addSubview:preview.container];
+        
+        [UIView animateWithDuration:0.5f
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             backgroundView.alpha = 0.6;
+                             [screenshot setTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(0.96f, 0.96f), 0 ,0.0f)];
+                         } completion:nil];
+        
+        [UIView animateWithDuration:0.3f
+                              delay:0.2f
+             usingSpringWithDamping:0.88f
+              initialSpringVelocity:1.2f
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             preview.frame = finalFrame;
+                         }
+                         completion:^(BOOL finished) {
+                         }];
     }];
 }
+
+- (void) tapped:(id)sender
+{
+    const CGFloat duration = 0.3f;
+
+    /*
+    [UIView animateWithDuration:duration animations:^{
+        self.alpha = 0.0f;
+    } completion:^(BOOL finished) {
+        [self killThisView];
+    }];
+    */
+    UIView *backgroundView = [self.container viewWithTag:1199];
+    UIView *screenshot = [self.container viewWithTag:1299];
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         screenshot.transform = CGAffineTransformIdentity;
+                         self.frame = CGRectMake(0, CGRectGetHeight(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+                         backgroundView.alpha = 0;
+                     }
+                     completion:^(BOOL finished) {
+                         self.container.alpha = 0;
+                         [self killThisView];
+                     }];
+
+    /*
+*/
+}
+
+
 - (instancetype)initWithUser:(User *)user
 {
     CGRect bounds = mainWindow.bounds;
@@ -236,17 +314,6 @@
     return cell;
 }
 
-- (void) tapped:(id)sender
-{
-    const CGFloat duration = 0.3f;
-
-    [UIView animateWithDuration:duration animations:^{
-        self.alpha = 0.0f;
-    } completion:^(BOOL finished) {
-        [self killThisView];
-    }];
-}
-
 - (void) killThisView
 {
     __LF
@@ -271,6 +338,7 @@
 
 @interface PreviewMedia()
 @property (strong, nonatomic) MediaView *mediaView;
+@property (strong, nonatomic) UIView *container;
 @end
 
 @implementation PreviewMedia
@@ -279,11 +347,57 @@
 {
     [media fetched:^{
         PreviewMedia *preview = [[PreviewMedia alloc] initWithMedia:media];
+        
+        /*
         preview.alpha = 0;
         [mainWindow addSubview:preview];
         [UIView animateWithDuration:0.3 animations:^{
             preview.alpha = 1.0f;
         }];
+        */
+        
+        CGRect finalFrame = mainWindow.bounds;
+        
+        preview.container = [[UIView alloc] initWithFrame:mainWindow.bounds];
+        
+        UIView *backgroundView = [[UIView alloc] initWithFrame:mainWindow.bounds];
+        backgroundView.backgroundColor = [UIColor blackColor];
+        backgroundView.alpha = 0.0f;
+        backgroundView.tag = 1199;
+        
+        preview.container.backgroundColor = [UIColor darkGrayColor];
+        preview.container.backgroundColor = kAppColor;
+        UIView *screenshot = [[UIApplication sharedApplication].keyWindow snapshotViewAfterScreenUpdates:NO];
+        screenshot.radius = 4.0f;
+        screenshot.clipsToBounds = YES;
+        screenshot.tag = 1299;
+        
+        [preview.container addSubview:screenshot];
+        [preview.container addSubview:backgroundView];
+        
+        preview.frame = CGRectMake(0, CGRectGetHeight(preview.frame), CGRectGetWidth(preview.frame), CGRectGetHeight(preview.frame));
+        
+        [preview.container addSubview:preview];
+        [mainWindow addSubview:preview.container];
+        
+        [UIView animateWithDuration:0.5f
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             backgroundView.alpha = 0.6;
+                             [screenshot setTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(0.96f, 0.96f), 0 ,0.0f)];
+                         } completion:nil];
+        
+        [UIView animateWithDuration:0.3f
+                              delay:0.2f
+             usingSpringWithDamping:0.88f
+              initialSpringVelocity:1.2f
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             preview.frame = finalFrame;
+                         }
+                         completion:^(BOOL finished) {
+                         }];
     }];
 }
 
@@ -319,15 +433,35 @@
 
 - (void) kill
 {
+    const CGFloat duration = 0.3f;
+    
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-    
+
+    /*
     [UIView animateWithDuration:0.3 animations:^{
         self.alpha = 0.0f;
     } completion:^(BOOL finished) {
         [self.mediaView removeFromSuperview];
         [self removeFromSuperview];
     }];
+ */
+    
+    UIView *backgroundView = [self.container viewWithTag:1199];
+    UIView *screenshot = [self.container viewWithTag:1299];
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         screenshot.transform = CGAffineTransformIdentity;
+                         self.frame = CGRectMake(0, CGRectGetHeight(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+                         backgroundView.alpha = 0;
+                     }
+                     completion:^(BOOL finished) {
+                         self.container.alpha = 0;
+                         [self.mediaView removeFromSuperview];
+                         [self removeFromSuperview];
+                     }];
+
 }
 
 @end

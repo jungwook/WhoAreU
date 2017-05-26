@@ -21,6 +21,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
+}
+
+- (void) setTabItemBadgeValue
+{
+    UITabBarItem *chatBarItem = [self.tabBar.items objectAtIndex:3];
+    
+    NSUInteger count = [MessageCenter countAllUnreadMessages];
+    chatBarItem.badgeValue = count > 0 ? @(count).stringValue : nil;
+}
+
+- (void) notificationNewChatMessage:(NSNotification*) notification
+{
+    [self setTabItemBadgeValue];
 }
 
 - (void) forceLoadViewControllers
@@ -37,6 +52,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [self setTabItemBadgeValue];
     [self checkLoginStatusAndProceed];
 }
 
@@ -63,17 +79,19 @@
  
         [self presentViewController:logInViewController animated:YES completion:nil];
  */
-        
+        PNOTIF(kNotificationUserLoggedInMessage, nil);
         // User logged in so ready to initialize systems.
         [Engine initializeSystems];
         
         // Subscribe to channel user
         [MessageCenter subscribeToChannelUser];
         [MessageCenter setupUserToInstallation];
+//        [MessageCenter processFetchMessages];
+
 
         // force load child view controllers
-//        [self forceLoadViewControllers];
-        [MessageCenter setSystemBadge];
+        [self forceLoadViewControllers];
+        [MessageCenter setSystemBadge];        
     };
     
     if (user) {
@@ -109,7 +127,7 @@
                 user.password = usernameAndPassword;
                 user.nickname = nickname;
                 user.age = age;
-                user.desc = intro;
+                user.channel = intro;
                 [user setGenderTypeFromString:gender];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:usernameAndPassword forKey:@"username"];
