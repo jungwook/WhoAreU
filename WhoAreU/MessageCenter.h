@@ -30,6 +30,7 @@
  */
 + (void)        send:(id)message;
 
++ (void)        initializeCommunicationSystem;
 + (NSArray*)    liveChannels;
 + (NSArray*)    sortedMessagesForChannelId:(id)channelId;
 + (id)          lastJoinedChannelIdForUser:(User*)user;

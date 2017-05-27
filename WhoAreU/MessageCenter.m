@@ -47,7 +47,11 @@
 
     [self loadFiles];
     [self setupPushHandlers];
-    [self setupSocket];
+}
+
++ (void)initializeCommunicationSystem
+{
+    [[MessageCenter new] setupSocket];
 }
 
 + (void) setupUserToInstallation
@@ -105,6 +109,7 @@
 - (void) setupSocket
 {
     __LF
+    NSLog(@"User:%@", [User me]);
     self.socket = [WebSocket newWithId:[User me].objectId];
 }
 

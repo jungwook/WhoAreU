@@ -121,6 +121,7 @@ typedef void(^AnyBlock)(id object);
 typedef void(^ChannelBlock)(Channel* channel);
 typedef void(^VoidBlock)(void);
 typedef void(^CountBlock)(NSUInteger count);
+typedef void(^IndexBlock)(NSUInteger section, NSUInteger index);
 typedef void(^UserBlock)(User* user);
 typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);

@@ -78,7 +78,7 @@
 - (void)setUserId:(id)userId withThumbnail:(id)thumbnail
 {
     _user = [User objectWithoutDataWithObjectId:userId];
-    [self.photoView setBackgroundColor:self.user.genderColor];
+    [self.photoView setBackgroundColor:kAppColor];
     [self.photoView setUser:self.user thumbnail:thumbnail];
     [self setNeedsLayout];
     [self setCount];

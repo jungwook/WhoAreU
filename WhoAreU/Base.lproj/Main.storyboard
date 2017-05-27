@@ -399,7 +399,7 @@
             <objects>
                 <navigationController storyboardIdentifier="Profile" id="oyu-It-NVg" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Profile" image="user" id="1Z7-GN-cSf"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="gbM-wR-bnJ">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="gbM-wR-bnJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -499,7 +499,7 @@
             <objects>
                 <navigationController id="RcZ-NV-fmH" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" tag="1199" title="Chats" image="message2" id="7sZ-By-0Bn"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Gu3-A1-kzw">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Gu3-A1-kzw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -630,17 +630,17 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWj-vC-ATv">
                                                     <rect key="frame" x="373" y="6.6666666666666679" width="33" height="16"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8KG-Yg-QR8">
                                                     <rect key="frame" x="39" y="3.6666666666666661" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstItem="8KG-Yg-QR8" firstAttribute="leading" secondItem="s7a-3c-oqz" secondAttribute="trailing" constant="8" id="2LE-qk-64o"/>
                                                 <constraint firstAttribute="trailing" secondItem="zWj-vC-ATv" secondAttribute="trailing" constant="8" id="R97-W4-xKa"/>
@@ -744,7 +744,7 @@
             <objects>
                 <navigationController id="PWK-42-vQm" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Channels" image="channel" id="tj4-Gh-hcq"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="oaY-0R-eSj">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="oaY-0R-eSj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -760,7 +760,7 @@
         <scene sceneID="fJs-yf-h1p">
             <objects>
                 <navigationController storyboardIdentifier="VC" id="U8x-Is-chc" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dfK-NF-Thw">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="dfK-NF-Thw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -797,7 +797,7 @@
         <scene sceneID="Nxk-FE-f08">
             <objects>
                 <navigationController storyboardIdentifier="Chats" id="1Zk-ws-I1h" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Zyq-0V-FCd">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Zyq-0V-FCd">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1429,7 +1429,7 @@ GPS</string>
             <objects>
                 <navigationController id="PIH-gj-I3I" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Nearby" image="pin2" id="RKa-v4-BTl"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2SH-xF-304">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="2SH-xF-304">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

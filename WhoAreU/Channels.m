@@ -14,7 +14,7 @@
 #import "S3File.h"
 #import "Refresh.h"
 #import "MessageCenter.h"
-#import "PopOverMenu.h"
+#import "PopupMenu.h"
 
 #define CHATMAXWIDTH 200
 #define MEDIASIZE 160
@@ -189,19 +189,6 @@ object = {
     
     ANOTIF(kNotificationChannelMessage, @selector(newChannelMessage:));
     ANOTIF(kNotificationUserLoggedInMessage, @selector(notificationUserLoggedIn:));
-    
-    
-    PopOverMenuConfiguration *configuration = [PopOverMenuConfiguration defaultConfiguration];
-//    configuration.menuRowHeight = ...
-    configuration.menuWidth = 200.0f;
-    configuration.textColor = [UIColor darkGrayColor];
-//    configuration.textFont = ...
-    configuration.tintColor = [UIColor whiteColor];
-    configuration.borderColor = [UIColor whiteColor];
-//    configuration.borderWidth = ...
-    configuration.textAlignment = NSTextAlignmentLeft;
-    configuration.ignoreImageOriginalColor = YES; // set 'ignoreImageOriginalColor' to YES, images color will be same as textColor
-    configuration.allowRoundedArrow = NO; // Default is 'NO', if sets to 'YES', the arrow will be drawn with round corner.
 }
 
 - (void) notificationUserLoggedIn:(id)sender
@@ -211,27 +198,63 @@ object = {
 
 -(void)onNavButtonTapped:(UIBarButtonItem *)sender event:(UIEvent *)event
 {
+
     id menu = @[
-                @"I'm lonely tonight",
-                @"Let's meet",
-                @"How about dinner?",
-                @"Anyone interested in a movie?",
-                @"Drive away with me",
+                @{ @"title" : @"message",
+                   @"items" : @[
+                           @"I'm lonely tonight",
+                           @"Let's meet",
+                           @"How about dinner?",
+                           @"Anyone interested in a movie?",
+                           @"Drive away with me",
+                           ],
+                   @"icons" : @[
+                           @"message2",
+                           @"camera",
+                           @"message2",
+                           @"camera",
+                           @"message2",
+                           ],
+                   },
+                @{ @"title" : @"photo or video",
+                   @"items" : @[
+                           @"Send a photo",
+                           ],
+                   @"icons" : @[
+                           @"message2",
+                           ],
+                   },
+                @{ @"title" : @"Custom message",
+                   @"items" : @[
+                           @"Your message",
+                           ],
+                   @"icons" : @[
+                           @"camera",
+                           ],
+                   },
                 ];
     id images = @[
-                  @"message2",
-                  @"camera",
-                  @"message2",
-                  @"camera",
-                  @"message2",
-                  ];
+  @[
+      @"message2",
+      @"camera",
+      @"message2",
+      @"camera",
+      @"message2",
+      ],
+  @[
+      @"message2",
+      ],
+  @[
+      @"camera",
+      ],
+  ];
     
-    [PopOverMenu showFromEvent:event
-                   withMenuArray:menu
-                      imageArray:images
-                       doneBlock:^(NSInteger selectedIndex)
+    [PopupMenu showFromView:sender
+                  menuItems:menu
+//                      icons:images
+                 completion:^(NSUInteger section, NSUInteger index)
     {
-        id message = menu[selectedIndex];
+        id message = menu[section][@"items"][index];
         id packet = @{
                       fOperation    : @"pushHiToUsersNearMe",
                       fWhen         : [NSDate date].stringUTC,
@@ -241,27 +264,11 @@ object = {
                       fMedia : @{},
                       };
         [MessageCenter send:packet];
-    } dismissBlock:^{
-        
+    } cancel:^{
+        NSLog(@"Cancelled");
     }];
-}
-
-- (IBAction)sendChannelMessage:(id)sender {
-    [User payForChatWithChannelOnViewController:self action:^(id ret) {
-        id message = ret[fMessage];
-        id type = ret[fType];
-        id media = ret[fMedia] ? ret[fMedia] : @{};
-        id packet = @{
-                      fOperation    : @"pushHiToUsersNearMe",
-                      fWhen         : [NSDate date].stringUTC,
-                      fMessage      : message,
-                      fChannelType : @"message",
-                      fType : type,
-                      fMedia : media,
-                      };
-        
-        [MessageCenter send:packet];
-    }];
+    
+    return;
 }
 
 - (void) addMessageToMessages:(id)message

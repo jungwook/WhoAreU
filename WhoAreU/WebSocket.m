@@ -49,7 +49,6 @@
 
 - (instancetype)initWithId:(id)userId
 {
-    
     self = [super init];
     if (self) {
         ANOTIF(UIApplicationWillResignActiveNotification, @selector(notificationApplicationWillResignActive:));

@@ -80,6 +80,7 @@
         [self presentViewController:logInViewController animated:YES completion:nil];
  */
         PNOTIF(kNotificationUserLoggedInMessage, nil);
+        [MessageCenter initializeCommunicationSystem];
         // User logged in so ready to initialize systems.
         [Engine initializeSystems];
         
