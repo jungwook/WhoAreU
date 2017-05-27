@@ -8,6 +8,10 @@
 
 #import "PopupMenu.h"
 
+#define identifierMenuCell @"UITableViewCell.MenuCell"
+#define identifierCellContent @"UITableViewCellContentView"
+#define identifierErrorMessage @"PopupMenu: unknown sender class to start menu."
+
 @interface PopupMenuCell : UITableViewCell
 @property (nonatomic, strong) UILabel *menuLabel;
 @property (nonatomic, strong) UIImageView *icon;
@@ -78,16 +82,16 @@
     }
     else {
         self.icon.frame = CGRectZero;
-        self.menuLabel.frame = CGRectMake(self.inset*2,
+        self.menuLabel.frame = CGRectMake(self.inset,
                                           0,
-                                          w-3*self.inset,
+                                          w-2*self.inset,
                                           h);
     }
     if (self.separatorLine) {
         CGFloat add = self.image ? self.inset + self.iconSize : 0;
-        self.separatorLine.frame = CGRectMake(self.inset*2 + add,
+        self.separatorLine.frame = CGRectMake(self.inset*1 + add,
                                               0,
-                                              w-3*self.inset-add,
+                                              w-2*self.inset-add,
                                               0.5);
     }
 }
@@ -101,7 +105,6 @@
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, copy) IndexBlock completionHandler;
 @property (nonatomic, copy) VoidBlock cancelHandler;
-@property (nonatomic) BOOL simple;
 @end
 
 @implementation PopupMenu
@@ -121,18 +124,6 @@
     if (self) {
         [self setupVariables];
         self.menuItems = menuItems;
-        self.icons = nil;
-    }
-    return self;
-}
-
-- (instancetype)initWithMenuItems:(NSArray*)menuItems icons:(NSArray*)icons
-{
-    self = [super init];
-    if (self) {
-        [self setupVariables];
-        self.menuItems = menuItems;
-        self.icons = icons;
     }
     return self;
 }
@@ -140,9 +131,10 @@
 - (void) setupVariables
 {
     self.font = [UIFont systemFontOfSize:13];
+    self.headerFont = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
     _headerHeight = 30.0f;
     _inset = 8.0f;
-    _maxWidth = 140.0f;
+    _maxWidth = 200.0f;
     _iconSize = 20.0f;
     _pointerHeight = 10.0f;
     _direction = kPopupMenuDirectionDown;
@@ -165,7 +157,7 @@
     self.tableView.separatorInset = UIEdgeInsetsMake(0, 20, 0, 10);
     self.tableView.scrollEnabled = NO;
     
-    [self.tableView registerClass:[PopupMenuCell class] forCellReuseIdentifier:@"MenuCell"];
+    [self.tableView registerClass:[PopupMenuCell class] forCellReuseIdentifier:identifierMenuCell];
     
     self.menuView.clipsToBounds = YES;
     [self.menuView addSubview:self.tableView];
@@ -178,7 +170,6 @@
 {
     _menuItems = menuItems;
     
-    self.simple = [[self.menuItems firstObject] isKindOfClass:[NSString class]];
     [self.tableView reloadData];
     [self setNeedsLayout];
 }
@@ -201,59 +192,46 @@
     
     self.shadowView.layer.shadowPath = self.menuPath.CGPath;
     self.shadowView.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.shadowView.layer.shadowOffset = CGSizeMake(2, 2);
-    self.shadowView.layer.shadowRadius = 2.0f;
+    self.shadowView.layer.shadowOffset = CGSizeMake(0.5, 0.5);
+    self.shadowView.layer.shadowRadius = 1.0f;
     self.shadowView.layer.shadowOpacity = 0.6f;
 }
 
 - (CGFloat)height
 {
     CGFloat h = 0;
-    if (self.simple) {
-        for (id menuItem in self.menuItems) {
-            h += ([menuItem heightWithFont:self.font maxWidth:self.maxWidth] + 2*self.inset);
+    for (id section in self.menuItems) {
+        for (id item in [section objectForKey:fItems]) {
+            h += ([item heightWithFont:self.font maxWidth:self.maxWidth] + 2*self.inset);
         }
-        return h;
-    }
-    else {
-        for (id section in self.menuItems) {
-            for (id item in [section objectForKey:@"items"]) {
-                h += ([item heightWithFont:self.font maxWidth:self.maxWidth] + 2*self.inset);
-            }
-            if (![[section objectForKey:@"title"] isEqualToString:@""]) {
-                h+=self.headerHeight;
-            }
+        if (![[section objectForKey:fTitle] isEqualToString:kStringNull]) {
+            h+=self.headerHeight;
         }
-        return h;
     }
+    return h;
 }
 
 - (CGFloat)width
 {
     CGFloat maxWidth = 0;
     
-    if (self.simple) {
-        for (id menuItem in self.menuItems) {
-            CGRect rect = [menuItem boundingRectWithFont:self.font maxWidth:self.maxWidth];
+    BOOL icons = NO;
+    for (id section in self.menuItems) {
+        for (id item in [section objectForKey:fItems]) {
+            CGRect rect = [item boundingRectWithFont:self.font maxWidth:self.maxWidth];
             CGFloat w = CGRectGetWidth(rect);
             maxWidth = w > maxWidth ? w : maxWidth;
         }
-        // insets on each side
-        maxWidth += 3*self.inset + (self.icons ? self.iconSize : 0);
-        return maxWidth;
-    }
-    else {
-        for (id section in self.menuItems) {
-            for (id item in [section objectForKey:@"items"]) {
-                CGRect rect = [item boundingRectWithFont:self.font maxWidth:self.maxWidth];
-                CGFloat w = CGRectGetWidth(rect);
-                maxWidth = w > maxWidth ? w : maxWidth;
-            }
+        id title = [section objectForKey:fTitle];
+        if (title) {
+            CGRect rect = [title boundingRectWithFont:self.headerFont maxWidth:self.maxWidth];
+            CGFloat w = CGRectGetWidth(rect) + 5*self.inset;
+            maxWidth = w > maxWidth ? w : maxWidth;
         }
-        // insets on each side
-        maxWidth += 3*self.inset + (self.icons ? self.iconSize : 0);
-        return maxWidth;
+        icons |= ([section objectForKey:fIcons]!=nil);
     }
+    maxWidth += (icons ? self.iconSize : 0);
+    return maxWidth;
 }
 
 + (void) showFromFrame:(CGRect)frame
@@ -261,16 +239,7 @@
             completion:(IndexBlock)completion
                 cancel:(VoidBlock)cancel
 {
-    [self showFromFrame:frame menuItems:menuItems icons:nil completion:completion cancel:cancel];
-}
-
-+ (void) showFromFrame:(CGRect)frame
-             menuItems:(NSArray*)menuItems
-                 icons:(NSArray*)icons
-            completion:(IndexBlock)completion
-                cancel:(VoidBlock)cancel
-{
-    PopupMenu *menu = [[PopupMenu alloc] initWithMenuItems:menuItems icons:icons];
+    PopupMenu *menu = [[PopupMenu alloc] initWithMenuItems:menuItems];
     menu.completionHandler = completion;
     menu.cancelHandler = cancel;
     [menu showFromFrame:frame];
@@ -281,16 +250,7 @@
            completion:(IndexBlock)completion
                cancel:(VoidBlock)cancel
 {
-    [self showFromView:sender menuItems:menuItems icons:nil completion:completion cancel:cancel];
-}
-
-+ (void) showFromView:(id)sender
-            menuItems:(NSArray*)menuItems
-                icons:(NSArray*)icons
-           completion:(IndexBlock)completion
-               cancel:(VoidBlock)cancel
-{
-    PopupMenu *menu = [[PopupMenu alloc] initWithMenuItems:menuItems icons:icons];
+    PopupMenu *menu = [[PopupMenu alloc] initWithMenuItems:menuItems];
     menu.completionHandler = completion;
     menu.cancelHandler = cancel;
     [menu showFromView:sender];
@@ -299,7 +259,7 @@
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
         shouldReceiveTouch:(UITouch *)touch
 {
-    if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"]) {
+    if ([NSStringFromClass([touch.view class]) isEqualToString:identifierCellContent]) {
         return NO;
     }
     else {
@@ -307,7 +267,7 @@
     }
 }
 
-- (void) killThisView
+- (void) killThisView:(VoidBlock)handler
 {
     CGPoint anchorPoint = CGPointMake(self.pointerPosition/self.width, 0);
     self.transform = CGAffineTransformIdentity;
@@ -323,7 +283,10 @@
             [self.menuView removeFromSuperview];
             [self.shadowView removeFromSuperview];
             [self removeFromSuperview];
-            [self.screenView removeFromSuperview]; 
+            [self.screenView removeFromSuperview];
+            if (handler) {
+                handler();
+            }
         }];
     }];
 }
@@ -333,7 +296,7 @@
     if (self.cancelHandler) {
         self.cancelHandler();
     }
-    [self killThisView];
+    [self killThisView:nil];
 }
 
 - (void) showFromView:(id)sender
@@ -350,7 +313,7 @@
         [self showFromFrame:view.frame];
     }
     else {
-        NSLog(@"PopupMenu: unknown sender class to start menu.");
+        NSLog(identifierErrorMessage);
         return;
     }
 }
@@ -491,24 +454,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (self.simple) {
-        return self.menuItems.count;
-    }
-    else {
-        NSArray *items = self.menuItems[section][@"items"];
-        return items.count;
-    }
-    
+    NSArray *items = self.menuItems[section][fItems];
+    return items.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if (self.simple) {
-        return 1;
-    }
-    else {
-        return self.menuItems.count;
-    }
+    return self.menuItems.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -516,28 +468,21 @@
     NSUInteger row = indexPath.row;
     NSUInteger section = indexPath.section;
     
-    PopupMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MenuCell" forIndexPath:indexPath];
+    PopupMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:identifierMenuCell forIndexPath:indexPath];
 
     id item, icon, image, title = nil;
-    if (self.simple) {
-        item = self.menuItems[row];
-        icon = self.icons[row];
-        image = [UIImage imageNamed:icon];
-    }
-    else {
-        NSArray *items = self.menuItems[section][@"items"];
-        NSArray *icons = self.icons[section];
-        item = items[row];
-        icon = icons[row];
-        image = [UIImage imageNamed:icon];
-        title = self.menuItems[section][@"title"];
-    }
+    NSArray *items = self.menuItems[section][fItems];
+    NSArray *icons = self.menuItems[section][fIcons];
+    item = items[row];
+    icon = icons[row];
+    image = [UIImage imageNamed:icon];
+    title = self.menuItems[section][fTitle];
     [cell setMenuItem:item
                  icon:image
                  font:self.font
                 inset:self.inset
              iconSize:self.iconSize
-            separator:(indexPath.row > 0) || (section >0 && [title isEqualToString:@""])
+            separator:(indexPath.row > 0) || (section >0 && [title isEqualToString:kStringNull])
             textColor:self.textColor
         textAlignment:self.textAlignment
        separatorColor:self.separatorColor];
@@ -551,13 +496,8 @@
     NSUInteger section = indexPath.section;
 
     id item;
-    if (self.simple) {
-        item = self.menuItems[row];
-    }
-    else {
-        NSArray *items = self.menuItems[section][@"items"];
-        item = items[row];
-    }
+    NSArray *items = self.menuItems[section][fItems];
+    item = items[row];
 
     return ([item heightWithFont:self.font maxWidth:self.maxWidth] + 2*self.inset);
 }
@@ -569,28 +509,23 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return (self.simple) ? 0 : ([self.menuItems[section][@"title"] isEqualToString:@""]) ? 0 : self.headerHeight;
+    return ([self.menuItems[section][fTitle] isEqualToString:kStringNull]) ? 0 : self.headerHeight;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (self.simple) {
-        return nil;
-    }
-    else {
-        UIView *view = [UIView new];
-        view.frame = CGRectMake(0, 0, self.width, self.headerHeight);
-        
-        UILabel *headr = [UILabel new];
-        headr.frame = CGRectMake(self.inset, self.inset, self.width-self.inset, self.headerHeight - self.inset);
-        headr.backgroundColor = [UIColor clearColor];
-        headr.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
-        headr.textColor = [UIColor darkTextColor];
-        headr.text = [self.menuItems[section][@"title"] uppercaseString];
-        
-        [view addSubview:headr];
-        return view;
-    }
+    UIView *view = [UIView new];
+    view.frame = CGRectMake(0, 0, self.width, self.headerHeight);
+    
+    UILabel *headr = [UILabel new];
+    headr.frame = CGRectMake(self.inset, self.inset, self.width-self.inset, self.headerHeight - self.inset);
+    headr.backgroundColor = [UIColor clearColor];
+    headr.font = self.headerFont;
+    headr.textColor = [UIColor darkTextColor];
+    headr.text = [self.menuItems[section][fTitle] uppercaseString];
+    
+    [view addSubview:headr];
+    return view;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -599,23 +534,15 @@
     NSUInteger section = indexPath.section;
 
     id item;
-    if (self.simple) {
-        item = self.menuItems[row];
-    }
-    else {
-        NSArray *items = self.menuItems[section][@"items"];
-        item = items[row];
-    }
 
-    NSLog(@"selected:%@", item);
-    
-    if (self.completionHandler) {
-        self.completionHandler(indexPath.section, indexPath.row);
-    }
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self killThisView];
-    });
+    NSArray *items = self.menuItems[section][fItems];
+    item = items[row];
+
+    [self killThisView:^{
+        if (self.completionHandler) {
+            self.completionHandler(indexPath.section, indexPath.row);
+        }
+    }];
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor

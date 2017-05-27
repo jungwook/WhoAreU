@@ -11,6 +11,7 @@
 		120775091E9DD29000B02AF6 /* SignUp.xib in Resources */ = {isa = PBXBuildFile; fileRef = 120775071E9DD29000B02AF6 /* SignUp.xib */; };
 		12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 12082F931E9376D700E8D051 /* ShadowLabel.m */; };
 		120A02421ED8602300547CDA /* PopupMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 120A02411ED8602300547CDA /* PopupMenu.m */; };
+		120A02451ED92C5400547CDA /* DropDownNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 120A02441ED92C5400547CDA /* DropDownNavigationItem.m */; };
 		12134D501EBC0615001EEC5E /* Chats.m in Sources */ = {isa = PBXBuildFile; fileRef = 12134D4F1EBC0615001EEC5E /* Chats.m */; };
 		12144DB71E934CEA000828BF /* ListField.m in Sources */ = {isa = PBXBuildFile; fileRef = 12144DB61E934CEA000828BF /* ListField.m */; };
 		1215085C1EAF180E00EAA5E1 /* Tabs.m in Sources */ = {isa = PBXBuildFile; fileRef = 1215085B1EAF180E00EAA5E1 /* Tabs.m */; };
@@ -110,6 +111,8 @@
 		12082F931E9376D700E8D051 /* ShadowLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowLabel.m; sourceTree = "<group>"; };
 		120A02401ED8602300547CDA /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
 		120A02411ED8602300547CDA /* PopupMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopupMenu.m; sourceTree = "<group>"; };
+		120A02431ED92C5400547CDA /* DropDownNavigationItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropDownNavigationItem.h; sourceTree = "<group>"; };
+		120A02441ED92C5400547CDA /* DropDownNavigationItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownNavigationItem.m; sourceTree = "<group>"; };
 		12134D4E1EBC0615001EEC5E /* Chats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chats.h; sourceTree = "<group>"; };
 		12134D4F1EBC0615001EEC5E /* Chats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chats.m; sourceTree = "<group>"; };
 		12144DB51E934CEA000828BF /* ListField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListField.h; sourceTree = "<group>"; };
@@ -467,6 +470,8 @@
 				124587581EC3F3E100746AAF /* CenterScrollView.m */,
 				120A02401ED8602300547CDA /* PopupMenu.h */,
 				120A02411ED8602300547CDA /* PopupMenu.m */,
+				120A02431ED92C5400547CDA /* DropDownNavigationItem.h */,
+				120A02441ED92C5400547CDA /* DropDownNavigationItem.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -640,6 +645,7 @@
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
 				12D0F2EC1EC5644E004F2E3E /* MessageCenter.m in Sources */,
+				120A02451ED92C5400547CDA /* DropDownNavigationItem.m in Sources */,
 				120A02421ED8602300547CDA /* PopupMenu.m in Sources */,
 				124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */,
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,

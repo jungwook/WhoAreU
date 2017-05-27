@@ -729,7 +729,7 @@
                             <outlet property="delegate" destination="ext-qL-Zxp" id="Fgm-BU-jOT"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Channels" id="CV0-mc-wfz">
+                    <navigationItem key="navigationItem" title="Channels" id="CV0-mc-wfz" customClass="DropDownNavigationItem">
                         <barButtonItem key="rightBarButtonItem" image="message2" id="Ckw-Uw-bzS">
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         </barButtonItem>

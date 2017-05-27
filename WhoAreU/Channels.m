@@ -15,6 +15,7 @@
 #import "Refresh.h"
 #import "MessageCenter.h"
 #import "PopupMenu.h"
+#import "DropDownNavigationItem.h"
 
 #define CHATMAXWIDTH 200
 #define MEDIASIZE 160
@@ -167,7 +168,26 @@ object = {
 
 - (void)awakeFromNib
 {
+    id channels = [User channels];
+    id menu = @[
+                @{ fTitle : @"Select a Channel",
+                   fItems : channels,
+                   },
+                ];
+
     [super awakeFromNib];
+    
+    DropDownNavigationItem *navItem = (DropDownNavigationItem*) self.navigationItem;
+    
+    navItem.menuItems = menu;
+    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
+        id channel = menu[section][@"items"][index];
+        
+        [navItem setTitle:channel];
+        [MessageCenter subscribeToUserChannel:channel];
+    };
+    navItem.action = action;
+    
     self.filePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"channelMessagesFile"];
     
     self.messages = [NSMutableArray arrayWithContentsOfURL:self.filePath];
@@ -200,15 +220,15 @@ object = {
 {
 
     id menu = @[
-                @{ @"title" : @"message",
-                   @"items" : @[
+                @{ fTitle : @"message",
+                   fItems : @[
                            @"I'm lonely tonight",
                            @"Let's meet",
                            @"How about dinner?",
                            @"Anyone interested in a movie?",
                            @"Drive away with me",
                            ],
-                   @"icons" : @[
+                   fIcons : @[
                            @"message2",
                            @"camera",
                            @"message2",
@@ -216,42 +236,25 @@ object = {
                            @"message2",
                            ],
                    },
-                @{ @"title" : @"photo or video",
-                   @"items" : @[
+                @{ fTitle : @"photo or video",
+                   fItems : @[
                            @"Send a photo",
                            ],
-                   @"icons" : @[
+                   fIcons : @[
                            @"message2",
                            ],
                    },
-                @{ @"title" : @"Custom message",
-                   @"items" : @[
+                @{ fTitle : @"Custom message",
+                   fItems : @[
                            @"Your message",
                            ],
-                   @"icons" : @[
-                           @"camera",
-                           ],
+                   },
+                @{ fTitle : @"A Section",
                    },
                 ];
-    id images = @[
-  @[
-      @"message2",
-      @"camera",
-      @"message2",
-      @"camera",
-      @"message2",
-      ],
-  @[
-      @"message2",
-      ],
-  @[
-      @"camera",
-      ],
-  ];
     
     [PopupMenu showFromView:sender
                   menuItems:menu
-//                      icons:images
                  completion:^(NSUInteger section, NSUInteger index)
     {
         id message = menu[section][@"items"][index];

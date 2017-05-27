@@ -56,6 +56,10 @@
 #define fGender @"gender"
 #define fChannelType @"channelType"
 
+#define fTitle @"title"
+#define fItems @"items"
+#define fIcons @"icons"
+
 #define kStringNull @""
 #define kStringSpace @" "
 #define kStringCommaSpace @", "
