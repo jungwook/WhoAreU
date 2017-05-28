@@ -140,13 +140,17 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 @property (readonly) NSUInteger initialFreeCredits;
 @property (readonly) NSUInteger openChatCredits;
 
-- (id)dictionary;
-- (id)simpleDictionary;
-+ (BOOL) meEquals:(id)userId;
-+ (User*)me;
-- (BOOL)isMe;
-+ (NSArray*) ageGroups;
-+ (NSArray*) channels;
++ (BOOL)        meEquals:(id)userId;
++ (User*)       me;
++ (PFGeoPoint*) where;
++ (void)        setChannel:(id)channel;
+
++ (NSArray*)    ageGroups;
++ (NSArray*)    channels;
+
+- (id)          dictionary;
+- (id)          simpleDictionary;
+- (BOOL)        isMe;
 
 // Gender related
 - (void)        setGenderTypeFromString:(NSString*)gender;

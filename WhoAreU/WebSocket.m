@@ -122,26 +122,16 @@
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
     __LF
-    NSString *message = [NSString stringWithFormat:@"%@ logged in", [User me].nickname];
-    
     if (self.isActive) {
         self.isAlive = YES;
-        id packet = @{
-                      fOperation : @"registration",
-                      fId        : self.userId,
-                      fWhen      : [NSDate date].stringUTC,
-                      fMe        : [User me].simpleDictionary,
-                      fChannel   : [User me].channel,
-                      fMessage   : message,
-                      };
-        
-        [self send:packet];
-        
-        [MessageCenter sayHiToNearbyUsers];
-        [MessageCenter sayMessageToNearbyUsers:@"Hi"];
-        
+        [MessageCenter registerSession];
+        [MessageCenter sendSystemLogToNearbyUsers:@"logged in"];
+        //        [MessageCenter sendMessageToNearbyUsers:@"Hello it's me"];
+        [MessageCenter sendMessageToNearbyUsers:@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient natoque libero malesuada augue tincidunt ad: Mus tempor fames venenatis etiam phasellus convallis; Quam sit tortor consequat! Massa curabitur nam; Dolor curae; class mauris elit arcu... Nonummy feugiat suscipit ante nulla ullamcorper porttitor... Duis ad urna mi penatibus? Urna malesuada urna sem taciti et, dictumst proin natoque condimentum penatibus purus: Sed nascetur commodo, cum leo faucibus tristique? Bibendum class mauris praesent per ridiculus dui porta, facilisis laoreet eget parturient taciti viverra integer... Turpis scelerisque dapibus ut praesent... Curae; porttitor fringilla cursus; Magna purus hymenaeos. Lacus volutpat eros fames mus? Pellentesque vivamus sapien malesuada convallis fermentum aptent ad, sit in dictumst blandit; Enim duis sodales taciti? Aptent nascetur rutrum conubia primis habitant: "];
+        [MessageCenter sendMessageToNearbyUsers:@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient natoque libero malesuada augue tincidunt ad:"];
+        [MessageCenter sendMessageToNearbyUsers:@"Lorem ipsum dolor sit"];
         if (self.packets.count>0) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 NSLog(@"RE-sending %ld backlog packets", self.packets.count);
                 while (self.packets.count > 0) {
                     id packet = [self.packets firstObject];

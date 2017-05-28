@@ -247,9 +247,8 @@
             break;
             
         case kSimulatorStatusSimulator:
-            self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];
-            
         default:
+            self.currentLocation = [[CLLocation alloc] initWithLatitude:SIMULATOR_LOCATION.latitude longitude:SIMULATOR_LOCATION.longitude];            
             break;
     }
 }

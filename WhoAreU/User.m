@@ -294,6 +294,17 @@ NSString* __usernames(NSArray*users)
     return [[User me].objectId isEqualToString:userId];
 }
 
++ (PFGeoPoint*)where
+{
+    return [User me].where;
+}
+
++ (void)setChannel:(id)channel
+{
+    [User me].channel = channel;
+    [[User me] saveInBackground];
+}
+
 - (id)simpleDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -530,19 +541,16 @@ NSString* __usernames(NSArray*users)
 + (NSArray*) channels
 {
     return @[
-             @"Meet",
-             @"Flirt",
-             @"Vacation",
-             @"Drive",
-             @"Ride",
-             @"Chat",
-             @"Drink",
-             @"Lunch",
-             @"Dinner",
-             @"Picknick",
-             @"Work",
+             @"Let's meet",
+             @"Flirt with me",
+             @"Let's drive",
+             @"Just to chat",
+             @"Drink with me",
+             @"Brunch with me",
+             @"Lunch with me",
+             @"Dinner with me",
+             @"Let's work",
              @"Watch a movie",
-             @"Make Love",
              ];
 }
 

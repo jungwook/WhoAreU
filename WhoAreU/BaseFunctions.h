@@ -52,6 +52,7 @@ UIColor *UIColorFromNSString(NSString *string);
 - (CLLocationDegrees) headingToLocation:(PFGeoPoint*)location;
 - (NSString*) distanceStringToLocation:(PFGeoPoint *)location;
 - (CGFloat) headingInRadiansToLocation:(PFGeoPoint*)location;
++ (instancetype) geoPointFromWhere:(id)where;
 @end
 
 @interface NSDate (extensions)

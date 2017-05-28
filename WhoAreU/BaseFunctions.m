@@ -311,6 +311,11 @@ id __dictionary(id object)
 
 @implementation PFGeoPoint (extensions)
 
++ (instancetype) geoPointFromWhere:(id)where
+{
+    return [PFGeoPoint geoPointWithLatitude:[where[fLatitude] floatValue] longitude:[where[fLongitude] floatValue]];
+}
+
 - (CLLocationDegrees)headingToLocation:(PFGeoPoint *)location
 {
     float fLat = degreesToRadians(self.latitude);
@@ -382,7 +387,7 @@ id __dictionary(id object)
 
 + (UIColor *)femaleColor
 {
-    return [UIColor colorWithRed:240/255.f green:82/255.f blue:10/255.f alpha:1.0f];
+    return [UIColor colorWithRed:255/255.f green:35/255.f blue:35/255.f alpha:1.0f];
 }
 
 + (UIColor*) appColor

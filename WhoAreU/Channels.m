@@ -17,11 +17,20 @@
 #import "PopupMenu.h"
 #import "DropDownNavigationItem.h"
 
-#define CHATMAXWIDTH 200
+#define CHATMAXWIDTH 270
 #define MEDIASIZE 160
 
 #define INSET 8
-#define chatFont [UIFont systemFontOfSize:14]
+#define chatFont [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold]
+#define systemFont [UIFont systemFontOfSize:12]
+#define boldSystemFont [UIFont boldSystemFontOfSize:12]
+
+NSAttributedString* nicknameWithSystemMessage(id nickname, id message)
+{
+    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:nickname ? nickname : @"UNKNOWN" attributes:@{                                                                                                                   NSFontAttributeName : boldSystemFont,}];
+    [attr appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@", message] attributes:@{NSFontAttributeName : systemFont,}]];
+    return attr;
+}
 
 @interface SetupRow : UITableViewCell
 @property (strong, nonatomic) id info;
@@ -33,6 +42,7 @@
 
 @implementation SetupRow
 
+
 - (void)setInfo:(id)info
 {
     _info = info;
@@ -46,10 +56,7 @@
     NSDate *date = [NSDate dateFromStringUTC:when];
     NSString *msg = info[fMessage];
     
-    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:nickname ? nickname : @"UNKNOWN" attributes:@{                                                                                                                   NSFontAttributeName : [UIFont boldSystemFontOfSize:14],}];
-    [attr appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@", msg] attributes:@{NSFontAttributeName : chatFont,}]];
-    
-    self.systemLog.attributedText = attr;
+    self.systemLog.attributedText = nicknameWithSystemMessage(nickname, msg);
     self.when.text = date.timeAgo;
     self.setupView.backgroundColor = [User me].genderColor;
     [self.userView setUserId:userId withThumbnail:thumbnail];
@@ -61,6 +68,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *systemLog;
 @property (weak, nonatomic) IBOutlet UserView *userView;
 @property (weak, nonatomic) IBOutlet UILabel *when;
+@property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
 @end
 
 @implementation SystemRow
@@ -71,19 +79,20 @@
     
     id me = info[fMe];
     id nickname = me[fNickname];
-    id when = info[fWhen];
     id userId = me[fObjectId];
     id thumbnail = me[fThumbnail];
+    id introduction = me[fIntroduction];
+    id gender = me[fGender];
+    id genderColor = [User genderColorFromTypeString:gender];
     
-    
-    NSDate *date = [NSDate dateFromStringUTC:when];
+    NSDate *when = [NSDate dateFromStringUTC:info[fWhen]];
     NSString *msg = info[fMessage];
-    
-    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:nickname ? nickname : @"UNKNOWN" attributes:@{                                                                                                                   NSFontAttributeName : [UIFont boldSystemFontOfSize:14],}];
-    [attr appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@", msg] attributes:@{NSFontAttributeName : chatFont,}]];
 
-    self.systemLog.attributedText = attr;
-    self.when.text = date.timeAgo;
+    self.systemLog.attributedText = nicknameWithSystemMessage(nickname, msg);
+    self.when.text = [NSString stringWithFormat:@"%@ ago", when.timeAgoSimple];
+    self.introduction.text = introduction ? introduction : @"Hi";
+    self.introduction.backgroundColor = genderColor;
+    self.introduction.font = chatFont;
     [self.userView setUserId:userId withThumbnail:thumbnail];
 }
 
@@ -101,55 +110,67 @@
 @end
 
 /*
-object = {
+Channel Message:{
+    channel = "Let's meet";
+    channelType = message;
     distance = 0;
     me =     {
         age = 20s;
-        channel = Flirt;
-        gender = Male;
-        introduction = "i am such a hunk";
-        latitude = "37.5060899262235";
-        longitude = "127.063861573541";
-        nickname = iphone;
-        objectId = GFjHKP0CsY;
-        thumbnail = "ProfileMedia/GFjHKP0CsY/JtIFZTzI.jpg";
+        channel = "Let's meet";
+        gender = Female;
+        introduction = "\Uc548\Ub155\Ud558\Uc138\Uc694! \Uc560\Uc778 \Ucc3e\Uc544\Uc694.";
+        latitude = "37.51579284667969";
+        longitude = "127.0278091430664";
+        nickname = wahtever;
+        objectId = 0O42fMfR0i;
+        thumbnail = "ProfileMedia/0O42fMfR0i/3GVUSH9S.jpg";
     };
-    message = "iphone logged in.";
-    senderId = GFjHKP0CsY;
-    when = "2017-05-24T02:24:02.035Z";
+    message = "Hello it's me";
+    senderId = 0O42fMfR0i;
+    type = 1; // MessageType
+    when = "2017-05-28T04:01:24.208Z";
     where =     {
-        latitude = "37.5060899262235";
-        longitude = "127.063861573541";
+        latitude = "37.51579284667969";
+        longitude = "127.0278091430664";
     };
-}}
- */
+}
+*/
+
 @implementation ChannelRow
 
 - (void)setMessage:(id)message
 {
     _message = message;
     
-    id distance = message[fDistance];
     id me = message[fMe];
     
-    NSDate *date = [NSDate dateFromStringUTC:message[fWhen]];
-    
-    PFGeoPoint *where = [PFGeoPoint geoPointWithLatitude:[message[fLatitude] floatValue] longitude:[message[fLongitude] floatValue]];
-    self.nickname.text = me[fNickname];
-    self.distance.text = __distanceString([distance floatValue]);
-    self.compass.heading = [[User me].where headingToLocation:where];
-    self.introduction.backgroundColor = [User genderColorFromTypeString:me[fGender]];
-
+    NSDate *when = [NSDate dateFromStringUTC:message[fWhen]];
+    PFGeoPoint *where = [PFGeoPoint geoPointFromWhere:message[fWhere]];
+    CGFloat distance = [[User where] distanceInKilometersTo:where];
+    CGFloat heading = [[User where] headingToLocation:where];
+    id introduction = message[fMessage];
+    id media = message[fMedia];
+    id mediaFile = media[fMedia];
     id thumbnail = me[fThumbnail];
     id userId = me[fObjectId];
+    id nickname = me[fNickname];
+    id gender = me[fGender];
+    id genderColor = [User genderColorFromTypeString:gender];
+    
+    self.nickname.text = nickname;
+    self.distance.text = __distanceString(distance);
+    self.compass.heading = heading;
+
     [self.userView setUserId:userId withThumbnail:thumbnail];
     
-    self.introduction.text = message[fMessage];
-    self.when.text = date.timeAgoSimple;
-    id media = message[fMedia];
-    
+    self.introduction.backgroundColor = genderColor;
+    self.introduction.text = introduction;
+    self.introduction.font = chatFont;
+
+    self.when.text = [NSString stringWithFormat:@"%@ ago", when.timeAgoSimple];
+
     if (media && media[fMedia]) {
-        self.introduction.mediaFile = media[fMedia];
+        self.introduction.mediaFile = mediaFile;
     }
     else {
         self.introduction.mediaFile = nil;
@@ -168,10 +189,9 @@ object = {
 
 - (void)awakeFromNib
 {
-    id channels = [User channels];
     id menu = @[
                 @{ fTitle : @"Select a Channel",
-                   fItems : channels,
+                   fItems : [User channels],
                    },
                 ];
 
@@ -181,15 +201,13 @@ object = {
     
     navItem.menuItems = menu;
     IndexBlock action = ^(NSUInteger section, NSUInteger index) {
-        id channel = menu[section][@"items"][index];
-        
+        id channel = menu[section][fItems][index];
         [navItem setTitle:channel];
-        [MessageCenter subscribeToUserChannel:channel];
+        [User setChannel:channel];
     };
     navItem.action = action;
     
-    self.filePath = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"channelMessagesFile"];
-    
+    self.filePath = FileURL(@"channelMessagesFile");    
     self.messages = [NSMutableArray arrayWithContentsOfURL:self.filePath];
     if (!self.messages) {
         self.messages = [NSMutableArray new];
@@ -216,7 +234,7 @@ object = {
     self.navigationItem.title = [User me].channel;
 }
 
--(void)onNavButtonTapped:(UIBarButtonItem *)sender event:(UIEvent *)event
+-(void) onNavButtonTapped:(UIBarButtonItem *)sender event:(UIEvent *)event
 {
 
     id menu = @[
@@ -258,15 +276,8 @@ object = {
                  completion:^(NSUInteger section, NSUInteger index)
     {
         id message = menu[section][@"items"][index];
-        id packet = @{
-                      fOperation    : @"pushHiToUsersNearMe",
-                      fWhen         : [NSDate date].stringUTC,
-                      fMessage      : message,
-                      fChannelType : @"message",
-                      fType : @(kMessageTypeText),
-                      fMedia : @{},
-                      };
-        [MessageCenter send:packet];
+        
+        [MessageCenter sendMessageToNearbyUsers:message];
     } cancel:^{
         NSLog(@"Cancelled");
     }];
@@ -362,7 +373,7 @@ object = {
     
     id channelType = message[fChannelType];
     if ([channelType isEqualToString:@"system"]) {
-        return 30.0f;
+        return 56.0f;
     }
     else if ([channelType isEqualToString:@"setup"]) {
         return 30.0f;
@@ -381,7 +392,7 @@ object = {
             default:
             case kMessageTypeText: {
                 id messageString = message[fMessage];
-                return [messageString heightWithFont:chatFont maxWidth:CHATMAXWIDTH+2*INSET+10]+room*INSET;
+                return [messageString heightWithFont:chatFont maxWidth:CHATMAXWIDTH-3*INSET]+room*INSET;
             }
         }
     }

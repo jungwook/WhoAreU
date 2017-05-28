@@ -51,8 +51,9 @@
 + (void)        subscribeToChannel:(id)channel;
 + (void)        subscribeToUserChannel:(id)channel;
 + (void)        setupUserToInstallation;
-+ (void)        sayHiToNearbyUsers;
-+ (void)        sayMessageToNearbyUsers:(id)message;
++ (void)        registerSession;
++ (void)        sendMessageToNearbyUsers:(id)message;
++ (void)        sendSystemLogToNearbyUsers:(id)message;
 
 /**
  *Asynchronously* get all the channels that this device is subscribed to.

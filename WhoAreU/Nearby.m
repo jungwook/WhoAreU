@@ -49,7 +49,7 @@
 {
     _user = user;
     
-    CLLocationDirection heading = [[User me].where headingToLocation:user.where];
+    CLLocationDirection heading = [[User where] headingToLocation:user.where];
     [self.userView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.channel;
@@ -233,7 +233,7 @@
     [query whereKey:fObjectId notEqualTo:[User me].objectId];
     if (self.sortby == kNearBySortByLocation) {
         NSLog(@"Querying location");
-        [query whereKey:fWhere nearGeoPoint:[User me].where];
+        [query whereKey:fWhere nearGeoPoint:[User where]];
     }
     else {
         NSLog(@"Querying by time");

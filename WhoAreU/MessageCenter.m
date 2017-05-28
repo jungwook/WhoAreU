@@ -94,18 +94,6 @@
     }
 }
 
-+ (void) subscribeToUserChannel:(id)channel
-{
-    if (channel) {
-        id param = @{
-                     fOperation : @"setChannel",
-                     fChannel : channel,
-                     };
-        
-        [self send:param];
-    }
-}
-
 - (void) setupSocket
 {
     __LF
@@ -118,15 +106,20 @@
     __LF
 
     self.pushHandlers = [NSMutableDictionary dictionary];
-    
-    PushHandlerBlock pushTypeChannel = ^(id payload, id senderId, id channelId) {
-        
-        // if push originated from me then do nothing and return option = UNNotificationPresentationOptionNone
-        
-//        if ([User meEquals:senderId]) {
-//            return UNNotificationPresentationOptionNone;
-//        }
-        
+
+    PushHandlerBlock pushTypeChannelMessage = ^(id payload,
+                                                id senderId,
+                                                id channelId)
+    {
+        NSLog(@"payload:%@", payload);
+        PNOTIF(kNotificationChannelMessage, payload);
+        return UNNotificationPresentationOptionNone;
+    };
+
+    PushHandlerBlock pushTypeChannel = ^(id payload,
+                                         id senderId,
+                                         id channelId)
+    {
         NSLog(@"payload:%@", payload);
         PNOTIF(kNotificationChannelMessage, payload);
         
@@ -196,6 +189,7 @@
     };
     
     self.pushHandlers = @{
+                          kPushTypeChannelMessage : pushTypeChannelMessage,
                           kPushTypeChannel : pushTypeChannel,
                           kPushTypeMessage : pushTypeMessage,
                           kPushTypeMessageRead : pushTypeMessageRead,
@@ -219,8 +213,8 @@
     NSLog(@"UserInfo:%@", userInfo);
     
     PushHandlerBlock handler = [center.pushHandlers objectForKey:pushType];
+    NSLog(@"Processing handler:%@ (%@)", pushType, handler);
     if (handler) {
-        NSLog(@"Processing handler:%@", pushType);
         option = handler(payload, senderId, channelId);
     }
     
@@ -231,9 +225,8 @@
 {
     __LF
 
-    self.chatsFile = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"chatFile"];
-
-    self.channelsFile = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:@"channelFile"];
+    self.chatsFile = FileURL(@"chatFile");
+    self.channelsFile = FileURL(@"channelFile");
     
     self.chats = [NSMutableDictionary dictionaryWithContentsOfURL:self.chatsFile];
     self.channels = [NSMutableDictionary dictionaryWithContentsOfURL:self.channelsFile];
@@ -833,32 +826,67 @@
 }
 */
 
-+ (void)sayHiToNearbyUsers
++ (void) subscribeToUserChannel:(id)channel
 {
-    NSString *message = @"logged in.";
-    
+    if (channel) {
+        id param = @{
+                     fOperation : fOperationSetChannel,
+                     fChannel : channel,
+                     };
+        
+        [self send:param];
+    }
+}
+
++ (void) registerSession
+{
     id packet = @{
-                  fOperation    : @"pushHiToUsersNearMe",
-                  fId           : [User me].objectId,
-                  fWhen         : [NSDate date].stringUTC,
-                  fMe           : [User me].simpleDictionary,
-                  fDistance     : @(5.0f),
-                  fMessage      : message,
+                  fOperation : fOperationRegistration,
+                  fId        : [User me].objectId,
+                  fWhen      : [NSDate date].stringUTC,
+                  fMe        : [User me].simpleDictionary,
+                  fChannel   : [User me].channel,
                   };
     
     [self send:packet];
 }
 
-+ (void) sayMessageToNearbyUsers:(id)message
++ (void) sendMessageToNearbyUsers:(id)message
 {
+    [self sendMessageToNearbyUsers:message type:fChannelTypeMessage];
+}
+
++ (void) sendSystemLogToNearbyUsers:(id)message
+{
+    [self sendMessageToNearbyUsers:message type:fChannelTypeSystem];
+}
+
++ (void) sendMessageToNearbyUsers:(id)message
+                             type:(id)channelType
+{
+    BOOL simple = [message isKindOfClass:[NSString class]];
+    id now = [NSDate date].stringUTC;
+    id where = @{
+                 fLatitude : @([User where].latitude),
+                 fLongitude : @([User where].longitude),
+                 };
+    id messageString = simple ? (message ? message : @"") : (message[fMessage] ? message[fMessage] : @"");
+    id type = simple ? @(kMessageTypeText) : @(kMessageTypeMedia);
+    id media = simple ? @{} : message;
+    
     id packet = @{
-                  fOperation    : @"pushHiToUsersNearMe",
-                  fWhen         : [NSDate date].stringUTC,
-                  fMessage      : message,
-                  fChannelType : @"message",
+                  fOperation    : fChannelMessage,
+                  fWhen         : now,
+                  fWhere        : where,
+                  fChannelType  : channelType,
+                  fPayload      : @{
+                          fMessage  : messageString,
+                          fType     : type,
+                          fMedia    : media,
+                          },
                   };
     
-    [MessageCenter send:packet];
+    [self send:packet];
 }
 
 + (void) processReadMessage:(id)message

@@ -55,6 +55,13 @@
 #define fDistance @"distance"
 #define fGender @"gender"
 #define fChannelType @"channelType"
+#define fPushHiToUsersNearMe @"pushHiToUsersNearMe"
+#define fChannelMessage @"channelMessage"
+#define fChannelTypeMessage @"message"
+#define fChannelTypeSystem @"system"
+#define fChannelTypeSetup @"setup"
+#define fOperationSetChannel @"setChannel"
+#define fOperationRegistration @"registration"
 
 #define fTitle @"title"
 #define fItems @"items"
@@ -69,6 +76,7 @@
 #define kPushTypeChatChannel @"pushTypeChatChannel"
 #define kPushTypeMessage @"pushTypeMessage"
 #define kPushTypeChannel @"pushTypeChannel"
+#define kPushTypeChannelMessage @"pushTypeChannelMessage"
 
 #define kNotificationUserLoggedInMessage @"NotificationUserLoggedIn"
 #define kNotificationSystemInitialized @"NotifictionSystemInitialized"
@@ -89,8 +97,9 @@
 
 //#define WSLOCATION @"http://parse.kr:8080"
 #define WSLOCATION @"http://localhost:8080"
-
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
+#define FileURL(__X__) [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:__X__]
+
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
