@@ -148,7 +148,8 @@ NSString* __distanceString(double distance)
         return [NSString stringWithFormat:@"%.0fm", distance*1000];
     }
     else {
-        return [NSString stringWithFormat:@"%.0fkm", distance];
+        id fmt = (distance < 10.0) ? @"%.2fkm" : @"%.1fkm";
+        return [NSString stringWithFormat:fmt, distance];
     }
 }
 
@@ -422,3 +423,23 @@ id __dictionary(id object)
 }
 @end
 
+@implementation PFConfig (extensions)
+
++ (id) objectForLocaleKey:(id)key
+{
+    return [[PFConfig currentConfig] objectForLocaleKey:key];
+}
+
+- (id) objectForLocaleKey:(id)key
+{
+    NSString *localeCode = [[[[NSLocale preferredLanguages] objectAtIndex:0] componentsSeparatedByString:@"-"] firstObject];;
+    
+    PFConfig* config = [PFConfig currentConfig];
+    NSString *loc = [key stringByAppendingString:localeCode];
+    id ret = [config objectForKey:loc];
+    if (ret == nil) { // if no configuration then try without locale code.
+        return [config objectForKey:key];
+    }
+    return ret;
+}
+@end

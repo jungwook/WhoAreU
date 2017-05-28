@@ -39,7 +39,7 @@
     self.gender.text = self.user.genderTypeString;
     self.age.text = self.user.age;
     
-    CGFloat distance = [[Engine where] distanceInKilometersTo:self.user.where];
+    CGFloat distance = [[User where] distanceInKilometersTo:self.user.where];
     CGFloat heading = [[User where] headingToLocation:self.user.where];
     self.distance.text = __distanceString(distance);
     self.heading.text = __headingString(heading);

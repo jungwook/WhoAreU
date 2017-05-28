@@ -189,30 +189,13 @@ Channel Message:{
 
 - (void)awakeFromNib
 {
-    id menu = @[
-                @{ fTitle : @"Select a Channel",
-                   fItems : [User channels],
-                   },
-                ];
-
     [super awakeFromNib];
     
-    DropDownNavigationItem *navItem = (DropDownNavigationItem*) self.navigationItem;
-    
-    navItem.menuItems = menu;
-    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
-        id channel = menu[section][fItems][index];
-        [navItem setTitle:channel];
-        [User setChannel:channel];
-    };
-    navItem.action = action;
-    
-    self.filePath = FileURL(@"channelMessagesFile");    
+    self.filePath = FileURL(@"channelMessagesFile");
     self.messages = [NSMutableArray arrayWithContentsOfURL:self.filePath];
     if (!self.messages) {
         self.messages = [NSMutableArray new];
     }
-
     self.refresh = [Refresh initWithCompletionBlock:^(UIRefreshControl *refreshControl) {
         [self.tableView reloadData];
         if ([self.refresh isRefreshing])
@@ -232,6 +215,22 @@ Channel Message:{
 - (void) notificationUserLoggedIn:(id)sender
 {
     self.navigationItem.title = [User me].channel;
+    id menu = @[
+                @{ fTitle : @"Select a Channel",
+                   fItems : [User channels],
+                   },
+                ];
+    
+    
+    DropDownNavigationItem *navItem = (DropDownNavigationItem*) self.navigationItem;
+    
+    navItem.menuItems = menu;
+    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
+        id channel = menu[section][fItems][index];
+        [navItem setTitle:channel];
+        [User setChannel:channel];
+    };
+    navItem.action = action;
 }
 
 -(void) onNavButtonTapped:(UIBarButtonItem *)sender event:(UIEvent *)event

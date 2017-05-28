@@ -16,6 +16,7 @@
 #import "MediaCollection.h"
 #import "BalloonLabel.h"
 #import "MessageCenter.h"
+#import "DropDownNavigationItem.h"
 
 @interface NoMoreCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *label;
@@ -37,6 +38,7 @@
 @property (weak, nonatomic) IBOutlet UserView *userView;
 @property (weak, nonatomic) IBOutlet Compass *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
+@property (weak, nonatomic) IBOutlet UILabel *heading;
 @property (weak, nonatomic) IBOutlet UILabel *like;
 @property (weak, nonatomic) UIViewController* parent;
 @property (copy, nonatomic) UserBlock chatAction;
@@ -50,13 +52,15 @@
     _user = user;
     
     CLLocationDirection heading = [[User where] headingToLocation:user.where];
+    
     [self.userView clear];
     self.nickname.text = user.nickname;
     self.desc.text = user.channel;
     self.userView.user = user;
     self.age.text = user.age;
     self.compass.heading = heading;
-    self.distance.text = __distanceString([[Engine where] distanceInKilometersTo:user.where]);
+    self.distance.text = __distanceString([[User where] distanceInKilometersTo:user.where]);
+    self.heading.text = [NSString stringWithFormat:@"(%.1f)", heading];
     self.gender.text = user.genderCode;
     self.gender.backgroundColor = user.genderColor;
     self.introduction.text = user.introduction;
@@ -139,12 +143,29 @@
         [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
     }];
     [self.tableView addSubview:self.refresh];
-}
-
-- (IBAction)segmentTapped:(UISegmentedControl*)sender {
-    self.segmentIndex = sender.selectedSegmentIndex;
-    self.skip = 0;
-    [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    DropDownNavigationItem *navItem = (DropDownNavigationItem *)self.navigationItem;
+    
+    id menu = @{
+                fTitle : @"Search For",
+                fItems : @[
+                        @"Girls",
+                        @"Boys",
+                        @"All",
+                        @"Favorites"
+                        ],
+                };
+    
+    navItem.title = menu[fItems][self.segmentIndex];
+    navItem.menuItems = menu;
+    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
+        self.segmentIndex = index;
+        self.skip = 0;
+        [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+        
+        id search = menu[fItems][index];
+        [navItem setTitle:search];
+    };
+    navItem.action = action;
 }
 
 - (void)reloadAllUsersOnCondition:(NSUInteger)index reset:(BOOL)reset

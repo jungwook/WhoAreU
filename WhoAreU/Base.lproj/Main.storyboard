@@ -1146,7 +1146,7 @@
             </objects>
             <point key="canvasLocation" x="1179" y="216"/>
         </scene>
-        <!--Nearby-->
+        <!--Girls-->
         <scene sceneID="ni5-1X-PHq">
             <objects>
                 <tableViewController id="YjM-7k-2yQ" customClass="Nearby" sceneMemberID="viewController">
@@ -1183,24 +1183,20 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yyr-SF-O2v" customClass="Compass">
-                                            <rect key="frame" x="386" y="23" width="20" height="20"/>
-                                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <rect key="frame" x="376" y="18" width="30" height="30"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="Fwc-2v-hn0"/>
-                                                <constraint firstAttribute="width" constant="20" id="Li3-M8-srx"/>
+                                                <constraint firstAttribute="height" constant="30" id="Fwc-2v-hn0"/>
+                                                <constraint firstAttribute="width" constant="30" id="Li3-M8-srx"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
-                                                    <real key="value" value="1"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
-                                                    <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <real key="value" value="0.5"/>
                                                 </userDefinedRuntimeAttribute>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                     <real key="value" value="10"/>
                                                 </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="paneColor">
-                                                    <color key="value" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
+                                                    <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </view>
@@ -1241,7 +1237,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13 km" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9gz-ny-1z4">
-                                            <rect key="frame" x="343" y="25" width="39" height="16"/>
+                                            <rect key="frame" x="333" y="25" width="39" height="16"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -1300,9 +1296,16 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j6s-HA-Fpq">
+                                            <rect key="frame" x="298" y="26.666666666666671" width="31" height="14.333333333333329"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailingMargin" secondItem="yyr-SF-O2v" secondAttribute="trailing" id="0FX-3S-GUw"/>
+                                        <constraint firstItem="9gz-ny-1z4" firstAttribute="leading" secondItem="j6s-HA-Fpq" secondAttribute="trailing" constant="4" id="3N3-Vz-VR6"/>
                                         <constraint firstItem="xbZ-6u-1EM" firstAttribute="leading" secondItem="pLM-qa-QJj" secondAttribute="trailing" constant="4" id="3Xc-ni-1os"/>
                                         <constraint firstItem="EUq-tM-2mv" firstAttribute="top" secondItem="JxK-h6-gyL" secondAttribute="top" id="3i5-7u-KuV"/>
                                         <constraint firstItem="9gz-ny-1z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="e3X-hH-FAJ" secondAttribute="trailing" constant="4" id="5ER-rn-T53"/>
@@ -1321,6 +1324,7 @@
                                         <constraint firstItem="EUq-tM-2mv" firstAttribute="top" secondItem="kj2-Z6-aMP" secondAttribute="topMargin" constant="65" id="TfJ-Ou-SDp"/>
                                         <constraint firstItem="yjF-Vs-JF6" firstAttribute="top" secondItem="baJ-hN-I4B" secondAttribute="top" id="VqT-p4-3sy"/>
                                         <constraint firstItem="JxK-h6-gyL" firstAttribute="leading" secondItem="1D3-F2-9d7" secondAttribute="leading" id="W3u-wJ-4JU"/>
+                                        <constraint firstItem="j6s-HA-Fpq" firstAttribute="baseline" secondItem="9gz-ny-1z4" secondAttribute="baseline" id="Yu3-ck-bw4"/>
                                         <constraint firstItem="e3X-hH-FAJ" firstAttribute="leading" secondItem="d03-Hv-NMx" secondAttribute="trailing" id="b10-Sj-0GK"/>
                                         <constraint firstItem="Pka-Uq-gs0" firstAttribute="leading" secondItem="xbZ-6u-1EM" secondAttribute="trailing" constant="4" id="cBd-tG-SoF"/>
                                         <constraint firstItem="9yR-QF-frz" firstAttribute="baseline" secondItem="1D3-F2-9d7" secondAttribute="baseline" constant="-2" id="cFk-5w-FMT"/>
@@ -1344,6 +1348,7 @@
                                     <outlet property="desc" destination="9yR-QF-frz" id="9kN-dL-q8y"/>
                                     <outlet property="distance" destination="9gz-ny-1z4" id="bI1-mo-hRx"/>
                                     <outlet property="gender" destination="xbZ-6u-1EM" id="yw1-y5-x7K"/>
+                                    <outlet property="heading" destination="j6s-HA-Fpq" id="8wq-1p-fBd"/>
                                     <outlet property="introduction" destination="e3X-hH-FAJ" id="oMP-ED-qbB"/>
                                     <outlet property="like" destination="baJ-hN-I4B" id="rg7-Oz-wIg"/>
                                     <outlet property="nickname" destination="d03-Hv-NMx" id="SqD-uM-8hv"/>
@@ -1379,29 +1384,14 @@
                             <outlet property="delegate" destination="YjM-7k-2yQ" id="kfr-lB-24B"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="ZZt-Jr-SY6">
-                        <nil key="title"/>
+                    <navigationItem key="navigationItem" title="Girls" id="ZZt-Jr-SY6" customClass="DropDownNavigationItem">
                         <barButtonItem key="leftBarButtonItem" image="list" id="EXP-he-RUQ" customClass="ToggleButton">
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </barButtonItem>
-                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" id="4YL-vR-2xk">
-                            <rect key="frame" x="83" y="7" width="183" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <segments>
-                                <segment title="Girls"/>
-                                <segment title="Boys"/>
-                                <segment title="All"/>
-                                <segment title="Likes"/>
-                            </segments>
-                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <connections>
-                                <action selector="segmentTapped:" destination="YjM-7k-2yQ" eventType="valueChanged" id="uaZ-0D-NNN"/>
-                            </connections>
-                        </segmentedControl>
                         <rightBarButtonItems>
                             <barButtonItem id="n5p-B4-KFP">
                                 <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="e9i-eX-tWJ">
-                                    <rect key="frame" x="310" y="6" width="51" height="31"/>
+                                    <rect key="frame" x="345" y="6" width="51" height="31"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="onTintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <connections>
@@ -1411,7 +1401,7 @@
                             </barButtonItem>
                             <barButtonItem id="hhL-47-MRv">
                                 <view key="customView" contentMode="scaleToFill" id="q8Q-Ab-aWA">
-                                    <rect key="frame" x="272" y="5" width="30" height="33"/>
+                                    <rect key="frame" x="307" y="5" width="30" height="33"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Ps-J8-d3c">
@@ -1534,6 +1524,6 @@ GPS</string>
         <image name="user" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="QKh-dI-eif"/>
+        <segue reference="1wJ-vB-19p"/>
     </inferredMetricsTieBreakers>
 </document>

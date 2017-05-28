@@ -179,17 +179,6 @@
     }
 }
 
-+ (PFGeoPoint *)where
-{
-    Engine *engine = [Engine new];
-    return [engine where];
-}
-
-- (PFGeoPoint*) where
-{
-    return POINT_FROM_CLLOCATION(self.currentLocation);
-}
-
 - (void) initLocationServices
 {
     // Initializing location services.

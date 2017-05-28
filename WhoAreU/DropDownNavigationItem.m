@@ -101,7 +101,11 @@
 - (void) tapped:(UITapGestureRecognizer*)sender
 {
     UIView *view = sender.view;
-    [PopupMenu showFromView:view menuItems:self.menuItems completion:self.action cancel:nil];
+    BOOL array = [self.menuItems isKindOfClass:[NSArray class]];
+    BOOL dic = [self.menuItems isKindOfClass:[NSDictionary class]];
+    
+    id menu = dic ? @[self.menuItems] : ( array ? self.menuItems : @[] );
+    [PopupMenu showFromView:view menuItems:menu completion:self.action cancel:nil];
 }
 
 - (void) setup

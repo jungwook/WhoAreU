@@ -529,29 +529,32 @@ NSString* __usernames(NSArray*users)
 
 + (NSArray*) ageGroups
 {
-    return @[
-             @"10s",
-             @"20s",
-             @"30s",
-             @"40s",
-             @"50s",
-             ];
+    NSArray *ageGroups = [PFConfig objectForLocaleKey:@"ageGroups"];
+    return ageGroups ? ageGroups : @[
+                                     @"10s",
+                                     @"20s",
+                                     @"30s",
+                                     @"40s",
+                                     @"50s",
+                                     @"비밀",
+                                     ];
 }
 
 + (NSArray*) channels
 {
-    return @[
-             @"Let's meet",
-             @"Flirt with me",
-             @"Let's drive",
-             @"Just to chat",
-             @"Drink with me",
-             @"Brunch with me",
-             @"Lunch with me",
-             @"Dinner with me",
-             @"Let's work",
-             @"Watch a movie",
-             ];
+    NSArray *channels = [PFConfig objectForLocaleKey:@"channels"];
+    return channels ? channels : @[
+                                   @"Let's meet",
+                                   @"Flirt with me",
+                                   @"Let's drive",
+                                   @"Just to chat",
+                                   @"Drink with me",
+                                   @"Brunch with me",
+                                   @"Lunch with me",
+                                   @"Dinner with me",
+                                   @"Let's work",
+                                   @"Watch a movie",
+                                   ];
 }
 
 -(void)setMedia:(Media *)media

@@ -24,7 +24,6 @@ typedef enum : NSUInteger {
 @interface Engine : NSObject
 @property (nonatomic) BOOL initialized;
 @property (nonatomic) SimulatorStatus simulatorStatus;
-+ (PFGeoPoint*) where;
 + (void) initializeSystems;
 + (CLLocationDirection) heading;
 @end

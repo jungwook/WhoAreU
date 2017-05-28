@@ -66,6 +66,9 @@ UIColor *UIColorFromNSString(NSString *string);
 
 @end
 
+@interface PFConfig (extensions)
++ (id) objectForLocaleKey:(id)key;
+@end
 
 @interface NSString (extensions)
 - (CGRect) boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width;

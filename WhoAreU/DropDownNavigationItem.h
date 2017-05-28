@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface DropDownNavigationItem : UINavigationItem
-@property (nonatomic, strong) NSArray *menuItems;
+@property (nonatomic, strong) id menuItems;
 @property (nonatomic, copy) IndexBlock action;
 @end

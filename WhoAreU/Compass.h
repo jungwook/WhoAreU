@@ -13,4 +13,5 @@
 @property (nonatomic) IBInspectable CGFloat lineWidth;
 @property (strong, nonatomic) IBInspectable UIColor *lineColor;
 @property (strong, nonatomic) IBInspectable UIColor *paneColor;
+@property (strong, nonatomic) IBInspectable UIColor *northColor;
 @end

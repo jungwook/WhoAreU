@@ -13,8 +13,74 @@
 
 #pragma mark UserView
 
+@interface HeadingRing : UIView
+@property (strong, nonatomic) PFGeoPoint* where;
+@end
+
+@implementation HeadingRing
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup
+{
+    self.backgroundColor = [UIColor clearColor];
+}
+
+- (void)setAnchorPoint:(CGPoint)anchorPoint forView:(UIView *)view
+{
+    CGPoint newPoint = CGPointMake(view.bounds.size.width  * anchorPoint.x,
+                                   view.bounds.size.height * anchorPoint.y);
+    
+    CGPoint oldPoint = CGPointMake(view.bounds.size.width  * view.layer.anchorPoint.x,
+                                   view.bounds.size.height * view.layer.anchorPoint.y);
+    
+    newPoint = CGPointApplyAffineTransform(newPoint, view.transform);
+    oldPoint = CGPointApplyAffineTransform(oldPoint, view.transform);
+    
+    CGPoint position = view.layer.position;
+    
+    position.x -= oldPoint.x;
+    position.x += newPoint.x;
+    
+    position.y -= oldPoint.y;
+    position.y += newPoint.y;
+    
+    view.layer.position = position;
+    view.layer.anchorPoint = anchorPoint;
+}
+
+
+- (void)drawRect:(CGRect)rect
+{
+    CGFloat w = CGRectGetWidth(rect);
+    if (self.where) {
+        __LF
+
+        CGFloat size = 8, f = 0.55f;
+        UIBezierPath *point = [UIBezierPath bezierPath];
+        [point moveToPoint:CGPointMake(w/2, 0)];
+        [point addLineToPoint:CGPointMake(w/2+f*size, size)];
+        [point addLineToPoint:CGPointMake(w/2-f*size, size)];
+        [point addLineToPoint:CGPointMake(w/2, 0)];
+        
+        [[UIColor redColor] setFill];
+        [point fill];
+    }
+}
+
+@end
+
 @interface UserView()
 @property (strong, nonatomic) PhotoView *photoView;
+@property (strong, nonatomic) HeadingRing *ring;
+@property (nonatomic) BOOL on;
 @end
 
 @implementation UserView
@@ -36,11 +102,16 @@
 
 - (void)setup
 {
+    self.ring = [HeadingRing new];
+    
     self.photoView = [PhotoView new];
     self.photoView.backgroundColor = kAppColor;
     self.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = [UIColor yellowColor];
+    self.clipsToBounds = NO;
     
     [self addSubview:self.photoView];
+    [self addSubview:self.ring];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                          selector:@selector(newMessage:)
                                              name:kNotificationNewChatMessage
@@ -68,6 +139,7 @@
     _user = user;
     
     [self.user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        self.where = user.where;
         self.photoView.user = user;
         self.photoView.backgroundColor = user.genderColor;
         [self setNeedsLayout];
@@ -101,6 +173,21 @@
     [self.photoView clear];
 }
 
+- (void)setWhere:(PFGeoPoint *)where
+{
+    _where = where;
+    self.ring.where = where;
+
+    CLLocationDirection trueHeading = [Engine heading];
+    CLLocationDirection heading = [[User where] headingToLocation:where];
+    CLLocationDirection h = heading - trueHeading;
+
+    self.ring.transform = CGAffineTransformMakeRotation(h * M_PI/180);
+
+    [self setNeedsDisplay];
+}
+
+
 - (void)updateMediaOnViewController:(UIViewController *)viewController
 {
     [self.photoView updateMediaOnViewController:viewController];
@@ -113,8 +200,8 @@
     CGFloat h = CGRectGetHeight(frame);
     CGFloat m = MIN(w, h);
     self.photoView.radius = m / 2.0f;
-    self.photoView.clipsToBounds = YES;
     self.photoView.frame = CGRectMake((w-m)/2.0f, (h-m)/2.0f, m, m);
+    self.ring.frame = self.photoView.frame;
 }
 
 @end
@@ -227,15 +314,20 @@
     if (self.media) {
         [self.activity startAnimating];
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
-            
-            NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
-            
-            [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
-                UIImage *photo = [UIImage imageWithData:data];
-                self.image = photo;
-                [self.activity stopAnimating];
-            }];
+            if (error) {
+                NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+            }
+            else {
+                CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
+                
+                NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
+                
+                [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
+                    UIImage *photo = [UIImage imageWithData:data];
+                    self.image = photo;
+                    [self.activity stopAnimating];
+                }];
+            }
         }];
     }
 }

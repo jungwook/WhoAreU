@@ -97,7 +97,6 @@
 - (void) setupSocket
 {
     __LF
-    NSLog(@"User:%@", [User me]);
     self.socket = [WebSocket newWithId:[User me].objectId];
 }
 

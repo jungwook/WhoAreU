@@ -12,6 +12,7 @@
 #import "S3File.h"
 #import "MessageCenter.h"
 #import <ParseUI/ParseUI.h>
+#import <Parse/PFConfig.h>
 
 @interface Tabs () <PFLogInViewControllerDelegate>
 
@@ -67,32 +68,25 @@
     User *user = [User me];
     
     VoidBlock initializationHandler = ^(void) {
-        
-        __LF
-/*
-        PFLogInViewController *logInViewController = [[PFLogInViewController alloc] init];
-        logInViewController.delegate = self;
-        UILabel *logo = [UILabel new];
-        logo.font = [UIFont systemFontOfSize:60 weight:UIFontWeightLight];
-        logo.text = @"Fuck!";
-        logInViewController.logInView.logo = logo;
- 
-        [self presentViewController:logInViewController animated:YES completion:nil];
- */
-        PNOTIF(kNotificationUserLoggedInMessage, nil);
-        [MessageCenter initializeCommunicationSystem];
-        // User logged in so ready to initialize systems.
-        [Engine initializeSystems];
-        
-        // Subscribe to channel user
-        [MessageCenter subscribeToChannelUser];
-        [MessageCenter setupUserToInstallation];
-//        [MessageCenter processFetchMessages];
 
-
-        // force load child view controllers
-        [self forceLoadViewControllers];
-        [MessageCenter setSystemBadge];        
+        [[PFConfig getConfigInBackground] continueWithSuccessBlock:^id _Nullable(BFTask<PFConfig *> * _Nonnull task) {
+            
+            [Engine initializeSystems];
+            
+            PNOTIF(kNotificationUserLoggedInMessage, nil);
+            [MessageCenter initializeCommunicationSystem];
+            // User logged in so ready to initialize systems.
+            
+            // Subscribe to channel user
+            [MessageCenter subscribeToChannelUser];
+            [MessageCenter setupUserToInstallation];
+            //        [MessageCenter processFetchMessages];
+            
+            // force load child view controllers
+            [self forceLoadViewControllers];
+            [MessageCenter setSystemBadge];        
+            return nil;
+        }];
     };
     
     if (user) {
