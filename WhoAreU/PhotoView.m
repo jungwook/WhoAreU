@@ -33,42 +33,24 @@
     self.backgroundColor = [UIColor clearColor];
 }
 
-- (void)setAnchorPoint:(CGPoint)anchorPoint forView:(UIView *)view
+- (void)setWhere:(PFGeoPoint *)where
 {
-    CGPoint newPoint = CGPointMake(view.bounds.size.width  * anchorPoint.x,
-                                   view.bounds.size.height * anchorPoint.y);
+    _where = where;
     
-    CGPoint oldPoint = CGPointMake(view.bounds.size.width  * view.layer.anchorPoint.x,
-                                   view.bounds.size.height * view.layer.anchorPoint.y);
-    
-    newPoint = CGPointApplyAffineTransform(newPoint, view.transform);
-    oldPoint = CGPointApplyAffineTransform(oldPoint, view.transform);
-    
-    CGPoint position = view.layer.position;
-    
-    position.x -= oldPoint.x;
-    position.x += newPoint.x;
-    
-    position.y -= oldPoint.y;
-    position.y += newPoint.y;
-    
-    view.layer.position = position;
-    view.layer.anchorPoint = anchorPoint;
+    [self setNeedsDisplay];
 }
-
 
 - (void)drawRect:(CGRect)rect
 {
-    CGFloat w = CGRectGetWidth(rect);
     if (self.where) {
-        __LF
+        const CGFloat radius = 4;
+        CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), m = MIN(w, h)/2.0;
 
-        CGFloat size = 8, f = 0.55f;
-        UIBezierPath *point = [UIBezierPath bezierPath];
-        [point moveToPoint:CGPointMake(w/2, 0)];
-        [point addLineToPoint:CGPointMake(w/2+f*size, size)];
-        [point addLineToPoint:CGPointMake(w/2-f*size, size)];
-        [point addLineToPoint:CGPointMake(w/2, 0)];
+        CLLocationDegrees angle = [[User where] headingToLocation:self.where]-[Engine heading]-90.0f;
+        CLLocationDegrees heading = degreesToRadians(angle);
+        
+        CGPoint top = CGPointMake(cos(heading)*(m-radius)+m, sin(heading)*(m-radius)+m);
+        UIBezierPath *point = [UIBezierPath bezierPathWithArcCenter:top radius:4 startAngle:0 endAngle:2*M_PI clockwise:YES];
         
         [[UIColor redColor] setFill];
         [point fill];
@@ -177,16 +159,7 @@
 {
     _where = where;
     self.ring.where = where;
-
-    CLLocationDirection trueHeading = [Engine heading];
-    CLLocationDirection heading = [[User where] headingToLocation:where];
-    CLLocationDirection h = heading - trueHeading;
-
-    self.ring.transform = CGAffineTransformMakeRotation(h * M_PI/180);
-
-    [self setNeedsDisplay];
 }
-
 
 - (void)updateMediaOnViewController:(UIViewController *)viewController
 {

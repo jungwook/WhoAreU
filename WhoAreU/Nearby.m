@@ -182,6 +182,7 @@
         self.users = nil;
         [self.tableView reloadData];
     }
+    
     [self usersNear:[User me] completionHandler:^(NSArray<User *> *users) {
         if (reset) {
             self.users = users;
@@ -253,7 +254,7 @@
     }
     [query whereKey:fObjectId notEqualTo:[User me].objectId];
     if (self.sortby == kNearBySortByLocation) {
-        NSLog(@"Querying location");
+        NSLog(@"Querying location:%@", [User where]);
         [query whereKey:fWhere nearGeoPoint:[User where]];
     }
     else {
@@ -261,8 +262,13 @@
         [query orderByDescending:fUpdatedAt];
     }
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable users, NSError * _Nullable error) {
-        if (block) {
-            block(users);
+        if (error) {
+            NSLog(@"Error[%s]:%@", __func__, error.localizedDescription);
+        }
+        else {
+            if (block) {
+                block(users);
+            }
         }
     }];
 }

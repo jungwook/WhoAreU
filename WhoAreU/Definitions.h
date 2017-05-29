@@ -105,8 +105,8 @@
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define __LF NSLog(@"%s", __FUNCTION__);
-#define degreesToRadians(x) (M_PI * x / 180.0)
-#define radiansToDegrees(x) (x * 180.0 / M_PI)
+#define degreesToRadians(__x__) (M_PI * __x__ / 180.0f)
+#define radiansToDegrees(__x__) (__x__ * 180.0f / M_PI)
 
 #define ANOTIF(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:__Y__ name:__X__ object:nil]
 

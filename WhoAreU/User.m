@@ -305,6 +305,12 @@ NSString* __usernames(NSArray*users)
     [[User me] saveInBackground];
 }
 
+- (PFGeoPoint *)where
+{
+    PFGeoPoint *w = [self objectForKey:fWhere];
+    return w ? w : SIMULATOR_LOCATION;
+}
+
 - (id)simpleDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
