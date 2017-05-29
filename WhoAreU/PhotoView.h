@@ -10,7 +10,7 @@
 
 @interface UserView : UIView
 @property (strong, nonatomic) User *user;
-@property (strong, nonatomic) PFGeoPoint *where;
+
 - (void) clear;
 - (void) updateMediaOnViewController:(UIViewController*)viewController;
 - (void) setUserId:(id)userId withThumbnail:(id)thumbnail;

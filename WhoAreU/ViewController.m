@@ -14,13 +14,23 @@
 
 @implementation ViewController
 
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    __LF
+}
+
 - (void)viewDidLoad {
     __LF
     
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    [super viewDidLoad];    
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

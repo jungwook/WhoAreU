@@ -21,7 +21,7 @@
 
 #define PHOTOVIEWSIZE 30
 
-#define chatFont [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold]
+#define chatFont [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold]
 
 typedef enum : NSUInteger {
     kBalloonTypeLeft = 0,

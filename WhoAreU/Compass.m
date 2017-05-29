@@ -92,7 +92,6 @@
     if (self) {
         _lineWidth = 1.0f;
         _lineColor = [UIColor clearColor];
-        _northColor = [UIColor blackColor];
         _paneColor = [UIColor redColor];
         self.backgroundColor = [UIColor clearColor];
         
@@ -132,37 +131,42 @@ UIColor* realColor(UIColor *col)
 
 - (void)drawRect:(CGRect)rect
 {
-    CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect);
-    CGFloat midX = CGRectGetMidX(rect);
-    CGFloat midY = CGRectGetMidY(rect);
-//    CGFloat hp = MIN(CGRectGetWidth(rect), CGRectGetHeight(rect)) / 2.0f * 0.7f;
+    CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), m = MIN(w, h)/2.0f;
     
-    UIBezierPath *triangle = [UIBezierPath new];
+    UIBezierPath *circle = [UIBezierPath bezierPathWithArcCenter:CGPointMake(m, h-m) radius:(m-self.lineWidth) startAngle:0 endAngle:2*M_PI clockwise:YES];
     
-    [triangle moveToPoint:CGPointMake(midX, 0)];
-    [triangle addLineToPoint:CGPointMake(midX-midY/3.0f, midY/2.0f)];
-    [triangle addLineToPoint:CGPointMake(midX+midY/3.0f, midY/2.0f)];
-    [triangle addLineToPoint:CGPointMake(midX, 0)];
-    
-    triangle.lineWidth = self.lineWidth;
-
     [realColor(self.lineColor) setStroke];
-    [realColor(self.paneColor) setFill];
-    [triangle fill];
-    [triangle stroke];
+    [circle setLineWidth:self.lineWidth];
+    [circle stroke];
     
-    NSString *north = @"N";
-    UIFont *font = [UIFont systemFontOfSize:floor(h/2.0f) weight:UIFontWeightBlack];
+    CGFloat f = 0.3f, f2 = 0.25f;
     
-    NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-    style.alignment = NSTextAlignmentCenter;
+    {
+        UIBezierPath *triangle = [UIBezierPath new];
+        [triangle moveToPoint:CGPointMake(m, f*m)];
+        [triangle addLineToPoint:CGPointMake(m-f2*m, m)];
+        [triangle addLineToPoint:CGPointMake(m+f2*m, m)];
+        [triangle addLineToPoint:CGPointMake(m, f*m)];
+        
+        triangle.lineWidth = self.lineWidth;
+        [realColor(self.lineColor) setStroke];
+        [realColor(self.paneColor) setFill];
+        [triangle fill];
+        [triangle stroke];
+    }
+    {
+        UIBezierPath *triangle = [UIBezierPath new];
+        [triangle moveToPoint:CGPointMake(m, h-f*m)];
+        [triangle addLineToPoint:CGPointMake(m-f2*m, m)];
+        [triangle addLineToPoint:CGPointMake(m+f2*m, m)];
+        [triangle addLineToPoint:CGPointMake(m, h-f*m)];
+        
+        triangle.lineWidth = self.lineWidth;
+        [realColor(self.lineColor) setStroke];
+        [realColor(self.paneColor) setFill];
+        [triangle stroke];
+    }
     
-    id attr = @{
-                NSFontAttributeName : font,
-                NSForegroundColorAttributeName : realColor(self.northColor),
-                NSParagraphStyleAttributeName : style,
-                };
-    [north drawInRect:CGRectMake(0, midY/2.0f, w, h*2/3.0f) withAttributes:attr];
     
 //    UIBezierPath *path = [UIBezierPath arrowFromPoint:CGPointMake(midX, midY+h) toPoint:CGPointMake(midX, midY-h) tailWidth:h/(1.5*f) headWidth:h/f2 headLength:h/f1];
 //    
@@ -197,12 +201,6 @@ UIColor* realColor(UIColor *col)
 - (void)setLineColor:(UIColor *)lineColor
 {
     _lineColor = lineColor;
-    [self setNeedsDisplay];
-}
-
-- (void)setNorthColor:(UIColor *)northColor
-{
-    _northColor = northColor;
     [self setNeedsDisplay];
 }
 

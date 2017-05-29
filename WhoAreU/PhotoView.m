@@ -13,55 +13,10 @@
 
 #pragma mark UserView
 
-@interface HeadingRing : UIView
-@property (strong, nonatomic) PFGeoPoint* where;
-@end
-
-@implementation HeadingRing
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [self setup];
-    }
-    return self;
-}
-
-- (void)setup
-{
-    self.backgroundColor = [UIColor clearColor];
-}
-
-- (void)setWhere:(PFGeoPoint *)where
-{
-    _where = where;
-    
-    [self setNeedsDisplay];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    if (self.where) {
-        const CGFloat radius = 4;
-        CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), m = MIN(w, h)/2.0;
-
-        CLLocationDegrees angle = [[User where] headingToLocation:self.where]-[Engine heading]-90.0f;
-        CLLocationDegrees heading = degreesToRadians(angle);
-        
-        CGPoint top = CGPointMake(cos(heading)*(m-radius)+m, sin(heading)*(m-radius)+m);
-        UIBezierPath *point = [UIBezierPath bezierPathWithArcCenter:top radius:4 startAngle:0 endAngle:2*M_PI clockwise:YES];
-        
-        [[UIColor redColor] setFill];
-        [point fill];
-    }
-}
-
-@end
-
 @interface UserView()
 @property (strong, nonatomic) PhotoView *photoView;
-@property (strong, nonatomic) HeadingRing *ring;
+@property (strong, nonatomic) UILabel* gender;
+@property (strong, nonatomic) UIView* ring;
 @property (nonatomic) BOOL on;
 @end
 
@@ -84,16 +39,26 @@
 
 - (void)setup
 {
-    self.ring = [HeadingRing new];
-    
     self.photoView = [PhotoView new];
     self.photoView.backgroundColor = kAppColor;
     self.backgroundColor = [UIColor clearColor];
-    self.backgroundColor = [UIColor yellowColor];
     self.clipsToBounds = NO;
     
     [self addSubview:self.photoView];
+    
+    self.ring = [UIView new];
+    self.ring.borderWidth = 3.0f;
+    self.ring.borderColor = kAppColor;
     [self addSubview:self.ring];
+    
+    self.gender = [UILabel new];
+    self.gender.textColor = [UIColor whiteColor];
+    self.gender.font = [UIFont boldSystemFontOfSize:10];
+    self.gender.textAlignment = NSTextAlignmentCenter;
+    self.gender.clipsToBounds = YES;
+    
+    [self addSubview:self.gender];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                          selector:@selector(newMessage:)
                                              name:kNotificationNewChatMessage
@@ -121,9 +86,14 @@
     _user = user;
     
     [self.user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        self.where = user.where;
         self.photoView.user = user;
         self.photoView.backgroundColor = user.genderColor;
+        
+        self.gender.text = self.user.genderCode;
+        self.gender.backgroundColor = self.user.genderColor;
+        
+        self.ring.borderColor = self.user.genderColor;
+        
         [self setNeedsLayout];
         [self setCount];
     }];
@@ -155,12 +125,6 @@
     [self.photoView clear];
 }
 
-- (void)setWhere:(PFGeoPoint *)where
-{
-    _where = where;
-    self.ring.where = where;
-}
-
 - (void)updateMediaOnViewController:(UIViewController *)viewController
 {
     [self.photoView updateMediaOnViewController:viewController];
@@ -168,13 +132,17 @@
 
 - (void)layoutSubviews
 {
+    const CGFloat g = 17;
     CGRect frame = self.bounds;
     CGFloat w = CGRectGetWidth(frame);
     CGFloat h = CGRectGetHeight(frame);
     CGFloat m = MIN(w, h);
     self.photoView.radius = m / 2.0f;
-    self.photoView.frame = CGRectMake((w-m)/2.0f, (h-m)/2.0f, m, m);
+    self.photoView.frame = CGRectMake((w-m)/2.0f, h-m, m, m);
+    self.gender.frame = CGRectMake(w-g, h-g, g, g);
+    self.gender.radius = g/2.0f;
     self.ring.frame = self.photoView.frame;
+    self.ring.radius = m/2.0f;
 }
 
 @end

@@ -96,7 +96,7 @@
             CGFloat h = CGRectGetHeight(self.bounds);
             
             CGFloat o = self.type == kBalloonTypeRight ? INSET : INSET+inset;
-            self.label.frame = CGRectMake(o, 0, w-o, h);
+            self.label.frame = CGRectMake(o, 0, w-o-INSET, h);
         }
             break;
             

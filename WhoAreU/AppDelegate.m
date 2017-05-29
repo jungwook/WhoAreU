@@ -34,6 +34,23 @@
     [self registerForNotifications:application launchOptions:launchOptions];
 //    [SimulatedUsers createUsers];
     
+    id attr = @{
+                NSForegroundColorAttributeName : [UIColor whiteColor],
+                NSFontAttributeName : [UIFont systemFontOfSize:17 weight:UIFontWeightBold],
+                };
+    [[UINavigationBar appearance] setTitleTextAttributes:attr];
+    [[UINavigationBar appearance] setBarTintColor:kAppColor];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    
+    // Navigation bar buttons appearance
+    
+    attr = @{
+             NSFontAttributeName : [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold],
+//             NSShadowAttributeName : [UIColor blackColor],
+             NSForegroundColorAttributeName : [UIColor whiteColor],
+             };
+    [[UIBarButtonItem appearance] setTitleTextAttributes:attr forState:UIControlStateNormal];
+    
     return YES;
 }
 

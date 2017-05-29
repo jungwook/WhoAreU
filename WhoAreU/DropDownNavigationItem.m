@@ -10,18 +10,22 @@
 #import "PopupMenu.h"
 
 @interface TriangleView : UIView
-
+@property (strong, nonatomic) UIColor *color;
 @end
 
 @implementation TriangleView
+
+- (void)setColor:(UIColor *)color
+{
+    _color = color;
+    [self setNeedsDisplay];
+}
 
 - (void)drawRect:(CGRect)rect
 {
     NSString *triangle = @"\u25bc";
     
     UIFont *font = [UIFont boldSystemFontOfSize:12];
-    UIColor *color = [UIColor lightGrayColor];
-    color = [UIColor redColor];
     
     CGRect box = [triangle boundingRectWithFont:font maxWidth:20];
     CGFloat bw = CGRectGetWidth(box), bh = CGRectGetHeight(box);
@@ -29,7 +33,7 @@
 
     id attr = @{
                 NSFontAttributeName : font,
-                NSForegroundColorAttributeName : color,
+                NSForegroundColorAttributeName : self.color,
                 };
     [triangle drawInRect:CGRectInset(rect, (w-bw)/2.0f, (h-bh)/2.0f) withAttributes:attr];
 }
@@ -108,6 +112,24 @@
     [PopupMenu showFromView:view menuItems:menu completion:self.action cancel:nil];
 }
 
+- (void)setTextColor:(UIColor *)textColor
+{
+    _textColor = textColor;
+    self.titleLabel.textColor = self.textColor;
+}
+
+- (void)setFont:(UIFont *)font
+{
+    _font = font;
+    self.titleLabel.font = self.font;
+}
+
+- (void)setPointerColor:(UIColor *)pointerColor
+{
+    _pointerColor = pointerColor;
+    self.arrowView.color = self.pointerColor;
+}
+
 - (void) setup
 {
     iconSize = 20.0f;
@@ -123,8 +145,11 @@
     self.arrowView.backgroundColor = [UIColor clearColor];
     
     self.titleLabel.frame = self.itemView.bounds;
-    self.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightMedium];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
+
+    self.textColor = [UIColor whiteColor];
+    self.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
+    self.pointerColor = [UIColor colorWithWhite:0.90f alpha:1.0f];
     
     [self.itemView addSubview:self.titleLabel];
     [self.itemView addSubview:self.arrowView];
