@@ -143,6 +143,7 @@ typedef void(^MediaBlock)(Media *media);
 typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions options, CGRect keyboardFrame);
 typedef void(^FloatEventBlock)(CGFloat value);
 typedef void(^AlertAction)(UIAlertAction *action);
+typedef void(^ErrorBlock)(NSError* error);
 typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 typedef UNNotificationPresentationOptions(^PushHandlerBlock)(id payload, id senderId, id channelId);
 

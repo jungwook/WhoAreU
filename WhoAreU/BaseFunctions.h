@@ -71,7 +71,8 @@ UIColor *UIColorFromNSString(NSString *string);
 @end
 
 @interface NSString (extensions)
-- (CGRect) boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width;
+- (CGRect)  boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width;
 - (CGFloat) heightWithFont:(UIFont*)font maxWidth:(CGFloat)width;
+- (BOOL)    isValidEmail;
 @end
 #endif /* BaseFunctions_h */

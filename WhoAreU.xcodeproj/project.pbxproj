@@ -84,6 +84,9 @@
 		12D0F2F21EC6BA19004F2E3E /* MaterialDesignSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2F11EC6BA18004F2E3E /* MaterialDesignSymbol.m */; };
 		12D0F2F41EC6BFDA004F2E3E /* material-design-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12D0F2F31EC6BA28004F2E3E /* material-design-icons.ttf */; };
 		12D0F2FB1EC7F5E1004F2E3E /* NSData+GZIP.m in Sources */ = {isa = PBXBuildFile; fileRef = 12D0F2FA1EC7F5E1004F2E3E /* NSData+GZIP.m */; };
+		12DE01611EDC09D200E8D6DC /* Login.m in Sources */ = {isa = PBXBuildFile; fileRef = 12DE01601EDC09D200E8D6DC /* Login.m */; };
+		12DE01641EDC0A0B00E8D6DC /* SignupAndLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = 12DE01631EDC0A0B00E8D6DC /* SignupAndLogin.m */; };
+		12DE01671EDC46E800E8D6DC /* LoginOrSignup.m in Sources */ = {isa = PBXBuildFile; fileRef = 12DE01661EDC46E800E8D6DC /* LoginOrSignup.m */; };
 		12F96D521EB2C2E10054DA6C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F96D511EB2C2E10054DA6C /* UserNotifications.framework */; };
 		12F96D561EB453620054DA6C /* ChatView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12F96D551EB453620054DA6C /* ChatView.m */; };
 		A206A0F201B0F7145ED3C150 /* libPods-WhoAreU.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4A487C12DE9527ADBA9164D /* libPods-WhoAreU.a */; };
@@ -236,6 +239,12 @@
 		12D0F2F81EC7F5E1004F2E3E /* GZIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZIP.h; sourceTree = "<group>"; };
 		12D0F2F91EC7F5E1004F2E3E /* NSData+GZIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+GZIP.h"; sourceTree = "<group>"; };
 		12D0F2FA1EC7F5E1004F2E3E /* NSData+GZIP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+GZIP.m"; sourceTree = "<group>"; };
+		12DE015F1EDC09D200E8D6DC /* Login.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Login.h; sourceTree = "<group>"; };
+		12DE01601EDC09D200E8D6DC /* Login.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Login.m; sourceTree = "<group>"; };
+		12DE01621EDC0A0B00E8D6DC /* SignupAndLogin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignupAndLogin.h; sourceTree = "<group>"; };
+		12DE01631EDC0A0B00E8D6DC /* SignupAndLogin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignupAndLogin.m; sourceTree = "<group>"; };
+		12DE01651EDC46E800E8D6DC /* LoginOrSignup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginOrSignup.h; sourceTree = "<group>"; };
+		12DE01661EDC46E800E8D6DC /* LoginOrSignup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginOrSignup.m; sourceTree = "<group>"; };
 		12F96D511EB2C2E10054DA6C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		12F96D531EB2D3910054DA6C /* WhoAreU.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WhoAreU.entitlements; sourceTree = "<group>"; };
 		12F96D541EB453620054DA6C /* ChatView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatView.h; sourceTree = "<group>"; };
@@ -440,6 +449,12 @@
 				124587521EC0248700746AAF /* Channels.m */,
 				120A02461EDBDA7500547CDA /* EntryPoint.h */,
 				120A02471EDBDA7500547CDA /* EntryPoint.m */,
+				12DE015F1EDC09D200E8D6DC /* Login.h */,
+				12DE01601EDC09D200E8D6DC /* Login.m */,
+				12DE01621EDC0A0B00E8D6DC /* SignupAndLogin.h */,
+				12DE01631EDC0A0B00E8D6DC /* SignupAndLogin.m */,
+				12DE01651EDC46E800E8D6DC /* LoginOrSignup.h */,
+				12DE01661EDC46E800E8D6DC /* LoginOrSignup.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -671,7 +686,9 @@
 				124587451EBD61CF00746AAF /* Refresh.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
 				123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */,
+				12DE01671EDC46E800E8D6DC /* LoginOrSignup.m in Sources */,
 				12134D501EBC0615001EEC5E /* Chats.m in Sources */,
+				12DE01611EDC09D200E8D6DC /* Login.m in Sources */,
 				124587591EC3F3E100746AAF /* CenterScrollView.m in Sources */,
 				1215C5A71EA5C43800BA509E /* Nearby.m in Sources */,
 				123AF1481E9E0C9600ED0547 /* FloatingDrawerViewController.m in Sources */,
@@ -684,6 +701,7 @@
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
 				12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
+				12DE01641EDC0A0B00E8D6DC /* SignupAndLogin.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				1225F0171EAF2881002763A0 /* UserProfile.m in Sources */,
 				1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */,

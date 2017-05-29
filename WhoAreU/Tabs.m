@@ -95,6 +95,10 @@
         }];
     }
     else {
+        if (nil == [User me]) {
+            [self performSegueWithIdentifier:@"Entry" sender:self];
+        }
+/*
         NSString *prevUserName = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
         
         if (prevUserName && [User logInWithUsername:prevUserName password:prevUserName]) {
@@ -194,6 +198,7 @@
             };
             [self presentViewController:signup animated:YES completion:nil];
         }
+ */
     }
 }
 

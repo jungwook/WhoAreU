@@ -21,6 +21,15 @@
     
 //    [self performSegueWithIdentifier:@"Signup" sender:self];
 
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [User logOut];
+    if (nil == [User me]) {
+        [self performSegueWithIdentifier:@"Entry" sender:self];
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
