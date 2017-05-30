@@ -45,6 +45,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section==0)
+        return 0;
+    else
+        return 20;
+}
+
 /*
 #pragma mark - Navigation
 

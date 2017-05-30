@@ -15,6 +15,7 @@
 @interface Profile () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet PhotoView *photoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nicknameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *username;
 @property (weak, nonatomic) IBOutlet UITextField *nickname;
 @property (weak, nonatomic) IBOutlet UITextField *introduction;
 @property (weak, nonatomic) IBOutlet UILabel *sinceLabel;
@@ -153,6 +154,7 @@
     self.nickname.text = self.me.nickname;
     self.introduction.text = self.me.introduction;
     self.nicknameLabel.text = self.me.nickname;
+    self.username.text = self.me.username;
     self.sinceLabel.text = [NSString stringWithFormat:@"member since %@", [NSDateFormatter localizedStringFromDate:self.me.createdAt dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle]];
     self.credits.text = [@(self.me.credits).stringValue stringByAppendingString:@" Credits"];
     [self.photoImageView setMedia:self.me.media];
@@ -183,15 +185,18 @@
             break;
             
         case 1: {
-            return [self headerViewWithTitle:@"Photos & Videos" action:@selector(addMoreMedia:)];
+            return [self headerViewWithTitle:@"Profile" action:nil];
         }
             break;
             
         case 2: {
-            return [self headerViewWithTitle:@"Credits" action:@selector(chargeCredits:)];
+            return [self headerViewWithTitle:@"Photos & Videos" action:@selector(addMoreMedia:)];
         }
             break;
             
+        case 3: {
+            return [self headerViewWithTitle:@"Credits" action:@selector(chargeCredits:)];
+        }
         default:
             return nil;
             break;
@@ -215,7 +220,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section>=1)
-        return 50;
+        return 40;
     else
         return 0;
 }
@@ -223,30 +228,33 @@
 - (UIView*) headerViewWithTitle:(NSString*)title action:(SEL)action
 {
     CGFloat w = CGRectGetWidth(self.view.bounds);
-    CGFloat h = 50.0f, height = 22.0f, labelHeight = 30.0f;
+    CGFloat h = 50.0f, size = 22.0f, labelHeight = 30.0f;
     CGFloat o = 10.0f;
     UIView *v = [UIView new];
     UILabel *titleLabel = [UILabel new];
     titleLabel.frame = CGRectMake(o,
-                                  h-labelHeight,
+                                  o,
                                   w,
                                   labelHeight);
-    titleLabel.text = title;
-    titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+    titleLabel.text = [title uppercaseString];
+    titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
+    titleLabel.textColor = kAppColor;
     
-    UIButton *addMoreButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [addMoreButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
-    [addMoreButton addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
-    addMoreButton.frame = CGRectMake(w-o-height,
-                                     h-height-o,
-                                     height,
-                                     height);
-    addMoreButton.tintColor = [UIColor whiteColor];
-    addMoreButton.backgroundColor = [UIColor blackColor];
-    addMoreButton.radius = height/2.0f;
-    
+    if (action) {
+        UIButton *addMoreButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        [addMoreButton setImage:[UIImage imageNamed:@"plus"] forState:UIControlStateNormal];
+        [addMoreButton addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+        addMoreButton.frame = CGRectMake(w-o-size,
+                                         h-size-o,
+                                         size,
+                                         size);
+        addMoreButton.tintColor = [UIColor whiteColor];
+        addMoreButton.backgroundColor = kAppColor;
+        addMoreButton.radius = size/2.0f;
+        
+        [v addSubview:addMoreButton];
+    }
     [v addSubview:titleLabel];
-    [v addSubview:addMoreButton];
     return v;
 }
 
