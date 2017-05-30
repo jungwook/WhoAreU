@@ -50,6 +50,7 @@
 		1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F0191EB02B1E002763A0 /* ModalAnimator.m */; };
 		1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01B1EB02B1E002763A0 /* ModalViewController.m */; };
 		1225F0201EB07491002763A0 /* Credits.m in Sources */ = {isa = PBXBuildFile; fileRef = 1225F01F1EB07491002763A0 /* Credits.m */; };
+		122DFAB61EDCF5A700581C6B /* Setting.m in Sources */ = {isa = PBXBuildFile; fileRef = 122DFAB51EDCF5A700581C6B /* Setting.m */; };
 		1233F2281ECC5D9F00154CE6 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1233F2271ECC5D9F00154CE6 /* WebSocket.m */; };
 		123AF1461E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF13F1E9E0C9600ED0547 /* FloatingDrawerSpringAnimator.m */; };
 		123AF1471E9E0C9600ED0547 /* FloatingDrawerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 123AF1411E9E0C9600ED0547 /* FloatingDrawerView.m */; };
@@ -172,6 +173,8 @@
 		1225F01B1EB02B1E002763A0 /* ModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalViewController.m; sourceTree = "<group>"; };
 		1225F01E1EB07491002763A0 /* Credits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credits.h; sourceTree = "<group>"; };
 		1225F01F1EB07491002763A0 /* Credits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Credits.m; sourceTree = "<group>"; };
+		122DFAB41EDCF5A700581C6B /* Setting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Setting.h; sourceTree = "<group>"; };
+		122DFAB51EDCF5A700581C6B /* Setting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Setting.m; sourceTree = "<group>"; };
 		1233F2261ECC5D9F00154CE6 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		1233F2271ECC5D9F00154CE6 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
 		123AF13D1E9E0C9600ED0547 /* FloatingDrawerAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingDrawerAnimation.h; sourceTree = "<group>"; };
@@ -455,6 +458,8 @@
 				12DE01631EDC0A0B00E8D6DC /* SignupAndLogin.m */,
 				12DE01651EDC46E800E8D6DC /* LoginOrSignup.h */,
 				12DE01661EDC46E800E8D6DC /* LoginOrSignup.m */,
+				122DFAB41EDCF5A700581C6B /* Setting.h */,
+				122DFAB51EDCF5A700581C6B /* Setting.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -701,6 +706,7 @@
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
 				12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
+				122DFAB61EDCF5A700581C6B /* Setting.m in Sources */,
 				12DE01641EDC0A0B00E8D6DC /* SignupAndLogin.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				1225F0171EAF2881002763A0 /* UserProfile.m in Sources */,
