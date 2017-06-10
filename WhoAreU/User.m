@@ -7,8 +7,6 @@
 //
 
 #import "User.h"
-#import "S3File.h"
-#import "BaseFunctions.h"
 #import "MessageCenter.h"
 #import "NSData+GZIP.h"
 #import "MediaPicker.h"
@@ -233,9 +231,10 @@ NSString* __usernames(NSArray*users)
 - (void)imageLoaded:(ImageBlock)block
 {
     [self fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-        [S3File getDataFromFile:self.media completedBlock:^(NSData *data, NSError *error, BOOL fromCache) {
+        id filename = self.type == kMediaTypePhoto ? self.media : self.thumbnail;
+        [S3File getImageFromFile:filename imageBlock:^(UIImage *image) {
             if (block) {
-                block([UIImage imageWithData:data]);
+                block(image);
             }
         }];
     }];
@@ -452,6 +451,18 @@ NSString* __usernames(NSArray*users)
     }
 }
 
++ (NSString *)genderTypeStringFromGender:(GenderType)gender
+{
+    switch (gender) {
+        case kGenderTypeMale:
+            return @"Male";
+        case kGenderTypeFemale:
+            return @"Female";
+        case kGenderTypeUnknown:
+            return @"Unknown";
+    }
+}
+
 + (UIColor*) genderColorFromTypeString:(id)typeString
 {
     if ([typeString isEqualToString:@"Male"]) {
@@ -575,6 +586,7 @@ NSString* __usernames(NSArray*users)
         [self removeObjectForKey:fMedia];
         [self removeObjectForKey:fThumbnail];
     }
+    PostNotification(kNotificationUserMediaUpdated, media);
 }
 
 + (void)payForChatWithUser:(User*)user onViewController:(UIViewController *)viewController action:(AnyBlock)actionBlock
@@ -589,6 +601,11 @@ NSString* __usernames(NSArray*users)
                 actionBlock(channel);
             }
         }];
+        return;
+    }
+    
+    if ([User meEquals:user.objectId]) {
+        __alert(@"Warning", @"Cannot chat with self", nil, nil, viewController);
         return;
     }
     
@@ -767,16 +784,18 @@ NSString* __usernames(NSArray*users)
                 if (user.objectId) {
                     [simpleUser setObject:user.objectId forKey:fObjectId];
                 }
-                if (user.nickname) {
-                    [simpleUser setObject:user.nickname forKey:fNickname];
+                if (user.isDataAvailable) {
+                    if (user.nickname) {
+                        [simpleUser setObject:user.nickname forKey:fNickname];
+                    }
+                    if (user.thumbnail) {
+                        [simpleUser setObject:user.thumbnail forKey:fThumbnail];
+                    }
+                    if (user.channel) {
+                        [simpleUser setObject:user.channel forKey:fChannel];
+                    }
+                    [simpleUser setObject:user.genderTypeString forKey:fGender];
                 }
-                if (user.thumbnail) {
-                    [simpleUser setObject:user.thumbnail forKey:fThumbnail];
-                }
-                if (user.channel) {
-                    [simpleUser setObject:user.channel forKey:fChannel];
-                }
-                [simpleUser setObject:user.genderTypeString forKey:fGender];
                 [users addObject:simpleUser];
             }
             dictionary[fUsers] = users;
@@ -828,7 +847,7 @@ NSString* __usernames(NSArray*users)
                         [counter decreaseCount:counterId];
                     }
                     else {
-                        NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+                        LogError;
                     }
                 }];
             }];
@@ -854,6 +873,16 @@ NSString* __usernames(NSArray*users)
             NSLog(@"ERROR:[%s]%@", __func__, error.localizedDescription);
         }
     }];
+}
+
+@end
+
+@implementation Comment
+@dynamic user, nickname, thumbnail, age, channel, gender, comment, onId, where, type;
+
++ (NSString *)parseClassName
+{
+    return @"Comment";
 }
 
 @end

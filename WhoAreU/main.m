@@ -16,6 +16,7 @@ int main(int argc, char * argv[]) {
         [Message registerSubclass];
         [Channel registerSubclass];
         [History registerSubclass];
+        [Comment registerSubclass];
         
         NSLog(@"Subclasses registered");
 

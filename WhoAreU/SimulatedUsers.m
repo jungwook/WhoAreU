@@ -7,7 +7,6 @@
 //
 
 #import "SimulatedUsers.h"
-#import "S3File.h"
 
 @implementation SimulatedUsers
 

@@ -43,7 +43,7 @@
 + (void)        setSystemBadge;
 + (void)        saveChats;
 
-+ (NSString*)   channelNameForChannelId:(id)channelId;
++ (NSString*)   channelNameFromChannel:(id)dictionary;
 
 + (void)        processReadMessage:(id)message;
 

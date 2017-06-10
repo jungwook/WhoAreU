@@ -8,7 +8,6 @@
 
 #import "PhotoView.h"
 #import "MediaPicker.h"
-#import "S3File.h"
 #import "Preview.h"
 
 #pragma mark UserView
@@ -49,7 +48,7 @@
     self.ring = [UIView new];
     self.ring.borderWidth = 3.0f;
     self.ring.borderColor = kAppColor;
-    [self addSubview:self.ring];
+//    [self addSubview:self.ring];
     
     self.gender = [UILabel new];
     self.gender.textColor = [UIColor whiteColor];
@@ -126,8 +125,10 @@
 }
 
 - (void)updateMediaOnViewController:(UIViewController *)viewController
+                         completion:(ErrorBlock)handler
 {
-    [self.photoView updateMediaOnViewController:viewController];
+    [self.photoView updateMediaOnViewController:viewController
+                                     completion:handler];
 }
 
 - (void)layoutSubviews
@@ -185,7 +186,7 @@
 
 - (void)tapped:(id)sender
 {
-    PNOTIF(kNotificationEndEditing, nil);
+    PostNotification(kNotificationEndEditing, nil);
     if (self.user) {
         [PreviewUser showUser:self.user];
     }
@@ -197,18 +198,21 @@
 - (void)setUser:(User *)user
 {
     _user = user;
-    _media = user.media;
-    if (self.media) {
-        [self.activity startAnimating];
-        [S3File getImageFromFile:user.thumbnail imageBlock:^(UIImage *image) {
-            self.image = image;
-            [self.activity stopAnimating];
-        }];
-    }
-    else {
-        self.media = nil;
-        self.image = self.avatar;
-    }
+    
+    [self.user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        _media = user.media;
+        if (self.media) {
+            [self.activity startAnimating];
+            [S3File getImageFromFile:user.thumbnail imageBlock:^(UIImage *image) {
+                self.image = image;
+                [self.activity stopAnimating];
+            }];
+        }
+        else {
+            self.media = nil;
+            self.image = self.avatar;
+        }
+    }];
 }
 
 - (void)setUser:(User*)user thumbnail:(id)thumbnail
@@ -256,16 +260,19 @@
         [self.activity startAnimating];
         [self.media fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             if (error) {
-                NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+                LogError;
             }
             else {
                 CGFloat size = MIN(CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds));
                 
                 NSString *filename = self.media.type == kMediaTypeVideo ? self.media.thumbnail : (size < kThumbnailWidth ? self.media.thumbnail : self.media.media);
-                
-                [S3File getDataFromFile:filename dataBlock:^(NSData *data) {
-                    UIImage *photo = [UIImage imageWithData:data];
-                    self.image = photo;
+                [S3File getImageFromFile:filename imageBlock:^(UIImage *image) {
+                    if (image) {
+                        self.image = image;
+                    }
+                    else {
+                        self.media = nil;
+                    }
                     [self.activity stopAnimating];
                 }];
             }
@@ -316,21 +323,31 @@
         return avatar;
     }
     else {
-        avatar = [UIImage imageNamed:@"avatar"];
+        avatar = [UIImage avatar];
     }
     
     return avatar;
 }
 
 - (void)updateMediaOnViewController:(UIViewController *)viewController
+                         completion:(ErrorBlock)handler
 {
     void (^removeAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
         self.me.media = nil;
         [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-            NSLog(@"User:%@", self.me);
+            if (error) {
+                if (handler) {
+                    handler(error);
+                }
+            }
+            else {
+                self.image = self.avatar;
+                [self.activity stopAnimating];
+                if (handler) {
+                    handler(nil);
+                }
+            }
         }];
-        self.image = self.avatar;
-        [self.activity stopAnimating];
     };
     void (^updateAction)(UIAlertAction * _Nonnull action) = ^(UIAlertAction * _Nonnull action){
         [MediaPicker pickMediaOnViewController:viewController withUserMediaHandler:^(Media *media, BOOL picked) {
@@ -338,10 +355,19 @@
                 [self setMedia:media];
                 self.me.media = media;
                 [self.me saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                    NSLog(@"User:%@", self.me);
+                    if (error) {
+                        if (handler) {
+                            handler(error);
+                        }
+                    }
+                    else {
+                        [self.activity stopAnimating];
+                        if (handler) {
+                            handler(nil);
+                        }
+                    }
                 }];
             }
-            [self.activity stopAnimating];
         }];
     };
     void (^cancelAction)(UIAlertAction * action) = ^(UIAlertAction* action) {

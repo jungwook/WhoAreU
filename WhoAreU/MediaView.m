@@ -8,7 +8,6 @@
 
 #import "MediaView.h"
 #import "CenterScrollView.h"
-#import "S3File.h"
 #import "IndentedLabel.h"
 
 @interface MediaView() <UIScrollViewDelegate>
@@ -143,7 +142,7 @@
     
     
     [self dependingOn:(self.playerItem != nil) hideView:self.playerView action:nil];
-    [self dependingOn:(self.imageView.image) hideView:self.scrollView action:^{
+    [self dependingOn:(self.imageView.image != nil) hideView:self.scrollView action:^{
         [S3File getImageFromFile:self.media.media imageBlock:^(UIImage *image) {
             loadImageAction(image);
             [self slowlyShowView:self.scrollView completion:nil];
@@ -193,7 +192,7 @@
         loadVideoAction();
     }];
     
-    [self dependingOn:(self.imageView.image) hideView:self.scrollView action:nil];
+    [self dependingOn:(self.imageView.image != nil) hideView:self.scrollView action:nil];
 
 }
 

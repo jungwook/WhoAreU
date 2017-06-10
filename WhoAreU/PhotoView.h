@@ -12,17 +12,25 @@
 @property (strong, nonatomic) User *user;
 
 - (void) clear;
-- (void) updateMediaOnViewController:(UIViewController*)viewController;
-- (void) setUserId:(id)userId withThumbnail:(id)thumbnail;
+- (void) updateMediaOnViewController:(UIViewController *)viewController
+                          completion:(ErrorBlock)handler;
+- (void) setUserId:(id)userId
+     withThumbnail:(id)thumbnail;
 @end
 
 @interface PhotoView : UIView
 @property (strong, nonatomic) IBInspectable UIImage* image;
 @property (strong, nonatomic) Media* media;
 @property (strong, nonatomic) id dictionary;
+
 - (void) clear;
-- (void) updateMediaOnViewController:(UIViewController*)viewController;
+
+- (void) updateMediaOnViewController:(UIViewController*)viewController
+                          completion:(ErrorBlock)handler;
+
 - (void) setUser:(User *)user;
-- (void) setUserId:(id)userId withThumbnail:(id)thumbnail;
-- (void) setUser:(User*)user thumbnail:(id)thumbnail;
+- (void) setUserId:(id)userId
+     withThumbnail:(id)thumbnail;
+- (void) setUser:(User*)user
+       thumbnail:(id)thumbnail;
 @end

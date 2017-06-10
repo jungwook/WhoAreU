@@ -12,7 +12,6 @@
 #import "Compass.h"
 #import "Chat.h"
 #import "MessageCenter.h"
-#import "S3File.h"
 
 #pragma mark ChatsCell
 
@@ -43,7 +42,7 @@
         }
     }
     
-    self.nicknames.text = [MessageCenter channelNameForChannelId:channelId];
+    self.nicknames.text = [MessageCenter channelNameFromChannel:dictionary];
     
     if (selectedThumbnail) {
         [S3File getImageFromFile:selectedThumbnail imageBlock:^(UIImage *image) {
@@ -51,7 +50,7 @@
         }];
     }
     else {
-        __drawImage([UIImage imageNamed:@"avatar"], self.photoView);
+        __drawImage([UIImage avatar], self.photoView);
     }
     
     id last = [[MessageCenter sortedMessagesForChannelId:channelId] lastObject];
@@ -69,6 +68,11 @@
 
 @implementation Chats
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -78,8 +82,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    ANOTIF(kNotificationNewChannelAdded, @selector(notificationNewChannelAdded:));
-    ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
+    Notification(kNotificationNewChannelAdded, notificationNewChannelAdded:);
+    Notification(kNotificationNewChatMessage, notificationNewChatMessage:);
 }
 
 - (void) notificationNewChannelAdded:(id)notification

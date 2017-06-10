@@ -7,7 +7,6 @@
 //
 
 #import "Preview.h"
-#import "S3File.h"
 #import "CenterScrollView.h"
 #import "MediaView.h"
 

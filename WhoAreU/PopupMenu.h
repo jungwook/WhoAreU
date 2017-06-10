@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BlurView.h"
 
 typedef enum : NSUInteger {
     kPopupMenuDirectionDown = 0,
@@ -24,12 +25,18 @@ typedef enum : NSUInteger {
 
 + (void) showFromView:(id)sender
             menuItems:(NSArray*)menuItems
-           completion:(IndexBlock)completion
-               cancel:(VoidBlock)cancel;
+           completion:(SectionIndexBlock)completion
+               cancel:(VoidBlock)cancel
+                 rect:(CGRect)rect;
+
++ (void) showFromBarButtonItem:(UIBarButtonItem*)sender
+                     menuItems:(NSArray*)menuItems
+                    completion:(SectionIndexBlock)completion
+                        cancel:(VoidBlock)cancel;
 
 + (void) showFromFrame:(CGRect)frame
              menuItems:(NSArray*)menuItems
-            completion:(IndexBlock)completion
+            completion:(SectionIndexBlock)completion
                 cancel:(VoidBlock)cancel;
 
 @end

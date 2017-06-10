@@ -201,26 +201,6 @@ PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates)
     return [PFGeoPoint geoPointWithLatitude:coordinates.latitude longitude:coordinates.longitude];
 }
 
-NSString *NSStringFromUIColor(UIColor *color)
-{
-    const CGFloat *components = CGColorGetComponents(color.CGColor);
-    return [NSString stringWithFormat:@"[%f, %f, %f, %f]",
-            components[0],
-            components[1],
-            components[2],
-            components[3]];
-}
-
-UIColor *UIColorFromNSString(NSString *string)
-{
-    NSString *componentsString = [[string stringByReplacingOccurrencesOfString:@"[" withString:kStringNull] stringByReplacingOccurrencesOfString:@"]" withString:kStringNull];
-    NSArray *components = [componentsString componentsSeparatedByString:kStringCommaSpace];
-    return [UIColor colorWithRed:[(NSString*)components[0] floatValue]
-                           green:[(NSString*)components[1] floatValue]
-                            blue:[(NSString*)components[2] floatValue]
-                           alpha:[(NSString*)components[3] floatValue]];
-}
-
 id __dictionary(id object)
 {
     if ([object isKindOfClass:[PFObject class]]) {
@@ -349,6 +329,52 @@ id __dictionary(id object)
     return __distanceString(distance);
 }
 
+#define commaSpace @", "
+#define formattedAddressLines @"FormattedAddressLines"
+- (void) reverseGeocode:(StringBlock)handler
+{
+    NSString* errorString = @"Address not found";
+    
+    CLGeocoder *geocoder = [CLGeocoder new];
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:self.latitude longitude:self.longitude];
+    
+    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+
+        if (error) {
+            NSLog(@"failed with error: %@", error);
+            if (handler) {
+                handler(errorString);
+            }
+        }
+        
+        if (placemarks.count > 0)
+        {
+            NSString *address = @"";
+            
+            CLPlacemark* placemark = [placemarks firstObject];
+            id dic = placemark.addressDictionary;
+            
+            if([placemark.addressDictionary objectForKey:formattedAddressLines] != NULL) {
+                address = [[dic objectForKey:formattedAddressLines] componentsJoinedByString:commaSpace];
+            }
+            else {
+                address = errorString;
+            }
+            
+            if (handler) {
+                handler(address);
+            }
+        }
+        else {
+            if (handler) {
+                handler(errorString);
+            }
+        }
+    }];
+}
+#undef commaSpace
+#undef formattedAddressLines
+
 @end
 
 @implementation User (extensions)
@@ -401,6 +427,92 @@ id __dictionary(id object)
     return [UIColor colorWithRed:128/255.f green:128/255.f blue:128/255.f alpha:1.0f];
 }
 
+- (UIColor *)grayscale
+{
+    CGFloat red = 0;
+    CGFloat blue = 0;
+    CGFloat green = 0;
+    CGFloat alpha = 0;
+ 
+    if ([self getRed:&red green:&green blue:&blue alpha:&alpha]) {
+        return [UIColor colorWithWhite:(0.299*red + 0.587*green + 0.114*blue) alpha:alpha];
+    } else {
+        return self;
+    }
+}
+
+- (UIColor *)lighterColor
+{
+    CGFloat h, s, b, a;
+
+    if ([self getHue:&h saturation:&s brightness:&b alpha:&a]) {
+        return [UIColor colorWithHue:h
+                          saturation:s
+                          brightness:MIN(b * 1.3, 1.0)
+                               alpha:a];
+    }
+    else {
+        return self;
+    }
+}
+
+- (UIColor *)darkerColor
+{
+    CGFloat h, s, b, a;
+    if ([self getHue:&h saturation:&s brightness:&b alpha:&a]) {
+        return [UIColor colorWithHue:h
+                          saturation:s
+                          brightness:b * 0.75
+                               alpha:a];
+    }
+    else {
+        return self;
+    }
+}
+
++ (UIColor *)interpolateRGBColorFrom:(UIColor *)startColor
+                                  to:(UIColor *)endColor
+                        withFraction:(float)f
+{
+    UIColor *start = [UIColor colorWithCGColor:CGColorCreateCopyByMatchingToColorSpace(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), kCGRenderingIntentDefault, startColor.CGColor, NULL)];
+    UIColor *end = [UIColor colorWithCGColor:CGColorCreateCopyByMatchingToColorSpace(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), kCGRenderingIntentDefault, endColor.CGColor, NULL)];
+    
+    f = MAX(0, f);
+    f = MIN(1, f);
+    
+    const CGFloat *c1 = CGColorGetComponents(start.CGColor);
+    const CGFloat *c2 = CGColorGetComponents(end.CGColor);
+    
+    CGFloat r = c1[0] + (c2[0] - c1[0]) * f;
+    CGFloat g = c1[1] + (c2[1] - c1[1]) * f;
+    CGFloat b = c1[2] + (c2[2] - c1[2]) * f;
+    CGFloat a = c1[3] + (c2[3] - c1[3]) * f;
+    
+    return [UIColor colorWithRed:r green:g blue:b alpha:a];
+}
+
++ (UIColor *)interpolateHSVColorFrom:(UIColor *)startColor to:(UIColor *)endColor withFraction:(float)f
+{
+    UIColor *start = [UIColor colorWithCGColor:CGColorCreateCopyByMatchingToColorSpace(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), kCGRenderingIntentDefault, startColor.CGColor, NULL)];
+    UIColor *end = [UIColor colorWithCGColor:CGColorCreateCopyByMatchingToColorSpace(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), kCGRenderingIntentDefault, endColor.CGColor, NULL)];
+
+    f = MAX(0, f);
+    f = MIN(1, f);
+    
+    CGFloat h1,s1,v1,a1;
+    [start getHue:&h1 saturation:&s1 brightness:&v1 alpha:&a1];
+    
+    CGFloat h2,s2,v2,a2;
+    [end getHue:&h2 saturation:&s2 brightness:&v2 alpha:&a2];
+    
+    CGFloat h = h1 + (h2 - h1) * f;
+    CGFloat s = s1 + (s2 - s1) * f;
+    CGFloat v = v1 + (v2 - v1) * f;
+    CGFloat a = a1 + (a2 - a1) * f;
+    
+    return [UIColor colorWithHue:h saturation:s brightness:v alpha:a];
+}
+
 @end
 
 @implementation NSString (extensions)
@@ -420,6 +532,23 @@ id __dictionary(id object)
                                              options:options
                                           attributes:attributes
                                              context:nil]);
+}
+
+- (NSString*) substringWithNumberOfWords:(NSUInteger)count
+{
+    
+    NSArray *words = [self componentsSeparatedByString:@" "];
+    return [[words subarrayWithRange:NSMakeRange(0, MIN(count, words.count) - 1)] componentsJoinedByString:@" "];
+}
+
+- (UIColor*) UIColor
+{
+    NSString *componentsString = [[self stringByReplacingOccurrencesOfString:@"[" withString:kStringNull] stringByReplacingOccurrencesOfString:@"]" withString:kStringNull];
+    NSArray *components = [componentsString componentsSeparatedByString:kStringCommaSpace];
+    return [UIColor colorWithRed:[(NSString*)components[0] floatValue]
+                           green:[(NSString*)components[1] floatValue]
+                            blue:[(NSString*)components[2] floatValue]
+                           alpha:[(NSString*)components[3] floatValue]];
 }
 
 -(BOOL) isValidEmail
@@ -453,3 +582,24 @@ id __dictionary(id object)
     return ret;
 }
 @end
+
+@implementation UIView (extensions)
+
+- (void)drawImage:(UIImage *)image
+{
+    [self.layer setContents:(id)image.CGImage];
+    [self.layer setContentsGravity:kCAGravityResizeAspectFill];
+    [self.layer setMasksToBounds:YES];
+}
+
+@end
+
+@implementation UIImage (extensions)
+
++(UIImage *)avatar
+{
+    return [UIImage imageNamed:@"avatar"];
+}
+
+@end
+

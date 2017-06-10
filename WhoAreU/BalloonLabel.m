@@ -7,7 +7,6 @@
 //
 
 #import "BalloonLabel.h"
-#import "S3File.h"
 
 #define MEDIASIZE 160
 

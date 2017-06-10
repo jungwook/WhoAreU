@@ -43,16 +43,17 @@
 - (void) dealloc
 {
     __LF
-    RNOTIF(UIApplicationWillResignActiveNotification);
-    RNOTIF(UIApplicationDidBecomeActiveNotification);
+    RemoveAllNotifications;
+//    RNotification(UIApplicationWillResignActiveNotification);
+//    RNotification(UIApplicationDidBecomeActiveNotification);
 }
 
 - (instancetype)initWithId:(id)userId
 {
     self = [super init];
     if (self) {
-        ANOTIF(UIApplicationWillResignActiveNotification, @selector(notificationApplicationWillResignActive:));
-        ANOTIF(UIApplicationDidBecomeActiveNotification, @selector(notificationApplicationDidBecomeActive:));
+        Notification(UIApplicationWillResignActiveNotification, notificationApplicationWillResignActive:);
+        Notification(UIApplicationDidBecomeActiveNotification, notificationApplicationDidBecomeActive:);
         
         _userId = userId;
         self.isAlive = NO;
@@ -181,7 +182,7 @@
         NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
         if (error) {
-            NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+            LogError;
             return;
         }
         else {
@@ -192,7 +193,7 @@
     else if ([message isKindOfClass:[NSData class]]) {
         NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:message options:kNilOptions error:&error];
         if (error) {
-            NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+            LogError;
             return;
         }
         else {

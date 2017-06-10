@@ -30,4 +30,11 @@ typedef void(^MediaBoolBlock)(Media* media, BOOL picked);
 + (void) pickMediaOnViewController:(UIViewController*)viewController withUserMediaHandler:(MediaBoolBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaInfoHandler:(MediaInfoBlock)handler;
 + (void) pickMediaOnViewController:(UIViewController*)viewController withMediaHandler:(MediaDataBlock)handler;
+
++ (instancetype) mediaPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaInfoBlock:(MediaInfoBlock)block;
+
++ (instancetype) mediaPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType userMediaBlock:(MediaBoolBlock)block;
+
++ (instancetype) mediaPickerWithSourceType:(UIImagePickerControllerSourceType)sourceType mediaBlock:(MediaDataBlock)block;
+
 @end

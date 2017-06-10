@@ -15,9 +15,6 @@ CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
 UIImage*    __scaleImage(UIImage* image, CGSize size);
 void        __drawImage(UIImage *image, UIView* view);
 void        __circleizeView(UIView* view, CGFloat percent);
-//float       __heading(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
-//float       __headingRad(PFGeoPoint* fromLoc, PFGeoPoint* toLoc);
-//float       __headingUsers(PFUser* from, PFUser* to);
 NSData*     __compressedImageData(NSData* data, CGFloat width);
 NSData*     __compressedImageDataQuality(NSData* data, CGFloat width, CGFloat compressionRatio);
 NSString*   __randomObjectId();
@@ -35,17 +32,19 @@ NSString*   __dateString(NSDate* date);
 void        __alert(NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction, UIViewController* parent);
 id          __dictionary(id object);
 
-NSString *NSStringFromUIColor(UIColor *color);
-UIColor *UIColorFromNSString(NSString *string);
-
 @interface UIColor (extensions)
-- (NSString*)   stringValue;
-+ (UIColor*)    colorFromString:(NSString*)colorString;
-
+- (NSString*)stringValue;
++ (UIColor*) colorFromString:(NSString*)colorString;
 + (UIColor*) appColor;
 + (UIColor*) maleColor;
 + (UIColor*) femaleColor;
 + (UIColor*) unknownGenderColor;
+- (UIColor*) grayscale;
++ (UIColor*) interpolateHSVColorFrom:(UIColor *)start to:(UIColor *)end withFraction:(float)f;
++ (UIColor*) interpolateRGBColorFrom:(UIColor *)start to:(UIColor *)end withFraction:(float)f;
+- (UIColor*) lighterColor;
+- (UIColor*) darkerColor;
+
 @end
 
 @interface PFGeoPoint (extensions)
@@ -53,6 +52,7 @@ UIColor *UIColorFromNSString(NSString *string);
 - (NSString*) distanceStringToLocation:(PFGeoPoint *)location;
 - (CGFloat) headingInRadiansToLocation:(PFGeoPoint*)location;
 + (instancetype) geoPointFromWhere:(id)where;
+- (void) reverseGeocode:(StringBlock)handler;
 @end
 
 @interface NSDate (extensions)
@@ -74,5 +74,15 @@ UIColor *UIColorFromNSString(NSString *string);
 - (CGRect)  boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width;
 - (CGFloat) heightWithFont:(UIFont*)font maxWidth:(CGFloat)width;
 - (BOOL)    isValidEmail;
+- (NSString*) substringWithNumberOfWords:(NSUInteger)count;
+- (UIColor*) UIColor;
+@end
+
+@interface UIView (extensions)
+- (void) drawImage:(UIImage*)image;
+@end
+
+@interface UIImage (extensions)
++ (UIImage*) avatar;
 @end
 #endif /* BaseFunctions_h */

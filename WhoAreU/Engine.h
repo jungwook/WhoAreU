@@ -26,4 +26,5 @@ typedef enum : NSUInteger {
 @property (nonatomic) SimulatorStatus simulatorStatus;
 + (void) initializeSystems;
 + (CLLocationDirection) heading;
++ (BOOL) headingAvailable;
 @end

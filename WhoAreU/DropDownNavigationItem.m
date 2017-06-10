@@ -109,7 +109,11 @@
     BOOL dic = [self.menuItems isKindOfClass:[NSDictionary class]];
     
     id menu = dic ? @[self.menuItems] : ( array ? self.menuItems : @[] );
-    [PopupMenu showFromView:view menuItems:menu completion:self.action cancel:nil];
+    [PopupMenu showFromView:view
+                  menuItems:menu
+                 completion:self.action
+                     cancel:nil
+                       rect:view.frame];
 }
 
 - (void)setTextColor:(UIColor *)textColor

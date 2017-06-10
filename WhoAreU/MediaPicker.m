@@ -7,7 +7,6 @@
 //
 
 #import "MediaPicker.h"
-#import "S3File.h"
 #import "AppDelegate.h"
 
 @import MobileCoreServices;

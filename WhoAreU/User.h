@@ -69,6 +69,28 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 + (void)fetch:(id)channelId completion:(ChannelBlock)handler;
 @end
 
+#pragma mark Comment
+
+typedef enum : NSUInteger {
+    CommentTypeUser = 0,
+    CommentTypeMedia,
+    CommentTypeChat,
+} CommentType;
+
+
+@interface Comment : PFObject <PFSubclassing>
+@property (retain) User *user;
+@property (retain) NSString* nickname;
+@property (retain) NSString* thumbnail;
+@property (retain) NSString* age;
+@property (retain) NSString* channel;
+@property (retain) NSString* comment;
+@property (retain) NSString* onId;
+@property (retain) PFGeoPoint* where;
+@property CommentType type;
+@property GenderType gender;
+@end
+
 #pragma mark MessageHistory
 
 @interface History : PFObject <PFSubclassing>
@@ -155,6 +177,7 @@ typedef NS_OPTIONS(NSUInteger, MessageType)
 // Gender related
 - (void)        setGenderTypeFromString:(NSString*)gender;
 - (void)        setGenderTypeFromCode:(NSString *)genderCode;
++ (NSString*)   genderTypeStringFromGender:(GenderType)gender;
 - (NSString*)   genderTypeString;
 - (NSString*)   genderCode;
 - (UIColor*)    genderColor;

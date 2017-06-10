@@ -22,6 +22,7 @@
 @import StoreKit;
 
 #import "Definitions.h"
+#import "S3File.h"
 #import "BaseFunctions.h"
 #import "ObjectIdStore.h"
 #import "User.h"

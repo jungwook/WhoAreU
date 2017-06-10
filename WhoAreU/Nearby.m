@@ -7,8 +7,9 @@
 //
 
 #import "Nearby.h"
+#import "Profile.h"
 #import "PhotoView.h"
-#import "Compass.h"
+#import "CompassView.h"
 #import "IndentedLabel.h"
 #import "UserProfile.h"
 #import "Chat.h"
@@ -16,109 +17,12 @@
 #import "MediaCollection.h"
 #import "BalloonLabel.h"
 #import "MessageCenter.h"
-#import "DropDownNavigationItem.h"
+#import "UserCell.h"
+#import "BlurView.h"
+#import "SelectionTab.h"
 
-@interface NoMoreCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *label;
-
-@end
-
-@implementation NoMoreCell
-
-
-@end
-
-@interface UserCell : UITableViewCell
-@property (weak, nonatomic) User *user;
-@property (weak, nonatomic) IBOutlet UILabel *nickname;
-@property (weak, nonatomic) IBOutlet UILabel *desc;
-@property (weak, nonatomic) IBOutlet IndentedLabel *gender;
-@property (weak, nonatomic) IBOutlet IndentedLabel *age;
-@property (weak, nonatomic) IBOutlet IndentedLabel *ago;
-@property (weak, nonatomic) IBOutlet UserView *userView;
-@property (weak, nonatomic) IBOutlet Compass *compass;
-@property (weak, nonatomic) IBOutlet UILabel *distance;
-@property (weak, nonatomic) IBOutlet UILabel *heading;
-@property (weak, nonatomic) IBOutlet UILabel *like;
-@property (weak, nonatomic) UIViewController* parent;
-@property (copy, nonatomic) UserBlock chatAction;
-@property (weak, nonatomic) IBOutlet BalloonLabel *introduction;
-@end
-
-@implementation UserCell
-
--(void)setUser:(User *)user
-{
-    _user = user;
-    
-    CLLocationDirection heading = [[User where] headingToLocation:user.where];
-    
-    [self.userView clear];
-    self.nickname.text = user.nickname;
-    self.desc.text = user.channel;
-    self.userView.user = user;
-    self.age.text = user.age;
-    self.compass.heading = heading;
-    self.distance.text = __distanceString([[User where] distanceInKilometersTo:user.where]);
-    self.heading.text = [NSString stringWithFormat:@"(%.1f)", heading];
-    self.gender.text = user.genderCode;
-    self.gender.backgroundColor = user.genderColor;
-    self.introduction.text = user.introduction;
-    self.ago.text = user.updatedAt.timeAgoSimple;
-    [self setLikeStatus:[[User me] likes:user]];
-}
-
-- (void)setLikeStatus:(BOOL) likes
-{
-    if (likes) {
-        self.like.text = @"UNLIKE";
-        self.like.backgroundColor = [UIColor colorWithRed:240/255.f green:82/255.f blue:10/255.f alpha:1.0f];
-
-    }
-    else {
-        self.like.text = @"LIKE";
-        self.like.backgroundColor = [UIColor colorWithRed:0/255.f green:150/255.f blue:0/255.f alpha:1.0f];
-    }
-}
-
-- (IBAction)doChat:(id)sender {
-    if (self.chatAction) {
-        self.chatAction(self.user);
-    }
-}
-
-- (IBAction)doLike:(id)sender {
-    BOOL likes = [[User me] likes:self.user];
-    if (likes) {
-        [[User me] unlike:self.user];
-    }
-    else {
-        [[User me] like:self.user];
-    }
-    [self setLikeStatus:!likes];
-}
-
-- (void)clicked
-{
-    [self.layer removeAllAnimations];
-    [self.layer addAnimation:[self photoAnimations] forKey:nil];
-}
-
-- (CABasicAnimation*) photoAnimations
-{
-    const CGFloat sf = 1.02;
-    CABasicAnimation *scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    scale.fromValue = [NSValue valueWithCGSize:CGSizeMake(1, 1)];
-    scale.toValue = [NSValue valueWithCGSize:CGSizeMake(sf, sf)];
-    scale.duration = 0.1f;
-    scale.autoreverses = YES;
-    scale.repeatCount = 1;
-    scale.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    scale.removedOnCompletion = YES;
-    
-    return scale;
-}
-@end
+#define kUserCell @"UserCell"
+#define kLoadMoreCell @"LoadMoreCell"
 
 @interface Nearby ()
 @property (strong, nonatomic) NSArray <User*> *users;
@@ -127,14 +31,53 @@
 @property (nonatomic) NSUInteger skip, limit;
 @property (nonatomic) SegmentType segmentIndex;
 @property (nonatomic) NearBySortBy sortby;
-@property (weak, nonatomic) IBOutlet UILabel *sortbyLabel;
+@property (strong, nonatomic) BlurView *sectionView;
+@property (strong, nonatomic) SelectionTab *tab, *location;
+@property (strong, nonatomic) NSArray <NSString*> *selectionMenu, *sortbyMenu;
 @end
 
 @implementation Nearby
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+- (void)setSortby:(NearBySortBy)sortby
+{
+    _sortby = sortby;
+    [self setNavigationTitle];
+}
+
+- (void)setSegmentIndex:(SegmentType)segmentIndex
+{
+    _segmentIndex = segmentIndex;
+    [self setNavigationTitle];
+}
+
+- (void)setNavigationTitle
+{
+    self.navigationItem.title = [self.selectionMenu[self.segmentIndex] stringByAppendingString:self.sortbyMenu[self.sortby]];
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    
+    [self.tableView registerNib:[UINib nibWithNibName:kUserCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kUserCell];
+    [self.tableView registerNib:[UINib nibWithNibName:kLoadMoreCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kLoadMoreCell];
+
+    self.selectionMenu = @[
+                           @"Girls",
+                           @"Boys",
+                           @"All",
+                           @"Favorites",
+                           ];
+    self.sortbyMenu = @[
+                        @" - near",
+                        @" - recent",
+                        ];
+
     self.sortby = kNearBySortByLocation;
     self.segmentIndex = 0;
     self.skip = 0;
@@ -143,48 +86,20 @@
         [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
     }];
     [self.tableView addSubview:self.refresh];
-    DropDownNavigationItem *navItem = (DropDownNavigationItem *)self.navigationItem;
-    
-    id menu = @{
-                fTitle : @"Search For",
-                fItems : @[
-                        @"Girls",
-                        @"Boys",
-                        @"All",
-                        @"Favorites"
-                        ],
-                };
-    
-    navItem.title = menu[fItems][self.segmentIndex];
-    navItem.menuItems = menu;
-    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
-        self.segmentIndex = index;
-        self.skip = 0;
-        [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
-        
-        id search = menu[fItems][index];
-        [navItem setTitle:search];
-    };
-    navItem.action = action;
 }
 
-- (void)reloadAllUsersOnCondition:(NSUInteger)index reset:(BOOL)reset
+- (void)reloadAllUsersOnCondition:(SegmentType)segmentIndex reset:(BOOL)reset
 {
     self.selectedRow = -1;
-    [self.tableView beginUpdates];
-    [self.tableView endUpdates];
-
-    if (![self.refresh isRefreshing]) {
+    [self.tableView reloadData];
+    
+    if (!reset && ![self.refresh isRefreshing]) {
         [self.refresh beginRefreshing];
-    }
-    if (reset) {
-        self.skip = 0;
-        self.users = nil;
-        [self.tableView reloadData];
     }
     
     [self usersNear:[User me] completionHandler:^(NSArray<User *> *users) {
         if (reset) {
+            self.skip = 0;
             self.users = users;
         }
         else {
@@ -194,7 +109,7 @@
         }
         [self.refresh endRefreshing];
         [self.tableView reloadData];
-    } condition:index];
+    } condition:segmentIndex];
 }
 
 - (NSArray*) sortUsersByDistance:(NSArray*) users
@@ -226,7 +141,7 @@
     return userIds;
 }
 
-- (void)usersNear:(User*)user completionHandler:(ArrayBlock)block condition:(NSUInteger)condition
+- (void)usersNear:(User*)user completionHandler:(ArrayBlock)block condition:(SegmentType)segmentIndex
 {
     __LF
     PFQuery *query = [User query];
@@ -237,7 +152,7 @@
     //  No need to include keys... lazy loading when tapped.
     //  [query includeKey:fPhotos];
     
-    switch (condition) {
+    switch (segmentIndex) {
         case kSegmentGirls:
             [query whereKey:@"gender" equalTo:@(kGenderTypeFemale)];
             break;
@@ -263,7 +178,7 @@
     }
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable users, NSError * _Nullable error) {
         if (error) {
-            NSLog(@"Error[%s]:%@", __func__, error.localizedDescription);
+            LogError;
         }
         else {
             if (block) {
@@ -282,7 +197,7 @@
 {
     [super viewDidLoad];
     self.selectedRow = -1;
-    ANOTIF(kNotificationSystemInitialized, @selector(systemInitialized:));
+    Notification(kNotificationSystemInitialized, systemInitialized:);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -306,7 +221,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == kSectionUsers) {
-        UserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
+        UserCell *cell = [tableView dequeueReusableCellWithIdentifier:kUserCell forIndexPath:indexPath];
         
         __weak typeof(UserCell*) weakCell = cell;
         
@@ -339,7 +254,7 @@
         return cell;
     }
     else {
-        NoMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LoadMore" forIndexPath:indexPath];
+        NoMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:kLoadMoreCell forIndexPath:indexPath];
         
         if (self.users.count == self.skip + self.limit) {
             cell.label.text = @"Load More";
@@ -365,19 +280,38 @@
         chat.hidesBottomBarWhenPushed = YES;
         chat.dictionary = sender;
     }
+    else if ([segue.identifier isEqualToString:@"Profile"]) {
+        Profile *profile = segue.destinationViewController;
+        profile.hidesBottomBarWhenPushed = YES;
+        if ([sender isKindOfClass:[User class]]) {
+            profile.user = sender;
+        }
+        else {
+            __alert(@"ERROR", @"Wrong sender", nil, nil, self);
+            profile.user = [User me];
+        }
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    User *user = [self.users objectAtIndex:indexPath.row];
+    UIFont *font = kIntroductionFont;
+    NSString *intro = user.introduction;
+    CGFloat w = CGRectGetWidth(self.tableView.bounds);
+    CGFloat y = 55;
+    CGFloat x = 66+8;
+    CGFloat i = 8, s = 30;
+    CGFloat mw = w - x - i*2 - s;
+    CGFloat h = [intro heightWithFont:font maxWidth:mw];
+    
+    CGFloat rowHeight = y + h + i+8;
+
     if (indexPath.section == kSectionUsers) {
-        if (indexPath.row == self.selectedRow) {
-            return 120;
-        }
-        else {
-            return 65;
-        }
+        return rowHeight + ((indexPath.row == self.selectedRow) ? 50.f : 0.f);
     }
     else {
+        // more cells...
         return 44;
     }
 }
@@ -392,7 +326,7 @@
             self.selectedRow = -1;
             cell.selected = NO;
             
-            [cell clicked];
+            [cell tapped:cell];
         }
         else {
             prevCell.selected = NO;
@@ -400,7 +334,7 @@
             self.selectedRow = indexPath.row;
             cell.selected = YES;
 
-            [cell clicked];
+            [cell tapped:cell];
         }
         [tableView beginUpdates];
         [tableView endUpdates];
@@ -411,12 +345,97 @@
     }
 }
 
-- (IBAction)sortByTimeLocation:(UISwitch*)sender {
-    __LF
+#define TabHeight 50.f
+#define TabInset 8.f
+#define TabHalfInset 4.0f
+#define LocationButtonWidth 60.f
+#define LocationWidth (2*LocationButtonWidth+TabHalfInset)
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section==kSectionUsers)
+        return TabHeight+TabInset+TabInset;
+    else
+        return 0.0f;
+}
+
+- (void (^)(NSUInteger index))tabConditionSelected
+{
+    return ^(NSUInteger index) {
+        self.segmentIndex = index;
+        self.skip = 0;
+        [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    };
+}
+
+- (void (^)(NSUInteger index))locationConditionSelected
+{
+    return ^(NSUInteger index) {
+        self.sortby = index;
+        [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    };
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (self.sectionView)
+        return self.sectionView;
     
-    self.sortby = !sender.on;
+    CGRect rect = self.tableView.frame;
+    CGFloat w = CGRectGetWidth(rect);
+    
+    self.sectionView = [BlurView new];
+    self.tab = [SelectionTab newWithTabs:@[
+                                           @"Girls\nOnly",
+                                           @"Boys\nOnly",
+                                           @"All\nUsers",
+                                           @"Favorites"
+                                           ]
+                                  widths:@[
+                                           @(1),
+                                           @(1),
+                                           @(1),
+                                           @(1.3),
+                                           ]
+                action:self.tabConditionSelected];
+
+    self.location = [SelectionTab newWithTabs:@[
+                                                @"near",
+                                                @"recent",
+                                                ]
+                                       widths:@[
+                                                @(1),
+                                                @(1),
+                                                ]
+                                       colors:@[
+                                                [UIColor greenColor].darkerColor,
+                                                [UIColor greenColor],
+                                                ]
+                                       action:self.locationConditionSelected];
+    
+    self.location.frame = CGRectMake(TabInset,
+                                     TabInset,
+                                     LocationWidth,
+                                     TabHeight);
+    self.tab.frame = CGRectMake(TabInset+LocationWidth+TabHalfInset,
+                                TabInset,
+                                w-2*TabInset-LocationWidth-TabHalfInset,
+                                TabHeight);
+
+    [self.sectionView addSubview:self.tab];
+    [self.sectionView addSubview:self.location];
+    
+    self.sectionView.frame = CGRectMake(0, 0, w, TabHeight+TabInset*2);
+    self.sortby = kNearBySortByLocation;
+    
+    return self.sectionView;
+}
+
+- (void) selectSortBy:(UIButton*)sender
+{
+    self.sortby = sender.tag;
+    
     [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
-    self.sortbyLabel.text = self.sortby ? @"By\nTime" : @"By\nGPS";
 }
 
 /*

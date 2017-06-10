@@ -11,7 +11,6 @@
 #import "IndentedLabel.h"
 #import "BalloonLabel.h"
 #import "Compass.h"
-#import "S3File.h"
 #import "Refresh.h"
 #import "MessageCenter.h"
 #import "PopupMenu.h"
@@ -187,6 +186,11 @@ Channel Message:{
 
 @implementation Channels
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
@@ -208,8 +212,8 @@ Channel Message:{
     
     [self.navigationItem setRightBarButtonItem:bbi];
     
-    ANOTIF(kNotificationChannelMessage, @selector(newChannelMessage:));
-    ANOTIF(kNotificationUserLoggedInMessage, @selector(notificationUserLoggedIn:));
+    Notification(kNotificationChannelMessage, newChannelMessage:);
+    Notification(kNotificationUserLoggedInMessage, notificationUserLoggedIn:);
 }
 
 - (void) notificationUserLoggedIn:(id)sender
@@ -225,7 +229,7 @@ Channel Message:{
     DropDownNavigationItem *navItem = (DropDownNavigationItem*) self.navigationItem;
     
     navItem.menuItems = menu;
-    IndexBlock action = ^(NSUInteger section, NSUInteger index) {
+    SectionIndexBlock action = ^(NSUInteger section, NSUInteger index) {
         id channel = menu[section][fItems][index];
         [navItem setTitle:channel];
         [User setChannel:channel];
@@ -246,7 +250,7 @@ Channel Message:{
                            @"Drive away with me",
                            ],
                    fIcons : @[
-                           @"message2",
+                           @"chat",
                            @"camera",
                            @"message2",
                            @"camera",
@@ -270,9 +274,9 @@ Channel Message:{
                    },
                 ];
     
-    [PopupMenu showFromView:sender
-                  menuItems:menu
-                 completion:^(NSUInteger section, NSUInteger index)
+    [PopupMenu showFromBarButtonItem:sender
+                           menuItems:menu
+                          completion:^(NSUInteger section, NSUInteger index)
     {
         id message = menu[section][@"items"][index];
         
@@ -311,7 +315,7 @@ Channel Message:{
 {
     __LF
 
-    RANOTIF;
+    RemoveAllNotifications;
 }
 
 - (void)viewWillAppear:(BOOL)animated

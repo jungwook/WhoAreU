@@ -40,6 +40,7 @@
 #define fBadge @"badge"
 #define fSound @"sound"
 #define fType @"type"
+#define fOnId @"onId"
 #define fSource @"source"
 #define fSize @"size"
 #define fUserId @"userId"
@@ -79,6 +80,7 @@
 #define kPushTypeChannelMessage @"pushTypeChannelMessage"
 
 #define kNotificationUserLoggedInMessage @"NotificationUserLoggedIn"
+#define kNotificationUserMediaUpdated @"NotificationUserMediaUpdated"
 #define kNotificationSystemInitialized @"NotifictionSystemInitialized"
 #define kNotificationNewChannelAdded @"NotificationNewChannelAdded"
 #define kNotificationNewChatMessage @"NotificationNewChatMessage"
@@ -99,6 +101,7 @@
 #define WSLOCATION @"http://localhost:8080"
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 #define FileURL(__X__) [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:__X__]
+#define LogError NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
 
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
@@ -108,14 +111,14 @@
 #define degreesToRadians(__x__) (M_PI * __x__ / 180.0f)
 #define radiansToDegrees(__x__) (__x__ * 180.0f / M_PI)
 
-#define ANOTIF(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:__Y__ name:__X__ object:nil]
+#define Notification(__X__,__Y__) [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(__Y__) name:__X__ object:nil]
+#define RemoveAllNotifications [[NSNotificationCenter defaultCenter] removeObserver:self]
+#define PostNotification(__X__, __Y__) [[NSNotificationCenter defaultCenter] postNotificationName:__X__ object:__Y__]
 
-#define RNOTIF(__Y__) [[NSNotificationCenter defaultCenter] removeObserver:self name:__Y__ object:nil]
-#define RANOTIF [[NSNotificationCenter defaultCenter] removeObserver:self]
-#define PNOTIF(__X__, __Y__) [[NSNotificationCenter defaultCenter] postNotificationName:__X__ object:__Y__]
+#define Coords2DFromPoint(__x__) CLLocationCoordinate2DMake(__x__.latitude, __x__.longitude)
+#define PointFromCLLocation(__X__) [PFGeoPoint geoPointWithLocation:__X__]
+#define PointFromCoords2D(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
 
-#define POINT_FROM_CLLOCATION(__X__) [PFGeoPoint geoPointWithLocation:__X__]
-#define POINT_FROM_COORDINATES(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
 #define SIMULATOR_LOCATION [PFGeoPoint geoPointWithLatitude:37.515791f longitude:127.027807f]
 
 #define kAppColor [UIColor colorWithRed:95/255.f green:167/255.f blue:229/255.f alpha:1.0f]
@@ -134,7 +137,10 @@ typedef void(^AnyBlock)(id object);
 typedef void(^ChannelBlock)(Channel* channel);
 typedef void(^VoidBlock)(void);
 typedef void(^CountBlock)(NSUInteger count);
-typedef void(^IndexBlock)(NSUInteger section, NSUInteger index);
+typedef void(^SelectedIndexBlock)(NSUInteger index);
+typedef void(^IndexBlock)(NSUInteger index);
+typedef void(^SectionIndexBlock)(NSUInteger section, NSUInteger index);
+typedef void(^UserViewRectBlock)(User * user, UIView* view, CGRect rect);
 typedef void(^UserBlock)(User* user);
 typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);

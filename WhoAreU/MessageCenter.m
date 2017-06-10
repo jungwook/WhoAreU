@@ -7,7 +7,6 @@
 //
 
 #import "MessageCenter.h"
-#import "S3File.h"
 #import "NSData+GZIP.h"
 #import "WebSocket.h"
 
@@ -111,7 +110,7 @@
                                                 id channelId)
     {
         NSLog(@"payload:%@", payload);
-        PNOTIF(kNotificationChannelMessage, payload);
+        PostNotification(kNotificationChannelMessage, payload);
         return UNNotificationPresentationOptionNone;
     };
 
@@ -120,7 +119,7 @@
                                          id channelId)
     {
         NSLog(@"payload:%@", payload);
-        PNOTIF(kNotificationChannelMessage, payload);
+        PostNotification(kNotificationChannelMessage, payload);
         
         return UNNotificationPresentationOptionNone;
     };
@@ -180,7 +179,7 @@
                            fMessageId : messageId,
                            fChannelId : channelId,
                            };
-                PNOTIF(kNotificationReadMessage, ret);
+                PostNotification(kNotificationReadMessage, ret);
             }
         }
         
@@ -504,15 +503,13 @@
     return;
 }
 
-+ (NSString*) channelNameForChannelId:(id)channelId
++ (NSString*) channelNameFromChannel:(id)dictionary
 {
-    return [[MessageCenter new] channelNameForChannelId:channelId];
+    return [[MessageCenter new] channelNameFromChannel:dictionary];
 }
 
-- (NSString*) channelNameForChannelId:(id)channelId
+- (NSString*) channelNameFromChannel:(id)dictionary
 {
-    id dictionary = [self.channels objectForKey:channelId];
-    
     NSArray *users = dictionary[fUsers];
     NSMutableSet *set = [NSMutableSet setWithArray:[users valueForKey:fNickname]];
     [set removeObject:[User me].nickname];
@@ -542,7 +539,7 @@
         [self saveChatFile];
         [[History historyWithChannelId:channelId messageId:messageId] saveInBackground];
         if (postNotification) {
-            PNOTIF(kNotificationNewChatMessage, nil);
+            PostNotification(kNotificationNewChatMessage, nil);
         }
         [MessageCenter setSystemBadge];
     }
@@ -567,7 +564,7 @@
         id dictionary = channel.dictionary;
         [self.channels setObject:dictionary forKey:channel.objectId];
         [self saveChannelsFile];
-        PNOTIF(kNotificationNewChannelAdded, dictionary);
+        PostNotification(kNotificationNewChannelAdded, dictionary);
     }];
 
     [[MessageCenter new] saveChannelsFile];
@@ -580,6 +577,9 @@
 
 - (id) lastJoinedChannelIdForUser:(User*)user
 {
+    if ([User meEquals:user.objectId]) {
+        return nil; // cannot chat with self.
+    }
     id selectedUserId = user.objectId;
     
     for (id channelId in self.channels.allKeys) {
@@ -616,7 +616,7 @@
                      channelId:channelId
               postNotification:NO];
         }
-        PNOTIF(kNotificationNewChatMessage, nil);
+        PostNotification(kNotificationNewChatMessage, nil);
         [self setSystemBadge];
     }];
 }
@@ -636,7 +636,7 @@
                      channelId:channelId
               postNotification:NO];
         }
-        PNOTIF(kNotificationNewChatMessage, nil);
+        PostNotification(kNotificationNewChatMessage, nil);
         [self setSystemBadge];
     }];
 }

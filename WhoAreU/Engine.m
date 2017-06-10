@@ -8,7 +8,6 @@
 
 #import "Engine.h"
 #import "TargetConditionals.h"
-#import "S3File.h"
 
 #pragma mark Counter
 
@@ -140,7 +139,7 @@
 {
     _initialized = initialized;
     
-    PNOTIF(kNotificationSystemInitialized, nil);
+    PostNotification(kNotificationSystemInitialized, nil);
 }
 
 - (void)setSimulatorStatus:(SimulatorStatus)simulatorStatus
@@ -185,41 +184,47 @@
     
     NSLog(@"Initializing Location Services");
     
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    
-    //    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
-    //        NSLog(@"Allowing background location updates");
-    //        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
-    //    }
-    
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusNotDetermined:
-            [self.locationManager requestAlwaysAuthorization];
-            break;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        default:
-            break;
-    }
-    
-    //    [self.locationManager startMonitoringSignificantLocationChanges];
-    
-    [self.locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
-    [self.locationManager startUpdatingLocation];
-    
-    if ([CLLocationManager locationServicesEnabled]) {
-        NSLog(@"LOCATION SERVICES ENABLED");
-    }
-    else {
-        NSLog(@"LOCATION SERVICES NOT ENABLED");
-    }
-    
-    [self.locationManager startUpdatingHeading];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = kCLDistanceFilterNone;
+        
+        //    if ([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+        //        NSLog(@"Allowing background location updates");
+        //        [self.locationManager setAllowsBackgroundLocationUpdates:YES];
+        //    }
+        
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+            case kCLAuthorizationStatusNotDetermined:
+                [self.locationManager requestAlwaysAuthorization];
+                break;
+            case kCLAuthorizationStatusAuthorizedAlways:
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            default:
+                break;
+        }
+        
+        //    [self.locationManager startMonitoringSignificantLocationChanges];
+        
+        [self.locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
+        [self.locationManager startUpdatingLocation];
+        
+        if ([CLLocationManager locationServicesEnabled]) {
+            NSLog(@"LOCATION SERVICES ENABLED");
+        }
+        else {
+            NSLog(@"LOCATION SERVICES NOT ENABLED");
+        }
+        
+        [self.locationManager startUpdatingHeading];
+    });
+}
+
++ (BOOL)headingAvailable
+{
+    return [CLLocationManager headingAvailable];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
@@ -251,7 +256,7 @@
 {
     _currentLocation = currentLocation;
     
-    self.me.where = POINT_FROM_CLLOCATION(currentLocation);
+    self.me.where = PointFromCLLocation(currentLocation);
     [self.me saveInBackground];
 }
 

@@ -40,13 +40,13 @@
                 };
     [[UINavigationBar appearance] setTitleTextAttributes:attr];
     [[UINavigationBar appearance] setBarTintColor:kAppColor];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor blackColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     // Navigation bar buttons appearance
     
     attr = @{
              NSFontAttributeName : [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold],
-//             NSShadowAttributeName : [UIColor blackColor],
              NSForegroundColorAttributeName : [UIColor whiteColor],
              };
     [[UIBarButtonItem appearance] setTitleTextAttributes:attr forState:UIControlStateNormal];

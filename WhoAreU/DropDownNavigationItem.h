@@ -10,7 +10,7 @@
 
 @interface DropDownNavigationItem : UINavigationItem
 @property (nonatomic, strong) id menuItems;
-@property (nonatomic, copy) IndexBlock action;
+@property (nonatomic, copy) SectionIndexBlock action;
 @property (nonatomic, strong) IBInspectable UIColor *textColor, *pointerColor;
 @property (nonatomic, strong) IBInspectable UIFont *font;
 

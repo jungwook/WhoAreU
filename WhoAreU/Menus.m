@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "SignUp.h"
 #import "ObjectIdStore.h"
-#import "S3File.h"
 #import "Menu.h"
 #import "FloatingDrawerSpringAnimator.h"
 #import "MessageCenter.h"

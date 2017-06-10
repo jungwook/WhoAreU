@@ -7,9 +7,7 @@
 //
 
 #import "Tabs.h"
-#import "Profile.h"
 #import "SignUp.h"
-#import "S3File.h"
 #import "MessageCenter.h"
 #import <ParseUI/ParseUI.h>
 #import <Parse/PFConfig.h>
@@ -23,7 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
+    Notification(kNotificationNewChatMessage, notificationNewChatMessage:);
 }
 
 - (void) setTabItemBadgeValue
@@ -77,7 +75,7 @@
             
             [Engine initializeSystems];
             
-            PNOTIF(kNotificationUserLoggedInMessage, nil);
+            PostNotification(kNotificationUserLoggedInMessage, nil);
             [MessageCenter initializeCommunicationSystem];
             // User logged in so ready to initialize systems.
             

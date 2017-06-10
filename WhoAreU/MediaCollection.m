@@ -118,10 +118,10 @@
     
     self.trashButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.trashButton.borderColor = [UIColor whiteColor];
-    self.trashButton.borderWidth = 1.0f;
-    self.trashButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.4f];
+    self.trashButton.borderWidth = 2.0f;
+    self.trashButton.backgroundColor = [UIColor whiteColor];
     
-    [self.trashButton setTintColor:[UIColor whiteColor]];
+    [self.trashButton setTintColor:kAppColor];
     [self.trashButton setImage:trash
                        forState:UIControlStateNormal];
     [self.trashButton addTarget:self

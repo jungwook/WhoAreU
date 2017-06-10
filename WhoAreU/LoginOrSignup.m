@@ -46,7 +46,7 @@
     };
     
     ErrorBlock failureHandler = ^(NSError* error) {
-        NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
+        LogError;
         id message = [NSString stringWithFormat:@"Error: %@", error.localizedDescription];
         __alert(@"ERROR", message, ^(UIAlertAction *action) {
         }, nil, self);

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="232" id="Yj2-XH-U9Q" customClass="FollowCell">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="232"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yj2-XH-U9Q" id="1da-rE-79f">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="231.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="PhL-1D-ZQL">
+                        <rect key="frame" x="0.0" y="33" width="375" height="199"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="tCG-Qr-VUs">
+                            <size key="itemSize" width="50" height="50"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <connections>
+                            <outlet property="dataSource" destination="-1" id="jvt-FQ-3JD"/>
+                            <outlet property="delegate" destination="-1" id="JUx-CH-4UN"/>
+                        </connections>
+                    </collectionView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cvt-MA-PjZ">
+                        <rect key="frame" x="8" y="8" width="359" height="18"/>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="PhL-1D-ZQL" secondAttribute="trailing" constant="-8" id="DDT-KS-4ZN"/>
+                    <constraint firstItem="PhL-1D-ZQL" firstAttribute="leading" secondItem="1da-rE-79f" secondAttribute="leadingMargin" constant="-8" id="Ryf-v3-NMZ"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="Cvt-MA-PjZ" secondAttribute="trailing" id="TcE-fQ-3dj"/>
+                    <constraint firstItem="PhL-1D-ZQL" firstAttribute="top" secondItem="1da-rE-79f" secondAttribute="topMargin" constant="25" id="c6g-ad-sck"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="Cvt-MA-PjZ" secondAttribute="leading" id="hKk-l6-i34"/>
+                    <constraint firstAttribute="topMargin" secondItem="Cvt-MA-PjZ" secondAttribute="top" id="s2E-0m-awH"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="PhL-1D-ZQL" secondAttribute="bottom" constant="-8.5" id="u9f-ZL-vCe"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="collectionView" destination="PhL-1D-ZQL" id="Qec-In-GvC"/>
+                <outlet property="titleLabel" destination="Cvt-MA-PjZ" id="Md9-ph-Hxd"/>
+            </connections>
+            <point key="canvasLocation" x="90.5" y="164"/>
+        </tableViewCell>
+    </objects>
+</document>

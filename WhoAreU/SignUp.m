@@ -86,7 +86,7 @@
             self.photo = nil;
             self.movie = nil;
             self.thumbnail = nil;
-            self.photoImageView.image = [UIImage imageNamed:@"avatar"];
+            self.photoImageView.image = [UIImage avatar];
         }]];
     }
     else {

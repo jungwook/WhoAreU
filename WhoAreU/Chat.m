@@ -60,7 +60,9 @@
     _dictionary = dictionary;
     
     self.chatView.channel = self.dictionary;
-    self.navigationItem.title = [MessageCenter channelNameForChannelId:self.channelId];
+    NSString *title = [MessageCenter channelNameFromChannel:dictionary];
+    NSLog(@"Chatting:%@\n%@", title, self.dictionary);
+    self.navigationItem.title = title;
     [MessageCenter processFetchMessagesForChannelId:self.channelId];
 }
 

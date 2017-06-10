@@ -104,13 +104,13 @@
     [self addMediaBut];
     [self addTextView];
     [self addSendBut];
-    ANOTIF(UIKeyboardWillChangeFrameNotification, @selector(doKeyBoardEvent:));
-    ANOTIF(UIKeyboardWillShowNotification, @selector(doKeyboardShowEvent:));
-    ANOTIF(UIKeyboardWillHideNotification, @selector(doKeyboardHideEvent:));
-    ANOTIF(kNotificationNewChatMessage, @selector(notificationNewChatMessage:));
-    ANOTIF(kNotificationReadMessage, @selector(notificationReadMessage:));
-    ANOTIF(kNotificationApplicationActive, @selector(notificationApplicationActive:));
-    ANOTIF(kNotificationEndEditing, @selector(notificationEndEditing:));
+    Notification(UIKeyboardWillChangeFrameNotification, doKeyBoardEvent:);
+    Notification(UIKeyboardWillShowNotification, doKeyboardShowEvent:);
+    Notification(UIKeyboardWillHideNotification, doKeyboardHideEvent:);
+    Notification(kNotificationNewChatMessage, notificationNewChatMessage:);
+    Notification(kNotificationReadMessage, notificationReadMessage:);
+    Notification(kNotificationApplicationActive, notificationApplicationActive:);
+    Notification(kNotificationEndEditing, notificationEndEditing:);
 }
 
 - (void)notificationEndEditing:(id)sender
@@ -152,12 +152,13 @@
 - (void) dealloc
 {
     __LF
-    RNOTIF(UIKeyboardWillChangeFrameNotification);
-    RNOTIF(UIKeyboardWillShowNotification);
-    RNOTIF(UIKeyboardWillHideNotification);
-    RNOTIF(kNotificationNewChatMessage);
-    RNOTIF(kNotificationApplicationActive);
-    RNOTIF(kNotificationEndEditing);
+    RemoveAllNotifications;
+//    RNotification(UIKeyboardWillChangeFrameNotification);
+//    RNotification(UIKeyboardWillShowNotification);
+//    RNotification(UIKeyboardWillHideNotification);
+//    RNotification(kNotificationNewChatMessage);
+//    RNotification(kNotificationApplicationActive);
+//    RNotification(kNotificationEndEditing);
 }
 
 - (void)doKeyboardShowEvent:(NSNotification *)notification
