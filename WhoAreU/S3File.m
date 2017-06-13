@@ -143,7 +143,7 @@
     }
     else {
         NSData *data = [NSData dataWithContentsOfURL:[self.dataPath URLByAppendingPathComponent:[key lastPathComponent]] options:NSDataReadingUncached error:&error];
-
+        
         if (data) {
             @synchronized (self.cache) {
                 id cacheItem = @{ fUpdatedAt : [NSDate date],

@@ -24,11 +24,14 @@
     if (self) {
         self.radius = 4.0f;
         self.clipsToBounds = YES;
+        
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)]];
         
         self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-        self.activity.frame = frame;
+        [self.activity setFrame:frame];
+        [self.activity setHidesWhenStopped:YES];
         [self.activity startAnimating];
+        
         [self addSubview:self.activity];
     }
     return self;
@@ -39,7 +42,7 @@
     _media = media;
     
     [S3File getImageFromFile:self.media.thumbnail imageBlock:^(UIImage *image) {
-        __drawImage(image, self);
+        [self drawImage:image];
         [self.activity stopAnimating];
     }];
 }
@@ -54,10 +57,10 @@
 @end
 
 @interface PreviewUser () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
-@property (nonatomic, weak) User *user;
+@property (nonatomic, strong) User *user;
+@property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UIActivityIndicatorView *activity;
 @property (nonatomic, strong) UIView *preview;
-@property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSMutableArray *media;
 @property (nonatomic, weak) Media *presentedMedia;
 @property (nonatomic) BOOL toggleView;
@@ -203,12 +206,14 @@
         [self selectFirstMedia];
     }
     
+    Counter *counter = [Counter new];
+    id cId = [counter setCount:self.user.photos.count completion:^{
+        [self.collectionView reloadData];
+    }];
     [self.user.photos enumerateObjectsUsingBlock:^(Media * _Nonnull photo, NSUInteger idx, BOOL * _Nonnull stop) {
         [photo fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            @synchronized (self.media) {
-                [self.media addObject:photo];
-                [self.collectionView reloadData];
-            }
+            [self.media addObject:photo];
+            [counter decreaseCount:cId];
         }];
     }];
 }

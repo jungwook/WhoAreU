@@ -603,3 +603,34 @@ id __dictionary(id object)
 
 @end
 
+@implementation UITableView (extensions)
+
+- (void) registerNibNamed:(NSString *)name
+{
+    [self registerNib:[UINib nibWithNibName:name bundle:[NSBundle mainBundle]] forCellReuseIdentifier:name];
+}
+
+- (void) registerNibsNamed:(NSArray<NSString *> *)names
+{
+    [names enumerateObjectsUsingBlock:^(NSString * _Nonnull name, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self registerNibNamed:name];
+    }];
+}
+@end
+
+@implementation UICollectionView (extensions)
+
+- (void) registerNibsNamed:(NSArray<NSString *> *)names
+{
+    [names enumerateObjectsUsingBlock:^(NSString * _Nonnull name, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self registerNibNamed:name];
+    }];
+}
+
+- (void) registerNibNamed:(NSString *)name
+{
+    [self registerNib:[UINib nibWithNibName:name bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:name];
+}
+@end
+
+

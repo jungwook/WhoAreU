@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,10 +16,10 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="237"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xxC-sN-yFd" id="NYo-gb-h15">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="236.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="236"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WKR-gV-m6I" customClass="UserView">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WKR-gV-m6I" customClass="Photo">
                         <rect key="frame" x="8" y="8" width="50" height="50"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -96,7 +96,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Eb-hA-dHe" userLabel="Buttons">
-                        <rect key="frame" x="8" y="92" width="256" height="40"/>
+                        <rect key="frame" x="8" y="84" width="256" height="40"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eg-sK-bCh">
                                 <rect key="frame" x="0.0" y="0.0" width="80" height="40"/>
@@ -165,17 +165,17 @@
                             <constraint firstItem="FZa-JC-yvj" firstAttribute="width" secondItem="4eg-sK-bCh" secondAttribute="width" id="wm5-lk-KeZ"/>
                         </constraints>
                     </view>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pSy-8z-LGm">
-                        <rect key="frame" x="74" y="84" width="293" height="0.5"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pSy-8z-LGm" userLabel="Line">
+                        <rect key="frame" x="74" y="231" width="293" height="1"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="0.5" id="ysG-o2-axC"/>
+                            <constraint firstAttribute="height" constant="1" id="ysG-o2-axC"/>
                         </constraints>
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="3Eb-hA-dHe" firstAttribute="top" secondItem="gn6-xP-KW9" secondAttribute="bottom" constant="16" id="CZ3-r7-e8x"/>
-                    <constraint firstItem="pSy-8z-LGm" firstAttribute="top" secondItem="gn6-xP-KW9" secondAttribute="bottom" constant="8" id="E6L-eS-nRn"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="pSy-8z-LGm" secondAttribute="bottom" constant="-4" id="09g-ZD-1Xb"/>
+                    <constraint firstItem="3Eb-hA-dHe" firstAttribute="top" secondItem="gn6-xP-KW9" secondAttribute="bottom" constant="8" id="CZ3-r7-e8x"/>
                     <constraint firstItem="fYR-fe-AV2" firstAttribute="top" secondItem="WKR-gV-m6I" secondAttribute="top" id="FfO-jc-tsA"/>
                     <constraint firstItem="1Wu-JV-SRQ" firstAttribute="leading" secondItem="hjX-vy-ZHp" secondAttribute="trailing" constant="4" id="GjJ-13-BVh"/>
                     <constraint firstAttribute="trailingMargin" secondItem="pSy-8z-LGm" secondAttribute="trailing" id="IeG-7F-dku"/>
@@ -212,7 +212,7 @@
                 <outlet property="introduction" destination="X68-5S-aw5" id="Qbt-RP-PvR"/>
                 <outlet property="like" destination="FZa-JC-yvj" id="plz-UR-Q3r"/>
                 <outlet property="nickname" destination="fYR-fe-AV2" id="X50-gI-bCB"/>
-                <outlet property="userView" destination="WKR-gV-m6I" id="S3m-s3-qpc"/>
+                <outlet property="photo" destination="WKR-gV-m6I" id="EzH-qL-bNP"/>
             </connections>
             <point key="canvasLocation" x="89.5" y="101.5"/>
         </tableViewCell>

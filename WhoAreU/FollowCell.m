@@ -23,7 +23,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    [self.collectionView registerNib:[UINib nibWithNibName:@"FollowingUserCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"FollowingUserCell"];
+    [self.collectionView registerNibNamed:@"FollowingUserCell"];
     
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;

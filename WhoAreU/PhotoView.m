@@ -83,6 +83,7 @@
 - (void)setUser:(User *)user
 {
     _user = user;
+    self.photoView.identifier = user.objectId;
     
     [self.user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         self.photoView.user = user;
@@ -221,7 +222,12 @@
     if (thumbnail) {
         [self.activity startAnimating];
         [S3File getImageFromFile:thumbnail imageBlock:^(UIImage *image) {
-            self.image = image;
+            if ([self.identifier isEqualToString:self.user.objectId]) {
+                self.image = image;
+            }
+            else {
+                printf("-");
+            }
             [self.activity stopAnimating];
         }];
     }

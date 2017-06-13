@@ -74,6 +74,7 @@
 		126154091E8CBBEC00F2AD4F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154081E8CBBEC00F2AD4F /* User.m */; };
 		1261540B1E8CC85C00F2AD4F /* Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1261540A1E8CC85C00F2AD4F /* Extensions.m */; };
 		126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 126154131E8CCC7900F2AD4F /* PhotoView.m */; };
+		12843FF91EECC72C00AF0BDE /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 12843FF81EECC72C00AF0BDE /* Photo.m */; };
 		1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39D1EA7956000A69146 /* IndentedLabel.m */; };
 		1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1289C39F1EA99F8300A69146 /* BaseFunctions.m */; };
 		128C257E1EBAAA950003F502 /* UIView+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = 128C257D1EBAAA950003F502 /* UIView+Badge.m */; };
@@ -245,6 +246,8 @@
 		1261540C1E8CC87100F2AD4F /* Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Extensions.h; sourceTree = "<group>"; };
 		126154121E8CCC7900F2AD4F /* PhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoView.h; sourceTree = "<group>"; };
 		126154131E8CCC7900F2AD4F /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
+		12843FF71EECC72C00AF0BDE /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
+		12843FF81EECC72C00AF0BDE /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
 		1289C39C1EA7956000A69146 /* IndentedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndentedLabel.h; sourceTree = "<group>"; };
 		1289C39D1EA7956000A69146 /* IndentedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndentedLabel.m; sourceTree = "<group>"; };
 		1289C39F1EA99F8300A69146 /* BaseFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseFunctions.m; sourceTree = "<group>"; };
@@ -584,6 +587,8 @@
 				12C74D141EE7B3E600F6480C /* BlurView.m */,
 				12C74D161EE7C55D00F6480C /* SelectionTab.h */,
 				12C74D171EE7C55D00F6480C /* SelectionTab.m */,
+				12843FF71EECC72C00AF0BDE /* Photo.h */,
+				12843FF81EECC72C00AF0BDE /* Photo.m */,
 				12C74CE51EE23C4900F6480C /* MediaPage */,
 			);
 			name = Views;
@@ -865,6 +870,7 @@
 				1225F0201EB07491002763A0 /* Credits.m in Sources */,
 				12C74CD91EE17C4B00F6480C /* ProfileCell.m in Sources */,
 				123AF14C1E9E0D2400ED0547 /* Menus.m in Sources */,
+				12843FF91EECC72C00AF0BDE /* Photo.m in Sources */,
 				12C74CFA1EE43E2C00F6480C /* CompassView.m in Sources */,
 				12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,

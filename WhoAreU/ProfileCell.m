@@ -8,13 +8,13 @@
 
 #import "ProfileCell.h"
 #import "MediaPage.h"
-#import "PhotoView.h"
+#import "Photo.h"
 #import "IndentedLabel.h"
 #import "PopupView.h"
 
 @interface ProfileCell()
 @property (weak, nonatomic) IBOutlet MediaPage *mediaPage;
-@property (weak, nonatomic) IBOutlet PhotoView *photoView;
+@property (weak, nonatomic) IBOutlet Photo *photo;
 @property (weak, nonatomic) IBOutlet UILabel *nickname;
 @property (weak, nonatomic) IBOutlet UILabel *age;
 @property (weak, nonatomic) IBOutlet IndentedLabel *channel;
@@ -71,7 +71,7 @@ CGPoint __io;
             LogError;
         }
         else {
-            [self.photoView setUser:self.user];
+            [self.photo setUser:self.user];
             [self.mediaPage setUser:self.user];
             self.nickname.text = self.user.nickname;
             self.age.text = self.user.age;

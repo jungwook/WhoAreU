@@ -32,24 +32,11 @@
     self.comments = [NSMutableArray array];
 }
 
-- (void)setUser:(User *)user
-{
-    _user = user;
-    [[self.user fetchIfNeededInBackground] continueWithSuccessBlock:^id _Nullable(BFTask<__kindof PFObject *> * _Nonnull task) {
-        self.navigationItem.title = self.user.nickname;
-        return nil;
-    }];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.tableView registerNib:[UINib nibWithNibName:kProfileCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kProfileCell];
-    [self.tableView registerNib:[UINib nibWithNibName:kUserMapCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kUserMapCell];
-    [self.tableView registerNib:[UINib nibWithNibName:kFollowCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kFollowCell];
-    [self.tableView registerNib:[UINib nibWithNibName:kCommentCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kCommentCell];
-    [self.tableView registerNib:[UINib nibWithNibName:kAddCommentCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kAddCommentCell];
-
+    [self.tableView registerNibsNamed:@[kProfileCell, kUserMapCell, kFollowCell, kCommentCell, kAddCommentCell]];
+    
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"message2"] style:UIBarButtonItemStylePlain target:self action:@selector(chatWithUserFromBBI:)]];
     
     Notification(UIKeyboardWillShowNotification, keyboardWillShow:);
@@ -57,6 +44,16 @@
     
     [self.tableView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedOutside:)]];
 }
+
+- (void)setUser:(User *)user
+{
+    _user = user;
+    
+    [self.user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        self.navigationItem.title = self.user.nickname;
+    }];
+}
+
 
 - (void) tappedOutside:(id)sender
 {

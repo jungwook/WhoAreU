@@ -61,7 +61,8 @@
     self.collectionView.alwaysBounceHorizontal = YES;
     self.collectionView.bounces = YES;
     self.collectionView.scrollEnabled = YES;
-    [self.collectionView registerNib:[UINib nibWithNibName:@"MediaPageCell" bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:@"MediaPageCell"];
+    
+    [self.collectionView registerNibNamed:@"MediaPageCell"];
     
     self.page = [UIPageControl new];
     [self.page addTarget:self action:@selector(pageSelected:) forControlEvents:UIControlEventValueChanged];
@@ -93,8 +94,7 @@
         return;
     }
     NSInteger index = self.page.currentPage + sender.tag;
-    index = MAX(index, 0);
-    index = MIN(index, self.items.count-1);
+    index = (index + self.items.count) % self.items.count;
     self.page.currentPage = index;
     [self pageSelected:self.page];
 }
@@ -186,14 +186,13 @@
     [super layoutSubviews];
     
     CGRect rect = self.bounds;
-    CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), size = 50, offset = 20;
+    CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), size = 30, offset = 20;
     self.collectionView.frame = rect;
-    self.page.frame = CGRectMake(0, 0, w, 50);
+    self.page.frame = CGRectMake(0, h-size, w, size);
     self.left.frame = CGRectMake(offset, (h-size)/2.0, size, size);
     self.right.frame = CGRectMake(w-offset-size, (h-size)/2.0, size, size);
     self.left.radius = size / 2.0f;
     self.right.radius = size / 2.0f;
-    
     self.progress.frame = CGRectMake(0, h-2, w, 2);
 }
 

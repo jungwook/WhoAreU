@@ -10,6 +10,7 @@
 #import "IndentedLabel.h"
 #import "CompassView.h"
 #import "PhotoView.h"
+#import "Preview.h"
 
 #define kIntroductionFont [UIFont systemFontOfSize:14]
 

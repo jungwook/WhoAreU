@@ -7,14 +7,15 @@
 //
 
 #import "UserCell.h"
+#import "Photo.h"
 
 @interface UserCell ()
 @property (weak, nonatomic) IBOutlet UILabel *nickname;
 @property (weak, nonatomic) IBOutlet IndentedLabel *channel;
 @property (weak, nonatomic) IBOutlet UILabel *age;
 @property (weak, nonatomic) IBOutlet IndentedLabel *gender;
+@property (weak, nonatomic) IBOutlet Photo *photo;
 @property (weak, nonatomic) IBOutlet IndentedLabel *ago;
-@property (weak, nonatomic) IBOutlet UserView *userView;
 @property (weak, nonatomic) IBOutlet CompassView *compass;
 @property (weak, nonatomic) IBOutlet UILabel *distance;
 @property (weak, nonatomic) IBOutlet UIButton *like;
@@ -35,28 +36,30 @@
     self.contentView.frame = self.bounds;
 }
 
--(void)setUser:(User *)user
+- (void) tappedPhoto:(id)sender
 {
-    _user = user;
+    [PreviewUser showUser:self.user];
+}
+
+-(void)setUser:(User *)usr
+{
+    _user = usr;
     
-    CLLocationDirection heading = [[User where] headingToLocation:user.where];
+    CLLocationDirection heading = [[User where] headingToLocation:self.user.where];
     
-    NSString *distanceString = [[User where] distanceStringToLocation:user.where];
+    NSString *distanceString = [[User where] distanceStringToLocation:self.user.where];
     
-    [self.userView clear];
-    self.nickname.text = user.nickname;
-    self.channel.text = user.channel;
-    self.userView.user = user;
-    self.age.text = user.age;
+    self.nickname.text = self.user.nickname;
+    self.channel.text = self.user.channel;
+    self.age.text = self.user.age;
     self.compass.heading = heading;
     self.distance.text = distanceString;
-//    self.heading.text = [NSString stringWithFormat:@"(%.1f)", heading];
-    self.gender.text = user.genderCode;
-    self.gender.backgroundColor = user.genderColor;
-    self.introduction.text = user.introduction;
-    self.ago.text = user.updatedAt.timeAgo;
-    [self setLikeStatus:[[User me] likes:user]];
-    
+    self.gender.text = self.user.genderCode;
+    self.gender.backgroundColor = self.user.genderColor;
+    self.introduction.text = self.user.introduction;
+    self.ago.text = self.user.updatedAt.timeAgo;
+    [self setLikeStatus:[[User me] likes:self.user]];
+    self.photo.user = self.user;
     [self setNeedsLayout];
 }
 

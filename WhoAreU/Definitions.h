@@ -126,7 +126,6 @@
 #define appWindow [UIApplication sharedApplication].keyWindow
 #define mainWindow [[[UIApplication sharedApplication] delegate] window]
 
-
 @class User;
 @class Media;
 @class Message;

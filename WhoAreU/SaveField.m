@@ -22,7 +22,6 @@
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    __LF
     self = [super initWithCoder:aDecoder];
     if (self) {
         [self initialize];

@@ -32,8 +32,6 @@
 
 - (void)setCoordinate:(CLLocationCoordinate2D)coordinate
 {
-    __LF
-    
     _coordinate = coordinate;
 }
 @end
@@ -75,15 +73,6 @@
     }
     return self;
 }
-
-//- (void)setAnnotation:(id<MKAnnotation>)annotation
-//{
-//    if ([annotation isKindOfClass:[UserAnnotation class]]) {
-//        UserAnnotation *anno = annotation;
-//        [self.ball drawImage:anno.image];
-//        [self.label setText:anno.user.nickname];
-//    }
-//}
 
 @end
 
@@ -128,6 +117,8 @@
     self.mapView.showsCompass = YES;
     self.mapView.scrollEnabled = YES;
     
+    [self.mapView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedMap:)]];
+    
     [self addSubview:self.mapView];
     [self addSubview:self.progressView];
 }
@@ -157,6 +148,22 @@
         return pinView;
     }
     return nil;
+}
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    CGPoint pointInView = [mapView convertCoordinate:Coords2DFromPoint(self.user.where) toPointToView:self.mapView];
+    
+    BOOL inside = CGRectContainsPoint(self.mapView.bounds, pointInView);
+    
+    if (inside == NO) {
+        [self.mapView setRegion:MKCoordinateRegionForMapRect(self.mapRect) animated:YES];
+    }
+}
+
+- (void)tappedMap:(UITapGestureRecognizer*)sender
+{
+    __LF
 }
 
 - (void)tappedPhoto:(UITapGestureRecognizer*)sender

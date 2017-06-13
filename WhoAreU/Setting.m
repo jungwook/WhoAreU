@@ -33,7 +33,6 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    __LF
     [super viewWillAppear:animated];
     
     [self updateUserDetails];
@@ -154,8 +153,6 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    __LF
-    
     switch (section) {
         case 0:
             return nil;

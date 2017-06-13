@@ -102,7 +102,8 @@
 
 @interface PopupMenu () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, readonly) CGFloat inset, maxWidth, width, height, iconSize, pointerHeight, cornerRadius, headerHeight, footerHeight;
-@property (nonatomic) PopupMenuDirection direction, pointerPosition;
+@property (nonatomic) CGFloat pointerPosition;
+@property (nonatomic) PopupMenuDirection direction;
 @property (nonatomic, strong) BlurView* menuView;
 @property (nonatomic, strong) UIView* screenView;
 @property (nonatomic, strong) UIView *shadowView;
@@ -138,7 +139,7 @@
     self.headerFont = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
     
     _inset = 8.0f;
-    _headerHeight = [@"X" heightWithFont:self.headerFont maxWidth:FLT_MAX] + 1*self.inset;
+    _headerHeight = [@"X" heightWithFont:self.headerFont maxWidth:FLT_MAX] + 1.5*self.inset;
     _footerHeight = self.inset / 2.0f;
     _maxWidth = 200.0f;
     _iconSize = [@"X" heightWithFont:self.font maxWidth:FLT_MAX];
@@ -289,28 +290,25 @@
 
 - (void) killThisView:(VoidBlock)handler
 {
-    CGPoint anchorPoint = CGPointMake(self.pointerPosition/self.width, 0);
+    CGPoint anchorPoint = CGPointMake(self.pointerPosition/self.width, self.direction == kPopupMenuDirectionUp ? 1 : 0);
     self.transform = CGAffineTransformIdentity;
     [self setAnchorPoint:anchorPoint forView:self];
     
     [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:0.88 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.transform = CGAffineTransformMakeScale(0.001, 0.001);
         self.screenView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+        self.screenView.alpha = 0;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.1 delay:0.2 usingSpringWithDamping:0.88 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            self.screenView.alpha = 0;
-        } completion:^(BOOL finished) {
-            [self.menuView removeFromSuperview];
-            [self.shadowView removeFromSuperview];
-            [self removeFromSuperview];
-            [self.screenView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull subView, NSUInteger idx, BOOL * _Nonnull stop) {
-                [subView removeFromSuperview];
-            }];
-            [self.screenView removeFromSuperview];
-            if (handler) {
-                handler();
-            }
+        [self.menuView removeFromSuperview];
+        [self.shadowView removeFromSuperview];
+        [self.screenView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull subView, NSUInteger idx, BOOL * _Nonnull stop) {
+            [subView removeFromSuperview];
         }];
+        [self.screenView removeFromSuperview];
+        if (handler) {
+            handler();
+        }
+        [self removeFromSuperview];
     }];
 }
 
@@ -368,7 +366,7 @@
     [mainWindow addSubview:self.screenView];
     [self positionMenuViewOnScreen:rect];
     
-    CGPoint anchorPoint = CGPointMake(self.pointerPosition/self.width, 0);
+    CGPoint anchorPoint = CGPointMake(self.pointerPosition/self.width, self.direction == kPopupMenuDirectionUp ? 1 : 0);
     self.shadowView.transform = CGAffineTransformMakeScale(0.0, 0.0);
     [self setAnchorPoint:anchorPoint forView:self.shadowView];
     

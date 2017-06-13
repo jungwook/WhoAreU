@@ -64,8 +64,7 @@
 {
     [super awakeFromNib];
     
-    [self.tableView registerNib:[UINib nibWithNibName:kUserCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kUserCell];
-    [self.tableView registerNib:[UINib nibWithNibName:kLoadMoreCell bundle:[NSBundle mainBundle]] forCellReuseIdentifier:kLoadMoreCell];
+    [self.tableView registerNibsNamed:@[kUserCell, kLoadMoreCell]];
 
     self.selectionMenu = @[
                            @"Girls",
@@ -308,7 +307,7 @@
     CGFloat rowHeight = y + h + i+8;
 
     if (indexPath.section == kSectionUsers) {
-        return rowHeight + ((indexPath.row == self.selectedRow) ? 50.f : 0.f);
+        return rowHeight + ((indexPath.row == self.selectedRow) ? 52.f : 4.f);
     }
     else {
         // more cells...

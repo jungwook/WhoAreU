@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ModalViewController : UIViewController <UIViewControllerTransitioningDelegate>
+@interface ModalViewController : UIViewController <UIViewControllerTransitioningDelegate, UINavigationControllerDelegate>
 @property (nonatomic, readonly) CGFloat offsetHeight;
+@end
+
+@interface Interactor : UIPercentDrivenInteractiveTransition
+@property (nonatomic) BOOL started, shouldFinish;
+
 @end

@@ -85,4 +85,15 @@ id          __dictionary(id object);
 @interface UIImage (extensions)
 + (UIImage*) avatar;
 @end
+
+@interface UITableView (extensions)
+- (void) registerNibNamed:(NSString*)name;
+- (void) registerNibsNamed:(NSArray<NSString*>*)names;
+@end
+
+@interface UICollectionView (extensions)
+- (void) registerNibNamed:(NSString*)name;
+- (void) registerNibsNamed:(NSArray<NSString *> *)names;
+@end
+
 #endif /* BaseFunctions_h */

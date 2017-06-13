@@ -19,6 +19,7 @@
 @end
 
 @interface PhotoView : UIView
+@property (strong, nonatomic) NSString *identifier;
 @property (strong, nonatomic) IBInspectable UIImage* image;
 @property (strong, nonatomic) Media* media;
 @property (strong, nonatomic) id dictionary;

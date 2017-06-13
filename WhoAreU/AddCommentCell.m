@@ -26,8 +26,6 @@
     [self clear:nil];
 
     [self.photoView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedPhoto:)]];
-    self.photoView.borderColor = [UIColor groupTableViewBackgroundColor];
-    self.photoView.borderWidth = 1.f;
 }
 
 - (void) tappedPhoto:(UITapGestureRecognizer *)sender {
