@@ -181,52 +181,55 @@
     const NSUInteger tasks = 4;
     
     [[self.user fetchIfNeededInBackground] continueWithSuccessBlock:^id _Nullable(BFTask<__kindof PFObject *> * _Nonnull task) {
-        Counter *counter = [Counter new];
         CLLocationCoordinate2D userCoords = Coords2DFromPoint(self.user.where);
         CLLocationCoordinate2D myCoords = Coords2DFromPoint(self.me.where);
         self.progressView.alpha = 1.0f;
         
-        id counterId = [counter setCount:tasks completion:^{
-            [UIView animateWithDuration:1 animations:^{
-                self.progressView.alpha = 0.0f;
-            }];
+        Counter *counter = [Counter counterWithCount:tasks completion:^{
+            dispatch_foreground(^{
+                [UIView animateWithDuration:1 animations:^{
+                    self.progressView.alpha = 0.0f;
+                }];
+            });
             self.mapRect = [self mapRectFrom:myCoords to:userCoords];
             [self.mapView setRegion:MKCoordinateRegionForMapRect(self.mapRect) animated:YES];
         }];
         [self.user.where reverseGeocode:^(NSString *string) {
             self.userAddress = string;
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_foreground(^{
                 self.progressView.progress += 1.0/tasks;
             });
-            [counter decreaseCount:counterId];
+            [counter decreaseCount];
         }];
         [self.me.where reverseGeocode:^(NSString *string) {
             self.myAddress = string;
-            dispatch_async(dispatch_get_main_queue(), ^{
+            
+            dispatch_foreground(^{
                 self.progressView.progress += 1.0/tasks;
             });
-            [counter decreaseCount:counterId];
+            [counter decreaseCount];
         }];
         [S3File getImageFromFile:self.user.thumbnail imageBlock:^(UIImage *image) {
             self.userPhoto = image ? image : [UIImage avatar];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_foreground(^{
                 self.progressView.progress += 1.0/tasks;
             });
-            
             UserAnnotation *annotation = [[UserAnnotation alloc] initWithLocation:userCoords];
             annotation.user = self.user;
             annotation.image = self.userPhoto;
             
             [self.mapView addAnnotation:annotation];
 
-            [counter decreaseCount:counterId];
+            [counter decreaseCount];
         }];
         [S3File getImageFromFile:self.me.thumbnail imageBlock:^(UIImage *image) {
             self.myPhoto = image ? image : [UIImage avatar];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            
+            dispatch_foreground(^{
                 self.progressView.progress += 1.0/tasks;
             });
-            [counter decreaseCount:counterId];
+            
+            [counter decreaseCount];
         }];
         
         return nil;

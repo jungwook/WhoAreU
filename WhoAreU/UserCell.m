@@ -8,6 +8,7 @@
 
 #import "UserCell.h"
 #import "Photo.h"
+#import "MessageCenter.h"
 
 @interface UserCell ()
 @property (weak, nonatomic) IBOutlet UILabel *nickname;
@@ -81,9 +82,22 @@
 }
 
 - (IBAction)doChat:(id)sender {
-    if (self.chatAction) {
-        self.chatAction(self.user);
-    }
+    [User payForChatWithUser:self.user onViewController:self.parent action:^(id object) {
+        if ([object isKindOfClass:[Channel class]]) {
+            Channel *channel = object;
+            [self.parent performSegueWithIdentifier:@"Chat" sender:channel.dictionary];
+        }
+        else if ([object isKindOfClass:[NSString class]]) {
+            NSLog(@"FIRST MESSAGE:%@", object);
+            [MessageCenter send:object users:@[self.user] completion:^(Channel *channel) {
+                NSLog(@"Entering Chat with channel:%@", channel.dictionary);
+                [self.parent performSegueWithIdentifier:@"Chat" sender:channel.dictionary];
+            }];
+        }
+        else {
+            NSLog(@"ERROR[%s]:Unknown return", __func__);
+        }
+    }];
 }
 
 - (IBAction)doLike:(id)sender {

@@ -28,6 +28,9 @@ PFGeoPoint* __pointFromCLLocation(CLLocation* location);
 PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
 
 NSString*   __dateString(NSDate* date);
+void dispatch(long identifier, VoidBlock action);
+void dispatch_background(VoidBlock action);
+void dispatch_foreground(VoidBlock action);
 
 void        __alert(NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction, UIViewController* parent);
 id          __dictionary(id object);
@@ -44,6 +47,7 @@ id          __dictionary(id object);
 + (UIColor*) interpolateRGBColorFrom:(UIColor *)start to:(UIColor *)end withFraction:(float)f;
 - (UIColor*) lighterColor;
 - (UIColor*) darkerColor;
++ (UIColor *) colorFromHexString:(NSString *)hexString;
 
 @end
 
@@ -73,9 +77,21 @@ id          __dictionary(id object);
 @interface NSString (extensions)
 - (CGRect)  boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width;
 - (CGFloat) heightWithFont:(UIFont*)font maxWidth:(CGFloat)width;
+- (CGFloat) widthWithFont:(UIFont*)font maxWidth:(CGFloat)width;
+- (CGFloat) heightWithFont:(UIFont*)font;
+- (CGFloat) widthWithFont:(UIFont*)font;
 - (BOOL)    isValidEmail;
+- (BOOL)    canBeEmail;
 - (NSString*) substringWithNumberOfWords:(NSUInteger)count;
 - (UIColor*) UIColor;
+@end
+
+@interface NSAttributedString (extensions)
+- (CGFloat)height;
+- (CGFloat)width;
+- (CGFloat) heightWithMaxWidth:(CGFloat)width;
+- (CGFloat) widthWithMaxWidth:(CGFloat)width;
+- (CGRect) boundingRectWithMaxWidth:(CGFloat)width;
 @end
 
 @interface UIView (extensions)
@@ -94,6 +110,11 @@ id          __dictionary(id object);
 @interface UICollectionView (extensions)
 - (void) registerNibNamed:(NSString*)name;
 - (void) registerNibsNamed:(NSArray<NSString *> *)names;
+@end
+
+@interface NSArray (extensions)
+- (NSArray<User*>*) sortedArrayOfUsersByDistance:(NSArray<User*>*)users;
+
 @end
 
 #endif /* BaseFunctions_h */

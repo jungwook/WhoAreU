@@ -186,6 +186,21 @@ Channel Message:{
 
 @implementation Channels
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    __LF
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;

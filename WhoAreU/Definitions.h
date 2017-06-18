@@ -65,8 +65,11 @@
 #define fOperationRegistration @"registration"
 
 #define fTitle @"title"
+#define fAttributedTitle @"attributedTitle"
 #define fItems @"items"
 #define fIcons @"icons"
+#define fIcon @"icon"
+#define fViewController @"viewController"
 
 #define kStringNull @""
 #define kStringSpace @" "
@@ -97,8 +100,8 @@
 
 #define kVideoThumbnailWidth 320
 
-//#define WSLOCATION @"http://parse.kr:8080"
-#define WSLOCATION @"http://localhost:8080"
+#define WSLOCATION @"http://parse.kr:8080"
+//#define WSLOCATION @"http://localhost:8080"
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
 #define FileURL(__X__) [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:__X__]
 #define LogError NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);

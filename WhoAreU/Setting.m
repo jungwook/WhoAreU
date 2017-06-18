@@ -11,6 +11,8 @@
 #import "SaveField.h"
 #import "PhotoView.h"
 #import "BlurView.h"
+#import "Segment.h"
+#import "TextField.h"
 
 #define kSectionHeight 50
 
@@ -27,12 +29,29 @@
 @property (weak, nonatomic) IBOutlet UILabel *since;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *gender;
 @property (weak, nonatomic) IBOutlet UIView *backgroundView;
+@property (weak, nonatomic) IBOutlet TextField *tf;
 @end
 
 @implementation Setting
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    __LF
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
+    __LF
     [super viewWillAppear:animated];
     
     [self updateUserDetails];
@@ -40,6 +59,22 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self notificationUserMediaUpdated:nil];
     });
+    
+//    self.tf.shouldValidateAction = ^BOOL(NSString *text) {
+//        return [text canBeEmail];
+//    };
+//    
+//    self.tf.validatedAction = ^BOOL(NSString *text) {
+//        return [text isValidEmail];
+//    };
+    
+    [self.tf setSelection:[User channels] default:[User channels].lastObject saveAction:^(NSString *string) {
+        NSLog(@"SELECTED:%@", string);
+    }];
+    self.tf.optional = YES;
+    self.tf.textColor = kAppColor;
+    self.tf.pickerTextColor = [UIColor yellowColor];
+    self.tf.pickerBackgroundColor = [UIColor femaleColor];
 }
 
 - (void)viewDidLoad {

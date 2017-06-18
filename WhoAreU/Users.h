@@ -1,8 +1,8 @@
 //
-//  Nearby.h
+//  Users.h
 //  WhoAreU
 //
-//  Created by 한정욱 on 2017. 4. 18..
+//  Created by 한정욱 on 2017. 6. 14..
 //  Copyright © 2017년 SMARTLY CO. All rights reserved.
 //
 
@@ -25,6 +25,6 @@ typedef enum : BOOL {
     kNearBySortByTime,
 } NearBySortBy;
 
-@interface Nearby : UITableViewController
+@interface Users : UIViewController
 
 @end

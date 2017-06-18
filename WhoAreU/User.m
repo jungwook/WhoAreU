@@ -833,18 +833,19 @@ NSString* __usernames(NSArray*users)
 
 - (void)fetched:(VoidBlock)handler
 {
-    Counter *counter = [Counter new];
     [self fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         if (error) {
             NSLog(@"ERROR:%@", error.localizedDescription);
         } else {
-            id counterId = [counter setCount:self.users.count completion:^{
-                handler();
+            Counter *counter = [Counter counterWithCount:self.users.count completion:^{
+                if (handler) {
+                    handler();
+                }
             }];
             [self.users enumerateObjectsUsingBlock:^(User * _Nonnull user, NSUInteger idx, BOOL * _Nonnull stop) {
                 [user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
                     if (!error) {
-                        [counter decreaseCount:counterId];
+                        [counter decreaseCount];
                     }
                     else {
                         LogError;

@@ -10,6 +10,7 @@
 
 @interface BlurView : UIView
 @property (strong, nonatomic) UIImage* image;
++ (instancetype) viewWithStyle:(UIBlurEffectStyle)style;
 @end
 
 

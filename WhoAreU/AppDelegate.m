@@ -39,8 +39,7 @@
                 NSFontAttributeName : [UIFont systemFontOfSize:17 weight:UIFontWeightBold],
                 };
     [[UINavigationBar appearance] setTitleTextAttributes:attr];
-    [[UINavigationBar appearance] setBarTintColor:kAppColor];
-    [[UINavigationBar appearance] setBarTintColor:[UIColor blackColor]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor appColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     // Navigation bar buttons appearance

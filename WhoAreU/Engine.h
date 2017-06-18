@@ -9,17 +9,21 @@
 #import <Foundation/Foundation.h>
 
 
+@interface Counter : NSObject
+@property (nonatomic) NSUInteger count;
+@property (nonatomic, copy) VoidBlock completionHandler;
+
++ (instancetype) counterWithCount:(NSUInteger)count completion:(VoidBlock)handler;
+- (void) setCount:(NSUInteger)count completion:(VoidBlock)handler;
+- (void) decreaseCount;
+@end
+
+
 typedef enum : NSUInteger {
     kSimulatorStatusUnknown = 0,
     kSimulatorStatusSimulator,
     kSimulatorStatusDevice,
 } SimulatorStatus;
-
-@interface Counter : NSObject
-@property (strong, nonatomic) NSMutableDictionary *counters;
-- (id) setCount:(NSUInteger)count completion:(VoidBlock)handler;
-- (void) decreaseCount:(id)counterId;
-@end
 
 @interface Engine : NSObject
 @property (nonatomic) BOOL initialized;

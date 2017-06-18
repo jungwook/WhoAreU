@@ -206,14 +206,13 @@
         [self selectFirstMedia];
     }
     
-    Counter *counter = [Counter new];
-    id cId = [counter setCount:self.user.photos.count completion:^{
+    Counter *counter = [Counter counterWithCount:self.user.photos.count completion:^{
         [self.collectionView reloadData];
     }];
     [self.user.photos enumerateObjectsUsingBlock:^(Media * _Nonnull photo, NSUInteger idx, BOOL * _Nonnull stop) {
         [photo fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
             [self.media addObject:photo];
-            [counter decreaseCount:cId];
+            [counter decreaseCount];
         }];
     }];
 }

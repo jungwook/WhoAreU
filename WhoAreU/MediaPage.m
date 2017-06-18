@@ -122,16 +122,17 @@
             [self.items addObject:self.user.media];
         }
         [self.items addObjectsFromArray:self.user.photos];
-        Counter *counter = [Counter new];
-        id counterId = [counter setCount:self.items.count completion:^{
+        
+        Counter *counter = [Counter counterWithCount:self.items.count completion:^{
             [UIView animateWithDuration:1 animations:^{
                 self.progress.alpha = 0.0f;
             }];
         }];
+        
         [self.items enumerateObjectsUsingBlock:^(Media * _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
             [item imageLoaded:^(UIImage *image) {
                 self.progress.progress += 1.0/self.items.count;
-                [counter decreaseCount:counterId];
+                [counter decreaseCount];
             }];
         }];
     }

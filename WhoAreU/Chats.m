@@ -68,6 +68,22 @@
 
 @implementation Chats
 
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    __LF
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    __LF
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
@@ -75,6 +91,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    __LF
     [super viewWillAppear:animated];
     [self.tableView reloadData];
 }

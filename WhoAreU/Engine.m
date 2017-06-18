@@ -13,62 +13,37 @@
 
 @implementation Counter
 
-+ (instancetype) new
++ (instancetype)counterWithCount:(NSUInteger)count
+                      completion:(VoidBlock)handler
 {
-    static id sharedFile = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedFile = [[self alloc] initOnce];
-    });
-    return sharedFile;
+    Counter *counter = [Counter new];
+    [counter setCount:count completion:handler];
+    return counter;
 }
 
-- (instancetype)initOnce
+- (void) setCount:(NSUInteger)count completion:(VoidBlock)handler
 {
-    self = [super init];
-    if (self) {
-        self.counters = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
-
-- (id) setCount:(NSUInteger)count completion:(VoidBlock)handler
-{
-    if (count) {
-        id counterId = [ObjectIdStore newObjectId];
-        if (counterId) {
-            id object = @{
-                          @"count" : @(count),
-                          @"handler" : handler
-                          };
-            [self.counters setObject:object forKey:counterId];
-        }
-        return counterId;
+    self.completionHandler = handler;
+    
+    if (count > 0) {
+        self.count = count;
     }
     else {
         if (handler) {
             handler();
         }
-        return nil;
     }
 }
 
-- (void) decreaseCount:(id)counterId
+- (void) decreaseCount
 {
-    id object = [self.counters objectForKey:counterId];
-    VoidBlock handler = [object objectForKey:@"handler"];
-    NSUInteger count = [[object objectForKey:@"count"] integerValue] - 1;
+    NSUInteger count = self.count - 1;
     if (count <= 0) {
-        count = 0;
-        if (handler) {
-            handler();
+        if (self.completionHandler) {
+            self.completionHandler();
         }
     }
-    id updatedObject = @{
-                  @"count" : @(count),
-                  @"handler" : handler
-                  };
-    [self.counters setObject:updatedObject forKey:counterId];
+    self.count = count;
 }
 
 @end

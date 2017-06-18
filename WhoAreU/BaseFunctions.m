@@ -387,6 +387,16 @@ id __dictionary(id object)
 
 @implementation UIColor (extensions)
 
++ (UIColor *) colorFromHexString:(NSString *)hexString
+{
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
 - (NSString*) stringValue
 {
     const CGFloat *components = CGColorGetComponents(self.CGColor);
@@ -515,11 +525,57 @@ id __dictionary(id object)
 
 @end
 
+@implementation NSAttributedString (extensions)
+
+- (CGFloat)height
+{
+    return [self heightWithMaxWidth:FLT_MAX];
+}
+
+- (CGFloat)width
+{
+    return [self widthWithMaxWidth:FLT_MAX];
+}
+
+- (CGFloat) heightWithMaxWidth:(CGFloat)width
+{
+    return CGRectGetHeight([self boundingRectWithMaxWidth:width]);
+}
+
+- (CGFloat) widthWithMaxWidth:(CGFloat)width
+{
+    return CGRectGetWidth([self boundingRectWithMaxWidth:width]);
+}
+
+- (CGRect) boundingRectWithMaxWidth:(CGFloat)width
+{
+    CGSize size = CGSizeMake(width, MAXFLOAT);
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+    return CGRectIntegral([self boundingRectWithSize:size options:options context:nil]);
+}
+
+@end
+
 @implementation NSString (extensions)
+
+- (CGFloat)heightWithFont:(UIFont *)font
+{
+    return [self heightWithFont:font maxWidth:FLT_MAX];
+}
+
+- (CGFloat)widthWithFont:(UIFont *)font
+{
+    return [self widthWithFont:font maxWidth:FLT_MAX];
+}
 
 - (CGFloat) heightWithFont:(UIFont*)font maxWidth:(CGFloat)width
 {
     return CGRectGetHeight([self boundingRectWithFont:font maxWidth:width]);
+}
+
+- (CGFloat) widthWithFont:(UIFont*)font maxWidth:(CGFloat)width
+{
+    return CGRectGetWidth([self boundingRectWithFont:font maxWidth:width]);
 }
 
 - (CGRect) boundingRectWithFont:(UIFont*)font maxWidth:(CGFloat) width
@@ -560,6 +616,12 @@ id __dictionary(id object)
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:self];
 }
+
+- (BOOL) canBeEmail
+{
+    return [self containsString:@"@"];
+}
+
 @end
 
 @implementation PFConfig (extensions)
@@ -633,4 +695,38 @@ id __dictionary(id object)
 }
 @end
 
+@implementation NSArray (extensions)
 
+- (NSArray<User*>*) sortedArrayOfUsersByDistance:(NSArray<User*>*)users
+{
+    User *user = [User me];
+    return [users sortedArrayUsingComparator:^NSComparisonResult(User*  _Nonnull user1, User*  _Nonnull user2) {
+        CGFloat distanceA = [user.where distanceInKilometersTo:user1.where];
+        CGFloat distanceB = [user.where distanceInKilometersTo:user2.where];
+        
+        if (distanceA < distanceB) {
+            return NSOrderedAscending;
+        } else if (distanceA > distanceB) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
+    }];
+}
+
+@end
+
+void dispatch_background(VoidBlock action)
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), action);
+}
+
+void dispatch_foreground(VoidBlock action)
+{
+    dispatch_async(dispatch_get_main_queue(), action);
+}
+
+void dispatch(long identifier, VoidBlock action)
+{
+    dispatch_async(dispatch_get_global_queue(identifier, 0), action);
+}

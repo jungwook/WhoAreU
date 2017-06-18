@@ -15,6 +15,11 @@
 
 @implementation BlurView
 
++ (instancetype)viewWithStyle:(UIBlurEffectStyle)style
+{
+    return [[BlurView alloc] initWithStyle:style];
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
@@ -28,6 +33,16 @@
     }
     return self;
 }
+
+- (instancetype)initWithStyle:(UIBlurEffectStyle)style
+{
+    self = [super init];
+    if (self) {
+        [self initializeWithStyle:style];
+    }
+    return self;
+}
+
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -56,8 +71,13 @@
 
 - (void) initialize
 {
+    [self initializeWithStyle:UIBlurEffectStyleLight];
+}
+
+- (void) initializeWithStyle:(UIBlurEffectStyle)style
+{
     self.imageView = [UIView new];
-    self.effectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent]];
+    self.effectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:style]];
     [self addSubview:self.imageView];
     [self addSubview:self.effectView];
 }
