@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface MapView : UIView <MKMapViewDelegate>
+@property (nonatomic, strong) IBInspectable NSString* userId;
 @property (nonatomic, strong) User* user;
 @property (nonatomic, strong) NSString *userAddress;
 @property (nonatomic, strong) NSString *myAddress;

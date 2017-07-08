@@ -28,7 +28,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This application requires the use of your camera.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application requires the user's location</string>
+	<string>This application requires the user&apos;s location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This application requires the use of your microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -51,7 +51,26 @@
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleBlackOpaque</string>
+	<key>UIStatusBarTintParameters</key>
+	<dict>
+		<key>UINavigationBar</key>
+		<dict>
+			<key>Translucent</key>
+			<false/>
+			<key>Style</key>
+			<string>UIBarStyleDefault</string>
+			<key>TintColor</key>
+			<dict>
+				<key>Red</key>
+				<real>0.7</real>
+				<key>Green</key>
+				<real>0.8</real>
+				<key>Blue</key>
+				<real>0.1</real>
+			</dict>
+		</dict>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

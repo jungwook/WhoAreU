@@ -14,6 +14,9 @@
 #import "MessageCenter.h"
 #import "Chat.h"
 #import "Profile.h"
+#import "HeaderMenu.h"
+#import "TabBar.h"
+#import "MessageView.h"
 
 #define kUserCell @"UserCell"
 #define kLoadMoreCell @"LoadMoreCell"
@@ -70,13 +73,13 @@
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.contentInset = UIEdgeInsetsMake(self.heightConstraint.constant, 0, 2*49.f, 0);
+//    self.tableView.contentInset = UIEdgeInsetsMake(self.heightConstraint.constant, 0, 2*49.f, 0);
     [self.tableView registerNibsNamed:@[kUserCell, kLoadMoreCell]];
     
     self.refresh = [Refresh initWithCompletionBlock:^(UIRefreshControl *refreshControl) {
         [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
     }];
-    [self.tableView addSubview:self.refresh];
+//    [self.tableView addSubview:self.refresh];
     
     self.selectionMenu = @[
                            @"Girls",
@@ -95,8 +98,106 @@
     self.limit = 20;
     
     [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
-    
     [self setupSegments];
+    
+    UIView *segView = [UIView new];
+    segView.backgroundColor = [UIColor redColor];
+    segView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 60.f);
+    
+    TabBar *seg = [TabBar new];
+    seg.gradientOn = NO;
+    seg.items = @[
+                      @{
+                          fTitle : @"Users",
+                          fIcon : @"pin",
+                          fDeselectedIcon : @"pin",
+                          },
+                      @{
+                          //                          fTitle : @"Me",
+                          fIcon : @"user",
+                          fDeselectedIcon : @"user",
+                          },
+                      @{
+                          //                          fTitle : @"Me",
+                          fIcon : @"heart",
+                          fDeselectedIcon : @"heart",
+                          },
+                      @{
+                          //                          fTitle : @"Chat",
+                          fIcon : @"message2",
+                          fDeselectedIcon : @"message2",
+                          },
+                      @{
+                          //                          fTitle : @"Channel",
+                          fIcon : @"pin2",
+                          fDeselectedIcon : @"pin2",
+                          },
+                      ];
+    
+    seg.index = 2;
+    seg.frame = CGRectInset(segView.bounds, 10, 5);
+
+    [segView addSubview:seg];
+//    HeaderMenu *menu = [HeaderMenu menuWithView:segView];
+    HeaderMenu *menu = [HeaderMenu menuWithTabBarItems:@[
+                                                         @{
+                                                             fTitle : @"Users",
+                                                             fIcon : @"pin",
+                                                             fDeselectedIcon : @"pin",
+                                                             },
+                                                         @{
+                                                             //                          fTitle : @"Me",
+                                                             fIcon : @"user",
+                                                             fDeselectedIcon : @"user",
+                                                             },
+                                                         @{
+                                                             //                          fTitle : @"Me",
+                                                             fIcon : @"heart",
+                                                             fDeselectedIcon : @"heart",
+                                                             },
+                                                         @{
+                                                             //                          fTitle : @"Chat",
+                                                             fIcon : @"message2",
+                                                             fDeselectedIcon : @"message2",
+                                                             },
+                                                         @{
+                                                             //                          fTitle : @"Channel",
+                                                             fIcon : @"pin2",
+                                                             fDeselectedIcon : @"pin2",
+                                                             },
+                                                         ]];
+    
+    menu.frame = CGRectMake(0, 0, self.view.bounds.size.width, 60.f);
+    menu.backgroundColor = [UIColor redColor];
+    [self.tableView addSubview:menu];
+    
+//    self.tableView.backgroundColor = [UIColor blackColor];
+}
+
+- (IBAction)selectSortby:(UIBarButtonItem*)sender
+{
+    self.sortby = !self.sortby;
+    
+    [sender setImage:self.sortby ? [UIImage imageNamed:@"gps"] : [UIImage imageNamed:@"timelapse"]];
+    [self reloadAllUsersOnCondition:self.segmentIndex reset:YES];
+    
+    MessageView *mv = [MessageView new];
+    mv.title = @"Hello";
+    mv.message = @"This is a system message. This is a system message. This is a system message. This is a system message. This is a system message. This is a system message.";
+    mv.backgroundColor = [UIColor appColor];
+    
+    [mv addButton:@"OK" action:^(){
+        __LF
+    } backgroundColor:mv.backgroundColor.lighterColor textColor:nil];
+    [mv addCancelButton:nil action:^{
+        __LF
+    } backgroundColor:nil textColor:nil];
+    
+//    [mv addButton:@"CANCEL" action:^(){
+//        __LF
+//    } backgroundColor:mv.backgroundColor.darkerColor textColor:nil];
+    
+    [mv show];
 }
 
 - (void) setupSegments
@@ -198,12 +299,14 @@
         default:
             break;
     }
-    [query whereKey:fObjectId notEqualTo:[User me].objectId];
-    if (self.sortby == kNearBySortByLocation) {
-        [query whereKey:fWhere nearGeoPoint:[User where]];
-    }
-    else {
-        [query orderByDescending:fUpdatedAt];
+    if ([User me]) {
+        [query whereKey:fObjectId notEqualTo:[User me].objectId];
+        if (self.sortby == kNearBySortByLocation) {
+            [query whereKey:fWhere nearGeoPoint:[User where]];
+        }
+        else {
+            [query orderByDescending:fUpdatedAt];
+        }
     }
     
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
@@ -212,9 +315,11 @@
                 LogError;
             }
             else {
-                if (block) {
-                    block(users);
-                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (block) {
+                        block(users);
+                    }
+                });
             }
         }];
     });
@@ -228,7 +333,7 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -251,6 +356,7 @@
         return cell;
     }
     else {
+        NSLog(@"No more cell at %ld", indexPath.row);
         NoMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:kLoadMoreCell forIndexPath:indexPath];
         
         if (self.users.count == self.skip + self.limit) {

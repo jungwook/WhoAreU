@@ -26,7 +26,6 @@
 #import "BaseFunctions.h"
 #import "ObjectIdStore.h"
 #import "User.h"
-#import "Extensions.h"
 #import "Engine.h"
 #import "UIView+Badge.h"
 #import "NSDate+TimeAgo.h"

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BaseFunctions.h"
+#import "MaterialDesignSymbol.h"
 
 CALayer* __drawImageOnLayer(UIImage *image, CGSize size)
 {
@@ -663,6 +664,11 @@ id __dictionary(id object)
     return [UIImage imageNamed:@"avatar"];
 }
 
++ (UIImage *)materialDesign:(NSString *)code
+{
+    return [[[MaterialDesignSymbol iconWithCode:code fontSize:48] image] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+}
+
 @end
 
 @implementation UITableView (extensions)
@@ -693,6 +699,22 @@ id __dictionary(id object)
 {
     [self registerNib:[UINib nibWithNibName:name bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:name];
 }
+
+- (__kindof UICollectionViewCell *) visibleCell
+{
+    CGRect shownFrame = self.bounds;
+    shownFrame.origin = self.contentOffset;
+    
+    return [self.visibleCells sortedArrayUsingComparator:^NSComparisonResult(UICollectionViewCell* _Nonnull c1, UICollectionViewCell* _Nonnull c2) {
+        
+        CGRect r1 = CGRectIntersection(shownFrame, c1.frame);
+        CGRect r2 = CGRectIntersection(shownFrame, c2.frame);
+        CGFloat h1 = CGRectGetWidth(r1)*CGRectGetHeight(r1);
+        CGFloat h2 = CGRectGetWidth(r2)*CGRectGetHeight(r2);
+        
+        return (h1 > h2) ? NSOrderedAscending : (h1 < h2) ? NSOrderedDescending : NSOrderedSame;
+    }].firstObject;
+}
 @end
 
 @implementation NSArray (extensions)
@@ -714,6 +736,193 @@ id __dictionary(id object)
     }];
 }
 
+- (id)objectAtIndexRow:(NSIndexPath *)indexPath
+{
+    return [self objectAtIndex:indexPath.row];
+}
+
+@end
+
+NSString const *topRadiusKey = @"UIView_topRadiusKey";
+
+@implementation UIView(Radius)
+@dynamic radius;
+
+-(void) setRadius:(CGFloat)radius
+{
+    self.layer.cornerRadius = radius;
+}
+
+-(CGFloat) radius
+{
+    return self.layer.cornerRadius;
+}
+
+@end
+
+@implementation UIView(Extras)
+@dynamic borderColor, shadowRadius, topRadius;
+
+- (void)setTopRadius:(CGFloat)topRadius
+{
+    NSNumber *number = @(topRadius);
+    objc_setAssociatedObject(self, &topRadiusKey, number, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    CAShapeLayer *mask = [CAShapeLayer layer];
+    mask.path = [self rountTopCornerPathWithRadius:topRadius].CGPath;
+    
+    self.layer.mask = mask;
+}
+
+-(CGFloat)topRadius
+{
+    NSNumber *number = objc_getAssociatedObject(self, &topRadiusKey);
+    return number.floatValue;
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    self.layer.borderColor = borderColor.CGColor;
+}
+
+- (UIColor *)borderColor
+{
+    return [UIColor colorWithCGColor:self.layer.borderColor];
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    self.layer.borderWidth = borderWidth;
+}
+
+- (void)setShadowRadius:(CGFloat)shadowRadius
+{
+    if (shadowRadius > 0) {
+        self.layer.shadowColor = [UIColor colorWithWhite:0.0f alpha:1.0f].CGColor;
+        self.layer.shadowOffset = CGSizeZero;
+        self.layer.shadowRadius = shadowRadius;
+        self.layer.shadowOpacity = 0.4f;
+    }
+    else {
+        self.layer.shadowColor = nil;
+        self.layer.shadowOffset = CGSizeZero;
+        self.layer.shadowRadius = 0.0f;
+        self.layer.shadowOpacity = 0.0f;
+    }
+}
+
+- (CGFloat)borderWidth
+{
+    return self.layer.borderWidth;
+}
+
+- (UIBezierPath*) rountTopCornerPathWithRadius:(CGFloat)radius
+{
+    UIBezierPath *path = [UIBezierPath new];
+    CGFloat w = self.frame.size.width, h = self.frame.size.height, i = radius;
+    
+    [path moveToPoint:CGPointMake(0, i)];
+    [path addQuadCurveToPoint:CGPointMake(i, 0) controlPoint:CGPointMake(0, 0)];
+    [path addLineToPoint:CGPointMake(w-i, 0)];
+    [path addQuadCurveToPoint:CGPointMake(w, i) controlPoint:CGPointMake(w, 0)];
+    [path addLineToPoint:CGPointMake(w, h)];
+    [path addLineToPoint:CGPointMake(0, h)];
+    [path addLineToPoint:CGPointMake(0, i)];
+    
+    return path;
+}
+
+@end
+
+
+@implementation UILabel(Shadow)
+@dynamic shadow;
+
+- (void)setShadow:(BOOL)shadow
+{
+    if (shadow) {
+        self.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.layer.shadowOffset = CGSizeMake(0, 0);
+        self.layer.shadowRadius = 3;
+        self.layer.shadowOpacity = 0.4;
+    }
+    else {
+        self.layer.shadowColor = nil;
+        self.layer.shadowOffset = CGSizeMake(0, 0);
+        self.layer.shadowRadius = 0;
+        self.layer.shadowOpacity = 0;
+    }
+}
+
+- (BOOL)shadow
+{
+    return (BOOL) self.layer.shadowColor;
+}
+
+@end
+
+@implementation UIScrollView (NormalizedContentOffset)
+
+- (CGPoint)normalizedOffset
+{
+    return CGPointMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top);
+}
+
+@end
+
+@implementation MKMapView (extensions)
+
+- (id<MKAnnotation>)annotationClosestToCenter
+{
+    CGFloat closest = FLT_MAX;
+    __block id <MKAnnotation> closestAnnotation = nil;
+    [self.visibleAnnotations enumerateObjectsUsingBlock:^(id<MKAnnotation> _Nonnull annotation, NSUInteger idx, BOOL * _Nonnull stop) {
+        CLLocation *l = LocationFromCoords(annotation.coordinate);
+        CLLocation *center = LocationFromCoords(self.centerCoordinate);
+        CGFloat d = [l distanceFromLocation:center];
+        if (closest > d) {
+            d = closest;
+            closestAnnotation = annotation;
+        }
+    }];
+    return closestAnnotation;
+}
+
+- (NSArray<id<MKAnnotation>> *)visibleAnnotations
+{
+    return [self annotationsInMapRect:self.visibleMapRect].allObjects;
+}
+
+- (__kindof MKAnnotationView *)annotationViewClosesToCenterWithClass:(__unsafe_unretained Class)classType
+{
+    MKAnnotationView *view = [self viewForAnnotation:[self annotationClosestToCenterWithClass:classType]];
+    return view;
+}
+
+- (id<MKAnnotation>)annotationClosestToCenterWithClass:(__unsafe_unretained Class)classType
+{
+    __block CGFloat closest = FLT_MAX;
+    __block id <MKAnnotation> closestAnnotation = nil;
+    [self.visibleAnnotations enumerateObjectsUsingBlock:^(id<MKAnnotation> _Nonnull annotation, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([annotation isKindOfClass:classType]) {
+            CLLocation *l = LocationFromCoords(annotation.coordinate);
+            CLLocation *center = LocationFromCoords(self.centerCoordinate);
+            CGFloat d = [l distanceFromLocation:center];
+//            NSLog(@"ANN:%.2f", d);
+            if (closest > d) {
+                closest = d;
+                closestAnnotation = annotation;
+            }
+        }
+        else {
+//            NSLog(@"CLASS:%@", NSStringFromClass([annotation class]));
+//            NSLog(@"CLASS TYPE:%@", NSStringFromClass(classType));
+        }
+    }];
+//    NSLog(@"CLOSEST ANN:%.2f", closest);
+    return closestAnnotation;
+}
+
 @end
 
 void dispatch_background(VoidBlock action)
@@ -730,3 +939,4 @@ void dispatch(long identifier, VoidBlock action)
 {
     dispatch_async(dispatch_get_global_queue(identifier, 0), action);
 }
+

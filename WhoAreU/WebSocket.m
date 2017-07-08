@@ -166,7 +166,7 @@
     __LF
     NSLog(@"CLOSED [%ld]:%@ - %ld[%@]", code, reason, webSocket.readyState, wasClean ? @"YES" : @"NO");
     
-    __alert(@"System Warning", @"Chatserver is down.\nMessages will be backlogged", nil, nil, nil);
+//    __alert(@"System Warning", @"Chatserver is down.\nMessages will be backlogged", nil, nil, nil);
 
     self.isAlive = NO;
     self.socket = nil;

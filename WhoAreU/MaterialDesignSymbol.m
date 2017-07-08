@@ -56,6 +56,12 @@
     return iconImage;
 }
 
+- (UIImage *)imageWithColor:(UIColor*)color
+{
+    [self addAttribute:NSForegroundColorAttributeName value:color];
+    return [self imageWithSize:CGSizeMake(self.fontSize, self.fontSize)];
+}
+
 - (UIImage *)image {
     return [self imageWithSize:CGSizeMake(self.fontSize, self.fontSize)];
 }

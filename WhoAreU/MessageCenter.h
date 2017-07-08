@@ -60,6 +60,7 @@
  @param info userInfo retrieved from application delegate.
  */
 + (UNNotificationPresentationOptions) handlePushUserInfo:(id)info;
++ (void)startFromViewController:(UIViewController*)viewController;
 @end
 
 

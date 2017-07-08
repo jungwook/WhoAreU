@@ -14,7 +14,7 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.textInsets = UIEdgeInsetsMake(2, 5, 2, 5);
+        [self setupVariables];
     }
     return self;
 }
@@ -23,20 +23,24 @@
 {
     self = [super init];
     if (self) {
-        self.textInsets = UIEdgeInsetsMake(2, 5, 2, 5);
+        [self setupVariables];
     }
     return self;
 }
 
-- (void)layoutSubviews
+- (void)setRounded:(BOOL)rounded
 {
-    CGRect rect = self.bounds;
+    CGFloat w = CGRectGetWidth(self.bounds), h = CGRectGetHeight(self.bounds);
+    CGFloat r = MIN(w, h)/2.0f;
     
-    CGFloat w = CGRectGetWidth(rect), h = CGRectGetHeight(rect), m = MIN(w, h)/2.0f;
-    
-    self.radius = m;
-    self.radius = 4.0f;
-    self.clipsToBounds = YES;
+    self.radius = rounded ? r : rounded;
+    self.clipsToBounds = rounded;
+}
+
+- (void)setupVariables
+{
+    self.textInsets = UIEdgeInsetsMake(4, 8, 4, 8);
+    [self setNeedsLayout];
 }
 
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines

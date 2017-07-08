@@ -21,6 +21,15 @@
     
     [self setupAWSCredentials];
 
+    [User registerSubclass];
+    [Media registerSubclass];
+    [Message registerSubclass];
+    [Channel registerSubclass];
+    [History registerSubclass];
+    [Comment registerSubclass];
+    
+    NSLog(@"Subclasses registered");
+
     // register subclasses
     
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
@@ -40,8 +49,11 @@
                 };
     [[UINavigationBar appearance] setTitleTextAttributes:attr];
     [[UINavigationBar appearance] setBarTintColor:[UIColor appColor]];
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    
+    [[UINavigationBar appearance] setTranslucent:NO];
+    // UIColor(red: 63.0/255.0, green: 172.0/255.0, blue: 236.0/255.0, alpha: 1.0)
     // Navigation bar buttons appearance
     
     attr = @{

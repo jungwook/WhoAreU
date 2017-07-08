@@ -10,6 +10,7 @@
 #define BaseFunctions_h
 
 #import "User.h"
+#import <objc/runtime.h>
 
 CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
 UIImage*    __scaleImage(UIImage* image, CGSize size);
@@ -99,6 +100,7 @@ id          __dictionary(id object);
 @end
 
 @interface UIImage (extensions)
++ (UIImage*) materialDesign:(NSString*)code;
 + (UIImage*) avatar;
 @end
 
@@ -110,11 +112,42 @@ id          __dictionary(id object);
 @interface UICollectionView (extensions)
 - (void) registerNibNamed:(NSString*)name;
 - (void) registerNibsNamed:(NSArray<NSString *> *)names;
+- (__kindof UICollectionViewCell *) visibleCell;
 @end
 
 @interface NSArray (extensions)
 - (NSArray<User*>*) sortedArrayOfUsersByDistance:(NSArray<User*>*)users;
+- (id) objectAtIndexRow:(NSIndexPath*)indexPath;
+@end
+
+@interface UIView(Radius)
+@property (nonatomic) IBInspectable CGFloat radius;
+@end
+
+@interface UIView(Extras)
+@property (nonatomic) IBInspectable UIColor *borderColor;
+@property (nonatomic) IBInspectable CGFloat borderWidth;
+@property (nonatomic) IBInspectable CGFloat shadowRadius;
+@property (nonatomic) IBInspectable CGFloat topRadius;
+- (UIBezierPath*) rountTopCornerPathWithRadius:(CGFloat)radius;
+@end
+
+@interface UILabel(Shadow)
+@property (nonatomic) IBInspectable BOOL shadow;
+@end
+
+@interface UIScrollView(NormalizedContentOffset)
+@property (nonatomic, readonly) CGPoint normalizedOffset;
+@end
+
+@interface MKMapView(extensions)
+@property (readonly, nonatomic) id <MKAnnotation> annotationClosestToCenter;
+@property (readonly, nonatomic) NSArray <id<MKAnnotation>> *visibleAnnotations;
+
+- (id<MKAnnotation>)annotationClosestToCenterWithClass:(__unsafe_unretained Class)classType;
+- (__kindof MKAnnotationView*)annotationViewClosesToCenterWithClass:(__unsafe_unretained Class)classType;
 
 @end
+
 
 #endif /* BaseFunctions_h */

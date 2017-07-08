@@ -18,7 +18,7 @@ typedef BOOL(^TextFieldValidation)(NSString *text);
 @property (nonatomic, copy) TextFieldValidation shouldValidateAction;
 @property (nonatomic, copy) TextFieldValidation validatedAction;
 @property (nonatomic, copy) StringBlock saveAction;
-@property (nonatomic) IBInspectable BOOL optional, readonly;
+@property (nonatomic) IBInspectable BOOL optional, readonly, floating;
 - (void)setSelection:(NSArray *)items
              default:(NSString*)item
           saveAction:(StringBlock)saveAction;

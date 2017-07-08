@@ -156,7 +156,7 @@
     
     BOOL inside = CGRectContainsPoint(self.mapView.bounds, pointInView);
     
-    if (inside == NO) {
+    if (inside == NO && MKMapRectIsNull(self.mapRect) == NO && MKMapRectIsEmpty(self.mapRect) == NO) {
         [self.mapView setRegion:MKCoordinateRegionForMapRect(self.mapRect) animated:YES];
     }
 }
@@ -174,12 +174,27 @@
     }
 }
 
+- (void)setUserId:(NSString *)userId
+{
+    if (userId == nil)
+        return;
+    
+    User *user = [User objectWithoutDataWithObjectId:userId];
+    
+    [user fetchIfNeededInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        self.user = user;
+    }];
+    
+    return;
+}
+
 - (void)setUser:(User *)user
 {
     _user = user;
     
-    const NSUInteger tasks = 4;
+    NSUInteger tasks = (self.me.where != nil) + (self.user.where != nil) + ( self.user.thumbnail != nil) + (self.me.thumbnail != nil);
     
+    [self.mapView removeAnnotations:self.mapView.annotations];
     [[self.user fetchIfNeededInBackground] continueWithSuccessBlock:^id _Nullable(BFTask<__kindof PFObject *> * _Nonnull task) {
         CLLocationCoordinate2D userCoords = Coords2DFromPoint(self.user.where);
         CLLocationCoordinate2D myCoords = Coords2DFromPoint(self.me.where);
@@ -223,6 +238,7 @@
             [counter decreaseCount];
         }];
         [S3File getImageFromFile:self.me.thumbnail imageBlock:^(UIImage *image) {
+            NSLog(@"MY PHOTO DONE");
             self.myPhoto = image ? image : [UIImage avatar];
             
             dispatch_foreground(^{

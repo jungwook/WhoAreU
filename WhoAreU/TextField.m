@@ -138,6 +138,7 @@
 @property (nonatomic, strong) KeyboardPicker *picker;
 @property (nonatomic, readonly) CGFloat placeholderHeight,lineWidth, animationDuration, overlayWidth, overlayHeight, visibleOverlayWidth, saveWidth, saveHeight, undoWidth, undoHeight, inset, w, h;
 @property (nonatomic, readonly) BOOL shouldValidate, validated, shouldShowSave, shouldShowUndo, filled, changed;
+@property (nonatomic) BOOL saveShowing, undoShowing, placeholderFloating;
 @property (nonatomic, readonly) NSString* placeholderTitle;
 @property (nonatomic, readonly) UIColor *validatedPlaceholderColor;
 @property (nonatomic, readonly) UIFont *buttonFont;
@@ -276,12 +277,14 @@
 {
     return CGRectMake(0,
                       self.filled ? self.placeholderHeight : 0,
-                      CGRectGetWidth(bounds) - self.visibleOverlayWidth,
+//                      CGRectGetWidth(bounds) - self.visibleOverlayWidth,
+                      CGRectGetWidth(bounds),
                       CGRectGetHeight(bounds) - (self.filled ? self.placeholderHeight : 0));
 }
 
 - (CGRect)editingRectForBounds:(CGRect)bounds
 {
+//    return bounds;
     return [self textRectForBounds:bounds];
 }
 
@@ -326,6 +329,7 @@
     undo.titleLabel.font = self.buttonFont;
     undo.titleLabel.textColor = [UIColor whiteColor];
     undo.frame = CGRectMake(self.saveWidth+self.inset, 0, self.saveHeight, self.saveHeight);
+    undo.alpha = self.shouldShowUndo;
     [undo addTarget:self action:@selector(undo:) forControlEvents:UIControlEventTouchDown];
     [view addSubview:undo];
     self.undo = undo;
@@ -439,13 +443,14 @@
 
 - (BOOL)shouldShowSave
 {
-    BOOL ret = ((self.changed || (self.optional && !self.filled && self.changed)) && self.validated && self.editing);
+    BOOL ret = ((self.changed || (self.optional && !self.filled && self.changed)) && self.validated && self.editing) && !self.readonly;
+    
     return ret;
 }
 
 - (BOOL)shouldShowUndo
 {
-    BOOL ret = self.editing && (self.changed || self.optional);
+    BOOL ret = self.editing && (self.changed || self.optional) && !self.readonly;
     return ret;
 }
 
@@ -468,10 +473,8 @@
 
 - (void)refreshSaveButton
 {
-    static BOOL showing = NO;
-    
-    if (self.shouldShowSave != showing) {
-        showing = self.shouldShowSave;
+    if (self.shouldShowSave != self.saveShowing) {
+        self.saveShowing = self.shouldShowSave;
         
         self.save.frame = self.shouldShowSave ? CGRectMake(self.overlayWidth, 0, self.saveWidth, self.saveHeight) : CGRectMake(0, 0, self.saveWidth, self.saveHeight);
         
@@ -490,12 +493,10 @@
 
 - (void)refreshUndoButton
 {
-    static BOOL showing = NO;
-    
-    if (self.shouldShowUndo == showing)
+    if (self.shouldShowUndo == self.undoShowing)
         return;
     
-    showing = self.shouldShowUndo;
+    self.undoShowing = self.shouldShowUndo;
     self.undo.frame = CGRectMake(self.saveWidth+self.inset, 0, self.saveHeight, self.saveHeight);
     [UIView animateWithDuration:self.animationDuration animations:^{
         self.undo.alpha = self.shouldShowUndo;
@@ -519,29 +520,31 @@
 
 - (NSString*) placeholderTitle
 {
-    NSString *placeholder = self.filled ? self.placeholder.uppercaseString : self.placeholder;
+    BOOL filled = self.filled || self.floating;
+    
+    NSString *placeholder = filled ? self.placeholder.uppercaseString : self.placeholder;
     return self.shouldValidate ? (self.validated ? placeholder : [placeholder stringByAppendingString:@" NOT VALID"]) : placeholder;
 }
 
 - (void)refreshPlaceholder
 {
-    static BOOL filled = NO;
+    BOOL filled = self.filled || self.floating;
     
-    if (self.filled == filled)
+    if (filled == self.placeholderFloating)
         return;
     
-    filled = self.filled;
+    self.placeholderFloating = filled;
     
     self.underline.frame = CGRectMake(0, self.h-self.lineWidth, self.w, self.lineWidth);
     self.underline.backgroundColor = self.validatedPlaceholderColor;
     
     [UIView animateWithDuration:self.animationDuration animations:^{
-        self.placeholderLabel.frame = self.filled ? CGRectMake(0, 0, self.w, self.placeholderHeight) : [super textRectForBounds:self.bounds];
-        self.placeholderLabel.alpha = self.filled;
-        self.placeholderLabel.font = self.filled ? self.placeholderFont : self.font;
-        self.placeholderLabel.text = self.filled ? self.placeholder.uppercaseString : self.placeholder;
-        self.placeholderLabel.textColor = self.filled ? self.validatedPlaceholderColor : [UIColor colorFromHexString:@"#C7C7CD"];
-        self.underline.alpha = self.filled;
+        self.placeholderLabel.frame = filled ? CGRectMake(0, 0, self.w, self.placeholderHeight) : [super textRectForBounds:self.bounds];
+        self.placeholderLabel.alpha = filled;
+        self.placeholderLabel.font = filled ? self.placeholderFont : self.font;
+        self.placeholderLabel.text = filled ? self.placeholder.uppercaseString : self.placeholder;
+        self.placeholderLabel.textColor = filled ? self.validatedPlaceholderColor : [UIColor colorFromHexString:@"#C7C7CD"];
+        self.underline.alpha = filled;
         self.underline.backgroundColor = self.validatedPlaceholderColor;
         self.underline.frame = CGRectMake(0, self.h-self.lineWidth, self.w, self.lineWidth);
     }];

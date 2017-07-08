@@ -11,15 +11,6 @@
 
 int main(int argc, char * argv[]) {
     @autoreleasepool {
-        [User registerSubclass];
-        [Media registerSubclass];
-        [Message registerSubclass];
-        [Channel registerSubclass];
-        [History registerSubclass];
-        [Comment registerSubclass];
-        
-        NSLog(@"Subclasses registered");
-
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }

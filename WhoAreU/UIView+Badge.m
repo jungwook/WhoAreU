@@ -191,6 +191,7 @@ NSString const *UIBarButtonItem_badgeValueKey = @"UIBarButtonItem_badgeValueKey"
 -(UIColor *)badgeTextColor {
     return objc_getAssociatedObject(self, &UIBarButtonItem_badgeTextColorKey);
 }
+
 -(void)setBadgeTextColor:(UIColor *)badgeTextColor
 {
     objc_setAssociatedObject(self, &UIBarButtonItem_badgeTextColorKey, badgeTextColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

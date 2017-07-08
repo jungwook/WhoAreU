@@ -40,9 +40,54 @@
     return self;
 }
 
++ (void)startFromViewController:(UIViewController *)viewController
+{
+    MessageCenter *center = [MessageCenter new];
+    [center checkLoginStatusAndProceedFromViewController:viewController];
+}
+
+- (void)checkLoginStatusAndProceedFromViewController:(UIViewController*)viewController
+{
+    User *user = [User me];
+    
+    VoidBlock initializationHandler = ^(void) {
+        [[PFConfig getConfigInBackground] continueWithSuccessBlock:^id _Nullable(BFTask<PFConfig *> * _Nonnull task) {
+            
+            [Engine initializeSystems];
+            
+            PostNotification(kNotificationUserLoggedInMessage, nil);
+            [MessageCenter initializeCommunicationSystem];
+            // User logged in so ready to initialize systems.
+            
+            // Subscribe to channel user
+            [MessageCenter subscribeToChannelUser];
+            [MessageCenter setupUserToInstallation];
+            //        [MessageCenter processFetchMessages];
+            
+            // force load child view controllers
+            [MessageCenter setSystemBadge];
+            return nil;
+        }];
+    };
+    
+    if (user) {
+        [user fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            initializationHandler();
+        }];
+    }
+    else {
+        UIViewController *vc = [viewController.storyboard instantiateViewControllerWithIdentifier:@"LoginOrStartup"];
+        
+        [viewController presentViewController:vc animated:YES completion:^{
+            NSLog(@"VC presented");
+        }];
+    }
+}
+
+
 - (void) setup
 {
-    __LF
+//    [User logOut];
 
     [self loadFiles];
     [self setupPushHandlers];

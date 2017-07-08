@@ -16,7 +16,8 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return UIStatusBarStyleLightContent;
+    return UIStatusBarStyleDefault;
+//    return UIStatusBarStyleLightContent;
 }
 
 - (void)viewDidLoad {

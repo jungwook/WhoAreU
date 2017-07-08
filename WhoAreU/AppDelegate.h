@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Tabs.h"
+#import "MainTabs.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, UNUserNotificationCenterDelegate>
 

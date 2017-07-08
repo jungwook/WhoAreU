@@ -63,12 +63,16 @@
 #define fChannelTypeSetup @"setup"
 #define fOperationSetChannel @"setChannel"
 #define fOperationRegistration @"registration"
+#define fSelectedTabBarIndex @"selectedTabBarIndex"
+#define fBadge @"badge"
 
 #define fTitle @"title"
 #define fAttributedTitle @"attributedTitle"
 #define fItems @"items"
 #define fIcons @"icons"
 #define fIcon @"icon"
+#define fDeselectedIcon @"deselectedIcon"
+#define fNavigationControllerRequired @"navigationController"
 #define fViewController @"viewController"
 
 #define kStringNull @""
@@ -119,6 +123,8 @@
 #define PostNotification(__X__, __Y__) [[NSNotificationCenter defaultCenter] postNotificationName:__X__ object:__Y__]
 
 #define Coords2DFromPoint(__x__) CLLocationCoordinate2DMake(__x__.latitude, __x__.longitude)
+#define LocationFromPoint(__X__) [[CLLocation alloc] initWithLatitude:__X__.latitude longitude:__X__.longitude]
+#define LocationFromCoords(__X__) [[CLLocation alloc] initWithLatitude:__X__.latitude longitude:__X__.longitude]
 #define PointFromCLLocation(__X__) [PFGeoPoint geoPointWithLocation:__X__]
 #define PointFromCoords2D(__X__) [PFGeoPoint geoPointWithLatitude:__X__.latitude longitude:__X__.longitude]
 

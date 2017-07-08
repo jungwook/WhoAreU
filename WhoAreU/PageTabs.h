@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    kTabsIndicatorTop,
+    kTabsIndicatorBottom,
+} TabsIndicatorType;
+
 @interface PageTabs : UIView
 @property (nonatomic, strong) NSArray <NSDictionary*> *items;
 @property (nonatomic, copy) IndexBlock selectAction;
-@property (nonatomic, strong) IBInspectable UIColor *selectedColor;
-@property (nonatomic, strong) IBInspectable UIColor *defaultColor;
+@property (nonatomic, strong) IBInspectable UIColor *selectedColor, *defaultColor, *tabColor;
+@property (nonatomic) IBInspectable TabsIndicatorType type;
 @end

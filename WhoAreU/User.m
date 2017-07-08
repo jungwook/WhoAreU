@@ -217,6 +217,11 @@ NSString* __usernames(NSArray*users)
     return dictionary;
 }
 
+- (CGFloat)heightWithWidth:(CGFloat)width
+{
+    return self.size.width > 0 ? self.size.height * width / self.size.width : 0;
+}
+
 - (void)setSize:(CGSize)mediaSize
 {
     [self setObject:@(mediaSize.width) forKey:@"width"];
@@ -460,6 +465,30 @@ NSString* __usernames(NSArray*users)
             return @"Female";
         case kGenderTypeUnknown:
             return @"Unknown";
+    }
+}
+
++ (NSString *)genderCodeStringFromGender:(GenderType)gender
+{
+    switch (gender) {
+        case kGenderTypeMale:
+            return @"M";
+        case kGenderTypeFemale:
+            return @"F";
+        case kGenderTypeUnknown:
+            return @"??";
+    }
+}
+
++ (UIColor*) genderColorFromGender:(GenderType)gender
+{
+    switch (gender) {
+        case kGenderTypeMale:
+            return [UIColor maleColor];
+        case kGenderTypeFemale:
+            return [UIColor femaleColor];
+        case kGenderTypeUnknown:
+            return [UIColor unknownGenderColor];
     }
 }
 

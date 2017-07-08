@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface IndentedLabel : UILabel
-@property (nonatomic) IBInspectable UIEdgeInsets textInsets;
+@property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic) IBInspectable BOOL rounded;
 @end

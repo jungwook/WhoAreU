@@ -7,10 +7,11 @@
 //
 
 #import "PageTab.h"
-#import "PageTabs.h"
+#import "TabBar.h"
+#import "MessageCenter.h"
 
 @interface PageTab () <UITabBarDelegate>
-@property (weak, nonatomic) IBOutlet PageTabs *tabs;
+@property (weak, nonatomic) IBOutlet TabBar *tabs;
 @property (weak, nonatomic) UIPageViewController *pages;
 @property (strong, nonatomic) NSArray<UIViewController*> *viewControllers;
 @property (strong, nonatomic) NSArray<NSDictionary*> *tabItems;
@@ -24,47 +25,106 @@
     return UIStatusBarStyleLightContent;
 }
 
+#define VC(__I__) [self.storyboard instantiateViewControllerWithIdentifier:__I__]
+
 - (void)viewDidLoad
 {
-    __LF
     [super viewDidLoad];
-    self.tabs.selectedColor = [UIColor groupTableViewBackgroundColor];
-    self.tabs.defaultColor = [UIColor lightGrayColor];
+    self.tabs.equalWidth = NO;
     self.tabItems = @[
-                      [self title:@"Me" icon:@"pin2" identifier:@"ProfileMain"],
-                      [self title:@"Me" icon:@"pin2" identifier:@"UserProfile"],
-                      [self title:@"Users" icon:@"pin2" identifier:@"Users"],
-                      [self title:@"Chat" icon:@"pin2" identifier:@"Chats"],
-                      [self title:@"Channel" icon:@"pin2" identifier:@"Channels"],
+                      @{
+                          fTitle : @"Location",
+                          fIcon : @"pin",
+                          fDeselectedIcon : @"pin",
+                          fViewController : VC(@"Location"),
+                          fNavigationControllerRequired : @(YES),
+                          },
+                      @{
+                          fTitle : @"Users",
+                          fIcon : @"pin",
+                          fDeselectedIcon : @"pin",
+                          fViewController : VC(@"Cards"),
+                          },
+                      @{
+//                          fTitle : @"Users",
+                          fIcon : @"pin",
+                          fDeselectedIcon : @"pin",
+                          fViewController : VC(@"Users"),
+                          },
+                      @{
+//                          fTitle : @"Me",
+                          fIcon : @"user",
+                          fDeselectedIcon : @"user",
+                          fViewController : VC(@"ProfileMain"),
+                          },
+                      @{
+//                          fTitle : @"Me",
+                          fIcon : @"heart",
+                          fDeselectedIcon : @"heart",
+                          fViewController : VC(@"UserProfile"),
+                         },
+                      @{
+//                          fTitle : @"Chat",
+                          fIcon : @"message2",
+                          fDeselectedIcon : @"message2",
+                          fViewController : VC(@"Chats"),
+                          },
+                      @{
+//                          fTitle : @"Channel",
+                          fIcon : @"pin2",
+                          fDeselectedIcon : @"pin2",
+                          fViewController : VC(@"Channels"),
+                          },
                 ];
+    
+    
+    self.tabs.position = kTabBarIndicatorPositionTop;
     self.tabs.selectAction = ^(NSUInteger index) {
         UIPageViewControllerNavigationDirection direction = index > self.index ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
         self.index = index;
         [self.pages setViewControllers:@[self.viewControllers[index]] direction:direction animated:YES completion:nil];
     };
+    
+    self.tabs.backgroundColor = [UIColor whiteColor];
+    self.tabs.blurOn = YES;
+    self.tabs.selectedColor = [UIColor appColor];
+    self.tabs.deselectedColor = [[UIColor appColor] colorWithAlphaComponent:0.4];
+    self.tabs.indicatorColor = [UIColor appColor];
+    
+//    self.tabs.selectedColor = [UIColor whiteColor];
+//    self.tabs.deselectedColor = [UIColor colorWithWhite:0.9 alpha:0.4];
+//    self.tabs.indicatorColor = [UIColor whiteColor];
+//    self.tabs.backgroundColor = [UIColor appColor];
 }
 
-- (NSDictionary*) title:(id)title icon:(id)icon identifier:(id)identifier
+- (void)viewDidAppear:(BOOL)animated
 {
-    UIViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
-    if (vc) {
-        return @{
-                 fTitle : title,
-//                 fIcon : icon,
-                 fViewController : vc,
-                 };
-    }
-    else
-        return nil;
+    [super viewDidAppear:animated];
+    [MessageCenter startFromViewController:self];
 }
-
 
 -(void)setTabItems:(NSArray *)tabItems
 {
+    NSMutableArray *viewControllers = [NSMutableArray new];
     _tabItems = tabItems;
     
     self.tabs.items = self.tabItems;
-    self.viewControllers = [self.tabItems valueForKey:fViewController];
+    
+    [self.tabItems enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull tabItem, NSUInteger idx, BOOL * _Nonnull stop) {
+        UIViewController* vc = [tabItem objectForKey:fViewController];
+        id ncr = [tabItem objectForKey:fNavigationControllerRequired];
+        if (ncr && ![vc isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
+            [viewControllers addObject:nc];
+        }
+        else {
+            [viewControllers addObject:vc];
+        }
+    }];
+    
+//    self.viewControllers = [self.tabItems valueForKey:fViewController];
+    
+    self.viewControllers = viewControllers;
     [self.pages setViewControllers:@[self.viewControllers.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 

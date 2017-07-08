@@ -5,6 +5,7 @@
 + (instancetype)iconWithCode:(NSString *)code fontSize:(CGFloat)fontSize;
 - (UIImage *)imageWithSize:(CGSize)imageSize;
 - (UIImage *)image;
+- (UIImage *)imageWithColor:(UIColor*)color;
 
 - (void)addAttributes:(NSDictionary *)attributes;
 - (void)addAttribute:(NSString *)name value:(id)value;

@@ -141,6 +141,7 @@ typedef enum : NSUInteger {
 - (void) saved:(VoidBlock)handler;
 - (void) imageLoaded:(ImageBlock)block;
 - (void) thumbnailLoaded:(ImageBlock)block;
+- (CGFloat) heightWithWidth:(CGFloat)width;
 @end
 
 #pragma mark User
@@ -183,6 +184,9 @@ typedef enum : NSUInteger {
 - (UIColor*)    genderColor;
 + (NSArray*)    genders;
 + (NSArray*)    genderCodes;
++ (NSString *)  genderCodeStringFromGender:(GenderType)gender;
++ (UIColor*)    genderColorFromGender:(GenderType)gender;
+
 - (BOOL)        likes:(User*)user;
 - (void)        like:(User*)user;
 - (void)        unlike:(User*)user;
