@@ -23,6 +23,8 @@
 		121754901F07394200C7D64B /* Collection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1217548F1F07394200C7D64B /* Collection.m */; };
 		121754931F0C7AC800C7D64B /* LocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 121754921F0C7AC800C7D64B /* LocationViewController.m */; };
 		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
+		122114501F1EE3570066F6CC /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1221144F1F1EE3570066F6CC /* MainMenuViewController.m */; };
+		122114531F1EEC200066F6CC /* TGLGuillotineMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
 		122262821E8B6E8000F51FAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262811E8B6E8000F51FAE /* ViewController.m */; };
@@ -74,6 +76,19 @@
 		128C257E1EBAAA950003F502 /* UIView+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = 128C257D1EBAAA950003F502 /* UIView+Badge.m */; };
 		1299A2161F0DC45F004EE1A5 /* LocationAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2151F0DC45F004EE1A5 /* LocationAnnotationView.m */; };
 		1299A21C1F0E47C3004EE1A5 /* LocationLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A21B1F0E47C3004EE1A5 /* LocationLayout.m */; };
+		1299A2801F18E727004EE1A5 /* ClusterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A27F1F18E727004EE1A5 /* ClusterViewController.m */; };
+		1299A2831F18F278004EE1A5 /* ClusterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2821F18F278004EE1A5 /* ClusterController.m */; };
+		1299A2861F19BF33004EE1A5 /* ClusterAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2851F19BF33004EE1A5 /* ClusterAnnotation.m */; };
+		1299A2901F1B8FB7004EE1A5 /* FBAnnotationCluster.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2881F1B8FB6004EE1A5 /* FBAnnotationCluster.m */; };
+		1299A2911F1B8FB7004EE1A5 /* FBClusteringManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A28B1F1B8FB6004EE1A5 /* FBClusteringManager.m */; };
+		1299A2921F1B8FB7004EE1A5 /* FBQuadTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A28D1F1B8FB6004EE1A5 /* FBQuadTree.m */; };
+		1299A2931F1B8FB7004EE1A5 /* FBQuadTreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A28F1F1B8FB6004EE1A5 /* FBQuadTreeNode.m */; };
+		1299A2961F1CC591004EE1A5 /* FloatingActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2951F1CC591004EE1A5 /* FloatingActionButton.m */; };
+		1299A2DE1F1CE1C8004EE1A5 /* MDCPaletteExpansions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2D91F1CE1C8004EE1A5 /* MDCPaletteExpansions.m */; };
+		1299A2DF1F1CE1C8004EE1A5 /* MDCPaletteNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2DB1F1CE1C8004EE1A5 /* MDCPaletteNames.m */; };
+		1299A2E01F1CE1C8004EE1A5 /* MDCPalettes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2DD1F1CE1C8004EE1A5 /* MDCPalettes.m */; };
+		1299A2E31F1D8B57004EE1A5 /* MDCInkLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1299A2E21F1D8B57004EE1A5 /* MDCInkLayer.m */; };
+		1299A2E71F1DDE17004EE1A5 /* WhoAreAU.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1299A2E61F1DDE17004EE1A5 /* WhoAreAU.storyboard */; };
 		12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */ = {isa = PBXBuildFile; fileRef = 12A213441EB47DBD00DF79B0 /* Balloon.m */; };
 		12AEF8BB1EFF370900FA90BF /* HeaderMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 12AEF8BA1EFF370800FA90BF /* HeaderMenu.m */; };
 		12B7960B1EAA2C970041AE6C /* Engine.m in Sources */ = {isa = PBXBuildFile; fileRef = 12B7960A1EAA2C970041AE6C /* Engine.m */; };
@@ -171,6 +186,10 @@
 		121754921F0C7AC800C7D64B /* LocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationViewController.m; sourceTree = "<group>"; };
 		121E15B31E95FE59009CCF51 /* MediaPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPicker.h; sourceTree = "<group>"; };
 		121E15B41E95FE59009CCF51 /* MediaPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPicker.m; sourceTree = "<group>"; };
+		1221144E1F1EE3570066F6CC /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
+		1221144F1F1EE3570066F6CC /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
+		122114511F1EEC200066F6CC /* TGLGuillotineMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGLGuillotineMenu.h; sourceTree = "<group>"; };
+		122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGLGuillotineMenu.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1222627B1E8B6E8000F51FAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1222627D1E8B6E8000F51FAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -251,6 +270,33 @@
 		1299A2151F0DC45F004EE1A5 /* LocationAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAnnotationView.m; sourceTree = "<group>"; };
 		1299A21A1F0E47C3004EE1A5 /* LocationLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationLayout.h; sourceTree = "<group>"; };
 		1299A21B1F0E47C3004EE1A5 /* LocationLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationLayout.m; sourceTree = "<group>"; };
+		1299A27E1F18E727004EE1A5 /* ClusterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClusterViewController.h; sourceTree = "<group>"; };
+		1299A27F1F18E727004EE1A5 /* ClusterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClusterViewController.m; sourceTree = "<group>"; };
+		1299A2811F18F278004EE1A5 /* ClusterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClusterController.h; sourceTree = "<group>"; };
+		1299A2821F18F278004EE1A5 /* ClusterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClusterController.m; sourceTree = "<group>"; };
+		1299A2841F19BF33004EE1A5 /* ClusterAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClusterAnnotation.h; sourceTree = "<group>"; };
+		1299A2851F19BF33004EE1A5 /* ClusterAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClusterAnnotation.m; sourceTree = "<group>"; };
+		1299A2871F1B8FB6004EE1A5 /* FBAnnotationCluster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBAnnotationCluster.h; sourceTree = "<group>"; };
+		1299A2881F1B8FB6004EE1A5 /* FBAnnotationCluster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBAnnotationCluster.m; sourceTree = "<group>"; };
+		1299A2891F1B8FB6004EE1A5 /* FBAnnotationClustering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBAnnotationClustering.h; sourceTree = "<group>"; };
+		1299A28A1F1B8FB6004EE1A5 /* FBClusteringManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBClusteringManager.h; sourceTree = "<group>"; };
+		1299A28B1F1B8FB6004EE1A5 /* FBClusteringManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBClusteringManager.m; sourceTree = "<group>"; };
+		1299A28C1F1B8FB6004EE1A5 /* FBQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBQuadTree.h; sourceTree = "<group>"; };
+		1299A28D1F1B8FB6004EE1A5 /* FBQuadTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBQuadTree.m; sourceTree = "<group>"; };
+		1299A28E1F1B8FB6004EE1A5 /* FBQuadTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBQuadTreeNode.h; sourceTree = "<group>"; };
+		1299A28F1F1B8FB6004EE1A5 /* FBQuadTreeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBQuadTreeNode.m; sourceTree = "<group>"; };
+		1299A2941F1CC591004EE1A5 /* FloatingActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingActionButton.h; sourceTree = "<group>"; };
+		1299A2951F1CC591004EE1A5 /* FloatingActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FloatingActionButton.m; sourceTree = "<group>"; };
+		1299A2D71F1CE1C8004EE1A5 /* MaterialPalettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialPalettes.h; sourceTree = "<group>"; };
+		1299A2D81F1CE1C8004EE1A5 /* MDCPaletteExpansions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDCPaletteExpansions.h; sourceTree = "<group>"; };
+		1299A2D91F1CE1C8004EE1A5 /* MDCPaletteExpansions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDCPaletteExpansions.m; sourceTree = "<group>"; };
+		1299A2DA1F1CE1C8004EE1A5 /* MDCPaletteNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDCPaletteNames.h; sourceTree = "<group>"; };
+		1299A2DB1F1CE1C8004EE1A5 /* MDCPaletteNames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDCPaletteNames.m; sourceTree = "<group>"; };
+		1299A2DC1F1CE1C8004EE1A5 /* MDCPalettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDCPalettes.h; sourceTree = "<group>"; };
+		1299A2DD1F1CE1C8004EE1A5 /* MDCPalettes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDCPalettes.m; sourceTree = "<group>"; };
+		1299A2E11F1D8B57004EE1A5 /* MDCInkLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDCInkLayer.h; sourceTree = "<group>"; };
+		1299A2E21F1D8B57004EE1A5 /* MDCInkLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDCInkLayer.m; sourceTree = "<group>"; };
+		1299A2E61F1DDE17004EE1A5 /* WhoAreAU.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = WhoAreAU.storyboard; sourceTree = "<group>"; };
 		12A213431EB47DBD00DF79B0 /* Balloon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Balloon.h; sourceTree = "<group>"; };
 		12A213441EB47DBD00DF79B0 /* Balloon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Balloon.m; sourceTree = "<group>"; };
 		12AEF8B91EFF370800FA90BF /* HeaderMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeaderMenu.h; sourceTree = "<group>"; };
@@ -386,6 +432,17 @@
 			name = Location;
 			sourceTree = "<group>";
 		};
+		1221144D1F1EE3400066F6CC /* Menu Controller */ = {
+			isa = PBXGroup;
+			children = (
+				122114511F1EEC200066F6CC /* TGLGuillotineMenu.h */,
+				122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */,
+				1221144E1F1EE3570066F6CC /* MainMenuViewController.h */,
+				1221144F1F1EE3570066F6CC /* MainMenuViewController.m */,
+			);
+			name = "Menu Controller";
+			sourceTree = "<group>";
+		};
 		1222626E1E8B6E8000F51FAE = {
 			isa = PBXGroup;
 			children = (
@@ -416,6 +473,7 @@
 				122262801E8B6E8000F51FAE /* ViewController.h */,
 				122262811E8B6E8000F51FAE /* ViewController.m */,
 				122262831E8B6E8000F51FAE /* Main.storyboard */,
+				1299A2E61F1DDE17004EE1A5 /* WhoAreAU.storyboard */,
 				12C74CD41EE1793500F6480C /* Profile.h */,
 				12C74CD51EE1793500F6480C /* Profile.m */,
 				122262861E8B6E8000F51FAE /* Assets.xcassets */,
@@ -544,6 +602,8 @@
 				12F1678C1EF21C260025752E /* PageTab.m */,
 				125690A81EF6AB3000723771 /* ProfileMain.h */,
 				125690A91EF6AB3000723771 /* ProfileMain.m */,
+				1221144D1F1EE3400066F6CC /* Menu Controller */,
+				1299A27D1F18E6C4004EE1A5 /* Cluster */,
 				121754941F0C7BB800C7D64B /* Location */,
 				12322CAF1EFB664E00A0BBDD /* Profile subs */,
 			);
@@ -613,9 +673,50 @@
 				121754891F05FDF400C7D64B /* MediaPlayer.m */,
 				1217548E1F07394200C7D64B /* Collection.h */,
 				1217548F1F07394200C7D64B /* Collection.m */,
+				1299A2941F1CC591004EE1A5 /* FloatingActionButton.h */,
+				1299A2951F1CC591004EE1A5 /* FloatingActionButton.m */,
+				1299A2D61F1CE1B0004EE1A5 /* Pallete */,
 				12C74CE51EE23C4900F6480C /* MediaPage */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		1299A27D1F18E6C4004EE1A5 /* Cluster */ = {
+			isa = PBXGroup;
+			children = (
+				1299A27E1F18E727004EE1A5 /* ClusterViewController.h */,
+				1299A27F1F18E727004EE1A5 /* ClusterViewController.m */,
+				1299A2841F19BF33004EE1A5 /* ClusterAnnotation.h */,
+				1299A2851F19BF33004EE1A5 /* ClusterAnnotation.m */,
+				1299A2811F18F278004EE1A5 /* ClusterController.h */,
+				1299A2821F18F278004EE1A5 /* ClusterController.m */,
+				1299A2871F1B8FB6004EE1A5 /* FBAnnotationCluster.h */,
+				1299A2881F1B8FB6004EE1A5 /* FBAnnotationCluster.m */,
+				1299A2891F1B8FB6004EE1A5 /* FBAnnotationClustering.h */,
+				1299A28A1F1B8FB6004EE1A5 /* FBClusteringManager.h */,
+				1299A28B1F1B8FB6004EE1A5 /* FBClusteringManager.m */,
+				1299A28C1F1B8FB6004EE1A5 /* FBQuadTree.h */,
+				1299A28D1F1B8FB6004EE1A5 /* FBQuadTree.m */,
+				1299A28E1F1B8FB6004EE1A5 /* FBQuadTreeNode.h */,
+				1299A28F1F1B8FB6004EE1A5 /* FBQuadTreeNode.m */,
+				1299A2E11F1D8B57004EE1A5 /* MDCInkLayer.h */,
+				1299A2E21F1D8B57004EE1A5 /* MDCInkLayer.m */,
+			);
+			name = Cluster;
+			sourceTree = "<group>";
+		};
+		1299A2D61F1CE1B0004EE1A5 /* Pallete */ = {
+			isa = PBXGroup;
+			children = (
+				1299A2D71F1CE1C8004EE1A5 /* MaterialPalettes.h */,
+				1299A2D81F1CE1C8004EE1A5 /* MDCPaletteExpansions.h */,
+				1299A2D91F1CE1C8004EE1A5 /* MDCPaletteExpansions.m */,
+				1299A2DA1F1CE1C8004EE1A5 /* MDCPaletteNames.h */,
+				1299A2DB1F1CE1C8004EE1A5 /* MDCPaletteNames.m */,
+				1299A2DC1F1CE1C8004EE1A5 /* MDCPalettes.h */,
+				1299A2DD1F1CE1C8004EE1A5 /* MDCPalettes.m */,
+			);
+			name = Pallete;
 			sourceTree = "<group>";
 		};
 		12AEF8B81EFE859500FA90BF /* Chat */ = {
@@ -774,6 +875,7 @@
 				12C74CF21EE2593A00F6480C /* FollowCell.xib in Resources */,
 				1245874F1EBF40BD00746AAF /* NSDateTimeAgo.bundle in Resources */,
 				12C74D071EE53D1F00F6480C /* AddCommentCell.xib in Resources */,
+				1299A2E71F1DDE17004EE1A5 /* WhoAreAU.storyboard in Resources */,
 				12D0F2F41EC6BFDA004F2E3E /* material-design-icons.ttf in Resources */,
 				122262851E8B6E8000F51FAE /* Main.storyboard in Resources */,
 				12C74CF41EE259BC00F6480C /* FollowingUserCell.xib in Resources */,
@@ -854,18 +956,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1299A2921F1B8FB7004EE1A5 /* FBQuadTree.m in Sources */,
 				12D0F2FB1EC7F5E1004F2E3E /* NSData+GZIP.m in Sources */,
+				1299A2901F1B8FB7004EE1A5 /* FBAnnotationCluster.m in Sources */,
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
 				124587531EC0248700746AAF /* Channels.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
+				1299A2831F18F278004EE1A5 /* ClusterController.m in Sources */,
 				125690AA1EF6AB3000723771 /* ProfileMain.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
+				1299A2DF1F1CE1C8004EE1A5 /* MDCPaletteNames.m in Sources */,
 				12BE6F3B1EF9328600074870 /* MainTabs.m in Sources */,
 				121754931F0C7AC800C7D64B /* LocationViewController.m in Sources */,
 				12D0F2EC1EC5644E004F2E3E /* MessageCenter.m in Sources */,
 				12C74D101EE78F1C00F6480C /* UserCell.m in Sources */,
 				1217548A1F05FDF400C7D64B /* MediaPlayer.m in Sources */,
 				120A02451ED92C5400547CDA /* DropDownNavigationItem.m in Sources */,
+				1299A2961F1CC591004EE1A5 /* FloatingActionButton.m in Sources */,
 				120A02421ED8602300547CDA /* PopupMenu.m in Sources */,
 				124587501EBF40BD00746AAF /* NSDate+TimeAgo.m in Sources */,
 				123AF15C1EA07DF300ED0547 /* Preview.m in Sources */,
@@ -883,6 +990,7 @@
 				124587561EC3F2B100746AAF /* MediaView.m in Sources */,
 				1289C3A01EA99F8300A69146 /* BaseFunctions.m in Sources */,
 				1225F01C1EB02B1E002763A0 /* ModalAnimator.m in Sources */,
+				122114501F1EE3570066F6CC /* MainMenuViewController.m in Sources */,
 				12C74CDF1EE1828C00F6480C /* Profile.m in Sources */,
 				12C74CEA1EE23C7D00F6480C /* MediaPageCell.m in Sources */,
 				12C74CD01EDEE16D00F6480C /* ProfilePhoto.m in Sources */,
@@ -890,7 +998,9 @@
 				12C74D151EE7B3E600F6480C /* BlurView.m in Sources */,
 				1299A21C1F0E47C3004EE1A5 /* LocationLayout.m in Sources */,
 				12C74CF01EE2592D00F6480C /* FollowCell.m in Sources */,
+				122114531F1EEC200066F6CC /* TGLGuillotineMenu.m in Sources */,
 				12F96D561EB453620054DA6C /* ChatView.m in Sources */,
+				1299A2931F1B8FB7004EE1A5 /* FBQuadTreeNode.m in Sources */,
 				124587481EBD92F400746AAF /* BalloonLabel.m in Sources */,
 				124587451EBD61CF00746AAF /* Refresh.m in Sources */,
 				12082F941E9376D700E8D051 /* ShadowLabel.m in Sources */,
@@ -911,24 +1021,30 @@
 				1289C39E1EA7956000A69146 /* IndentedLabel.m in Sources */,
 				1225F0201EB07491002763A0 /* Credits.m in Sources */,
 				12C74CD91EE17C4B00F6480C /* ProfileCell.m in Sources */,
+				1299A2E31F1D8B57004EE1A5 /* MDCInkLayer.m in Sources */,
 				12BE6F3E1EF9333B00074870 /* TabBar.m in Sources */,
 				12843FF91EECC72C00AF0BDE /* Photo.m in Sources */,
 				12C74CFA1EE43E2C00F6480C /* CompassView.m in Sources */,
 				12A213451EB47DBD00DF79B0 /* Balloon.m in Sources */,
 				122262DA1E8B822B00F51FAE /* ObjectIdStore.m in Sources */,
+				1299A2911F1B8FB7004EE1A5 /* FBClusteringManager.m in Sources */,
 				122DFAB61EDCF5A700581C6B /* Setting.m in Sources */,
 				12DE01641EDC0A0B00E8D6DC /* SignupAndLogin.m in Sources */,
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				12C74CED1EE2533400F6480C /* PopupView.m in Sources */,
 				1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */,
+				1299A2DE1F1CE1C8004EE1A5 /* MDCPaletteExpansions.m in Sources */,
 				121754871F0494A200C7D64B /* Cards.m in Sources */,
 				1215C5AA1EA6F88000BA509E /* Compass.m in Sources */,
 				123AF15F1EA1AF7500ED0547 /* Chat.m in Sources */,
 				12D0F2F21EC6BA19004F2E3E /* MaterialDesignSymbol.m in Sources */,
+				1299A2E01F1CE1C8004EE1A5 /* MDCPalettes.m in Sources */,
 				121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */,
 				12C74D181EE7C55D00F6480C /* SelectionTab.m in Sources */,
 				1222627C1E8B6E8000F51FAE /* main.m in Sources */,
 				121754821F0484DB00C7D64B /* Card.m in Sources */,
+				1299A2861F19BF33004EE1A5 /* ClusterAnnotation.m in Sources */,
+				1299A2801F18E727004EE1A5 /* ClusterViewController.m in Sources */,
 				1299A2161F0DC45F004EE1A5 /* LocationAnnotationView.m in Sources */,
 				12C74D0A1EE53D2E00F6480C /* AddCommentCell.m in Sources */,
 				121723081ECFEEF100494A4E /* ChatRow.m in Sources */,

@@ -11,7 +11,16 @@
 
 #import "User.h"
 #import <objc/runtime.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSObjCRuntime.h>
 
+
+void        __OP(VoidBlock action);
+BOOL        Coords2DEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2);
+BOOL        Coords2DNotEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2);
+void        __image(id file, ImageBlock action);
 CALayer*    __drawImageOnLayer(UIImage *image, CGSize size);
 UIImage*    __scaleImage(UIImage* image, CGSize size);
 void        __drawImage(UIImage *image, UIView* view);
@@ -27,7 +36,7 @@ CGFloat     __widthForNumberOfCells(UICollectionView* cv, UICollectionViewFlowLa
 UIView*     __viewWithTag(UIView *view, NSInteger tag);
 PFGeoPoint* __pointFromCLLocation(CLLocation* location);
 PFGeoPoint* __pointFromCoordinates(CLLocationCoordinate2D  coordinates);
-
+CGPoint     CGRectCenter(CGRect rect);
 NSString*   __dateString(NSDate* date);
 void dispatch(long identifier, VoidBlock action);
 void dispatch_background(VoidBlock action);
@@ -35,6 +44,14 @@ void dispatch_foreground(VoidBlock action);
 
 void        __alert(NSString* title, NSString* message, AlertAction okAction, AlertAction cancelAction, UIViewController* parent);
 id          __dictionary(id object);
+
+@interface Operations : NSObject
++ (instancetype)operationsWithCompletionBlock:(VoidBlock)action;
++ (instancetype)operationsWithCompletionBlock:(VoidBlock)action operationsPerThread:(NSUInteger)operationsPerThread;
+
+- (void)addOperationsFromArrayOfObject:(NSArray*)objects
+                             execution:(ObjectIndexBlock)action;
+@end
 
 @interface UIColor (extensions)
 - (NSString*)stringValue;
@@ -118,6 +135,7 @@ id          __dictionary(id object);
 @interface NSArray (extensions)
 - (NSArray<User*>*) sortedArrayOfUsersByDistance:(NSArray<User*>*)users;
 - (id) objectAtIndexRow:(NSIndexPath*)indexPath;
+- (void)concurrentBlocksUsingObjects:(void (NS_NOESCAPE ^)(id, NSUInteger idx, BOOL *stop))block;
 @end
 
 @interface UIView(Radius)
@@ -143,11 +161,17 @@ id          __dictionary(id object);
 @interface MKMapView(extensions)
 @property (readonly, nonatomic) id <MKAnnotation> annotationClosestToCenter;
 @property (readonly, nonatomic) NSArray <id<MKAnnotation>> *visibleAnnotations;
+@property (readonly, nonatomic) CGFloat zoomLevel;
 
 - (id<MKAnnotation>)annotationClosestToCenterWithClass:(__unsafe_unretained Class)classType;
 - (__kindof MKAnnotationView*)annotationViewClosesToCenterWithClass:(__unsafe_unretained Class)classType;
 
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
+                  zoomLevel:(NSUInteger)zoomLevel
+                   animated:(BOOL)animated;
+- (void)setZoomLevel:(CGFloat)zoomLevel
+            animated:(BOOL)animated;
+- (void)setZoomLevel:(CGFloat)zoomLevel;
 @end
-
 
 #endif /* BaseFunctions_h */

@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PageTab : UIViewController
-
+@interface PageTab : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource>
+@property (weak, nonatomic) UIPageViewController *pages;
 @end

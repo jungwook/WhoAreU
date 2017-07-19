@@ -12,6 +12,7 @@
 
 @interface Cards ()
 @property (nonatomic, strong) NSArray <User*>*users;
+@property (weak, nonatomic) IBOutlet Collection *collectionView;
 @end
 
 @implementation Cards
@@ -21,8 +22,10 @@ static NSString * const reuseIdentifier = @"Card";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    ((Collection*)self.collectionView).visibleCellChangedBlock = ^(Card* cell) {
-        [cell playVideoIfVideo];
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
+    self.collectionView.visibleCellChangedBlock = ^(__kindof UICollectionViewCell *cell) {
+        [(Card*)cell playVideoIfVideo];
     };
     
     self.collectionView.backgroundColor = [UIColor groupTableViewBackgroundColor];

@@ -72,7 +72,7 @@
 #define fIcons @"icons"
 #define fIcon @"icon"
 #define fDeselectedIcon @"deselectedIcon"
-#define fNavigationControllerRequired @"navigationController"
+#define fNavigationControllerNotRequired @"navigationControllerNotRequired"
 #define fViewController @"viewController"
 
 #define kStringNull @""
@@ -104,17 +104,24 @@
 
 #define kVideoThumbnailWidth 320
 
+//#define __LF NSLog(@"%s", __FUNCTION__);
+
+#define NSLog(FORMAT, ...) fprintf(stderr,"LOG>> %s %s\n", __func__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+//#define __LF NSLog(@"%s", __func__);
+#define __LF NSLog(@"");
+
 #define WSLOCATION @"http://parse.kr:8080"
 //#define WSLOCATION @"http://localhost:8080"
 #define S3LOCATION @"http://whoareu.s3.ap-northeast-2.amazonaws.com/"
+
 #define FileURL(__X__) [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:__X__]
+
 #define LogError NSLog(@"ERROR[%s]:%@", __func__, error.localizedDescription);
 
 #define SIMULATOR_FETCH_INTERVAL 10.0f
 #define ASSERT_NOT_NULL(__A__) NSAssert(__A__, @"__A__ cannot be nil")
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-#define __LF NSLog(@"%s", __FUNCTION__);
 #define degreesToRadians(__x__) (M_PI * __x__ / 180.0f)
 #define radiansToDegrees(__x__) (__x__ * 180.0f / M_PI)
 
@@ -152,6 +159,7 @@ typedef void(^UserViewRectBlock)(User * user, UIView* view, CGRect rect);
 typedef void(^UserBlock)(User* user);
 typedef void(^ImageBlock)(UIImage* image);
 typedef void(^ArrayBlock)(NSArray* array);
+typedef void(^ObjectIndexBlock)(id object, NSUInteger idx);
 typedef void(^StringBlock)(NSString* string);
 typedef void(^MediaBlock)(Media *media);
 typedef void(^KeyboardEventBlock)(CGFloat duration,UIViewAnimationOptions options, CGRect keyboardFrame);
@@ -160,6 +168,7 @@ typedef void(^AlertAction)(UIAlertAction *action);
 typedef void(^ErrorBlock)(NSError* error);
 typedef UNNotificationPresentationOptions(^PushBlock)(id message);
 typedef UNNotificationPresentationOptions(^PushHandlerBlock)(id payload, id senderId, id channelId);
+
 
 
 #endif /* Definitions_h */

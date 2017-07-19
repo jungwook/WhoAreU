@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "Card.h"
 
-@interface Cards : UICollectionViewController <UICollectionViewDelegateFlowLayout>
+@interface Cards : UIViewController <UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end

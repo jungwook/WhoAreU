@@ -10,6 +10,36 @@
 #import "BaseFunctions.h"
 #import "MaterialDesignSymbol.h"
 
+void __TT(VoidBlock action)
+{
+    [[NSOperationQueue new] addOperationWithBlock:action];
+}
+
+void __MT(VoidBlock action)
+{
+    [[NSOperationQueue mainQueue] addOperationWithBlock:action];
+}
+
+BOOL Coords2DEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2)
+{
+    return (c1.latitude == c2.latitude && c1.longitude == c2.longitude);
+}
+
+BOOL Coords2DNotEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2)
+{
+    return !Coords2DEquals(c1, c2);
+}
+
+void __image(id file, ImageBlock action)
+{
+    [S3File getImageFromFile:file imageBlock:action];
+}
+
+CGPoint CGRectCenter(CGRect rect)
+{
+    return CGPointMake(rect.origin.x+rect.size.width/2.f, rect.origin.y+rect.size.height/2.f);
+}
+
 CALayer* __drawImageOnLayer(UIImage *image, CGSize size)
 {
     CALayer *layer = [CALayer layer];
@@ -741,6 +771,10 @@ id __dictionary(id object)
     return [self objectAtIndex:indexPath.row];
 }
 
+- (void)concurrentBlocksUsingObjects:(void (^)(id, NSUInteger, BOOL *))block
+{
+    
+}
 @end
 
 NSString const *topRadiusKey = @"UIView_topRadiusKey";
@@ -908,21 +942,105 @@ NSString const *topRadiusKey = @"UIView_topRadiusKey";
             CLLocation *l = LocationFromCoords(annotation.coordinate);
             CLLocation *center = LocationFromCoords(self.centerCoordinate);
             CGFloat d = [l distanceFromLocation:center];
-//            NSLog(@"ANN:%.2f", d);
             if (closest > d) {
                 closest = d;
                 closestAnnotation = annotation;
             }
         }
         else {
-//            NSLog(@"CLASS:%@", NSStringFromClass([annotation class]));
-//            NSLog(@"CLASS TYPE:%@", NSStringFromClass(classType));
         }
     }];
-//    NSLog(@"CLOSEST ANN:%.2f", closest);
     return closestAnnotation;
 }
 
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
+                  zoomLevel:(NSUInteger)zoomLevel
+                   animated:(BOOL)animated
+{
+    CGFloat width = CGRectGetWidth(self.frame);
+    MKCoordinateSpan span = MKCoordinateSpanMake(0, 360.f/pow(2, zoomLevel)*width/256);
+    [self setRegion:MKCoordinateRegionMake(centerCoordinate, span) animated:animated];
+}
+
+- (void)setZoomLevel:(CGFloat)zoomLevel animated:(BOOL)animated
+{
+    CGFloat width = CGRectGetWidth(self.frame);
+    MKCoordinateSpan span = MKCoordinateSpanMake(0, 360.f/pow(2, zoomLevel)*width/256);
+    [self setRegion:MKCoordinateRegionMake(self.centerCoordinate, span) animated:animated];
+}
+
+- (void)setZoomLevel:(CGFloat)zoomLevel
+{
+    [self setZoomLevel:zoomLevel animated:NO];
+}
+
+-(CGFloat)zoomLevel
+{
+    return log2(360 * ((self.frame.size.width/256) / self.region.span.longitudeDelta));
+}
+
+@end
+
+
+@interface Operations ()
+@property (nonatomic) NSUInteger operationsPerThread;
+@property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSBlockOperation *completionBlock;
+@end
+
+@implementation Operations
+
++ (instancetype)operationsWithCompletionBlock:(VoidBlock)action
+{
+    Operations *op = [Operations new];
+    op.completionBlock = [NSBlockOperation blockOperationWithBlock:action];
+    
+    return op;
+}
+
++ (instancetype)operationsWithCompletionBlock:(VoidBlock)action operationsPerThread:(NSUInteger)operationsPerThread
+{
+    Operations *op = [Operations new];
+    op.completionBlock = [NSBlockOperation blockOperationWithBlock:action];
+    op.operationsPerThread = operationsPerThread;
+    
+    return op;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self setupVariables];
+    }
+    return self;
+}
+
+- (void)setupVariables
+{
+    self.queue = [NSOperationQueue new];
+    self.operationsPerThread = 11;
+}
+
+- (void)setOperationsPerThread:(NSUInteger)operationsPerThread
+{
+    _operationsPerThread = operationsPerThread;
+    self.queue.maxConcurrentOperationCount = self.operationsPerThread;
+}
+
+- (void)addOperationsFromArrayOfObject:(NSArray*)objects execution:(ObjectIndexBlock _Nonnull)action
+{
+    [[NSOperationQueue new] addOperationWithBlock:^{
+        [objects enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+                action(obj, idx);
+            }];
+            [self.queue addOperation:blockOperation];
+        }];
+        [self.queue waitUntilAllOperationsAreFinished];
+        [self.queue addOperation:self.completionBlock];
+    }];
+}
 @end
 
 void dispatch_background(VoidBlock action)
