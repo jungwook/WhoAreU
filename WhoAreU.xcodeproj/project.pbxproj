@@ -24,7 +24,8 @@
 		121754931F0C7AC800C7D64B /* LocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 121754921F0C7AC800C7D64B /* LocationViewController.m */; };
 		121E15B51E95FE59009CCF51 /* MediaPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 121E15B41E95FE59009CCF51 /* MediaPicker.m */; };
 		122114501F1EE3570066F6CC /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1221144F1F1EE3570066F6CC /* MainMenuViewController.m */; };
-		122114531F1EEC200066F6CC /* TGLGuillotineMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */; };
+		122114561F1F82050066F6CC /* MDCInkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 122114551F1F82050066F6CC /* MDCInkView.m */; };
+		122114591F202D880066F6CC /* Animations.m in Sources */ = {isa = PBXBuildFile; fileRef = 122114581F202D880066F6CC /* Animations.m */; };
 		1222627C1E8B6E8000F51FAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627B1E8B6E8000F51FAE /* main.m */; };
 		1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1222627E1E8B6E8000F51FAE /* AppDelegate.m */; };
 		122262821E8B6E8000F51FAE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 122262811E8B6E8000F51FAE /* ViewController.m */; };
@@ -188,8 +189,10 @@
 		121E15B41E95FE59009CCF51 /* MediaPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPicker.m; sourceTree = "<group>"; };
 		1221144E1F1EE3570066F6CC /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
 		1221144F1F1EE3570066F6CC /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
-		122114511F1EEC200066F6CC /* TGLGuillotineMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGLGuillotineMenu.h; sourceTree = "<group>"; };
-		122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGLGuillotineMenu.m; sourceTree = "<group>"; };
+		122114541F1F82050066F6CC /* MDCInkView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDCInkView.h; sourceTree = "<group>"; };
+		122114551F1F82050066F6CC /* MDCInkView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDCInkView.m; sourceTree = "<group>"; };
+		122114571F202D880066F6CC /* Animations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animations.h; sourceTree = "<group>"; };
+		122114581F202D880066F6CC /* Animations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Animations.m; sourceTree = "<group>"; };
 		122262771E8B6E8000F51FAE /* WhoAreU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoAreU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1222627B1E8B6E8000F51FAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1222627D1E8B6E8000F51FAE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -435,8 +438,6 @@
 		1221144D1F1EE3400066F6CC /* Menu Controller */ = {
 			isa = PBXGroup;
 			children = (
-				122114511F1EEC200066F6CC /* TGLGuillotineMenu.h */,
-				122114521F1EEC200066F6CC /* TGLGuillotineMenu.m */,
 				1221144E1F1EE3570066F6CC /* MainMenuViewController.h */,
 				1221144F1F1EE3570066F6CC /* MainMenuViewController.m */,
 			);
@@ -502,6 +503,8 @@
 				122262B21E8B76EC00F51FAE /* WhoAreU.pch */,
 				1289C39F1EA99F8300A69146 /* BaseFunctions.m */,
 				1289C3A11EA99F9500A69146 /* BaseFunctions.h */,
+				122114571F202D880066F6CC /* Animations.h */,
+				122114581F202D880066F6CC /* Animations.m */,
 				12D0F2F71EC71D39004F2E3E /* Definitions.h */,
 			);
 			name = "Supporting Files";
@@ -701,6 +704,8 @@
 				1299A28F1F1B8FB6004EE1A5 /* FBQuadTreeNode.m */,
 				1299A2E11F1D8B57004EE1A5 /* MDCInkLayer.h */,
 				1299A2E21F1D8B57004EE1A5 /* MDCInkLayer.m */,
+				122114541F1F82050066F6CC /* MDCInkView.h */,
+				122114551F1F82050066F6CC /* MDCInkView.m */,
 			);
 			name = Cluster;
 			sourceTree = "<group>";
@@ -962,6 +967,7 @@
 				126154141E8CCC7900F2AD4F /* PhotoView.m in Sources */,
 				124587531EC0248700746AAF /* Channels.m in Sources */,
 				122262821E8B6E8000F51FAE /* ViewController.m in Sources */,
+				122114561F1F82050066F6CC /* MDCInkView.m in Sources */,
 				1299A2831F18F278004EE1A5 /* ClusterController.m in Sources */,
 				125690AA1EF6AB3000723771 /* ProfileMain.m in Sources */,
 				122262D71E8B81FC00F51FAE /* S3File.m in Sources */,
@@ -998,7 +1004,6 @@
 				12C74D151EE7B3E600F6480C /* BlurView.m in Sources */,
 				1299A21C1F0E47C3004EE1A5 /* LocationLayout.m in Sources */,
 				12C74CF01EE2592D00F6480C /* FollowCell.m in Sources */,
-				122114531F1EEC200066F6CC /* TGLGuillotineMenu.m in Sources */,
 				12F96D561EB453620054DA6C /* ChatView.m in Sources */,
 				1299A2931F1B8FB7004EE1A5 /* FBQuadTreeNode.m in Sources */,
 				124587481EBD92F400746AAF /* BalloonLabel.m in Sources */,
@@ -1033,6 +1038,7 @@
 				1222627F1E8B6E8000F51FAE /* AppDelegate.m in Sources */,
 				12C74CED1EE2533400F6480C /* PopupView.m in Sources */,
 				1225F01D1EB02B1E002763A0 /* ModalViewController.m in Sources */,
+				122114591F202D880066F6CC /* Animations.m in Sources */,
 				1299A2DE1F1CE1C8004EE1A5 /* MDCPaletteExpansions.m in Sources */,
 				121754871F0494A200C7D64B /* Cards.m in Sources */,
 				1215C5AA1EA6F88000BA509E /* Compass.m in Sources */,

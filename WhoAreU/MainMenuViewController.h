@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Animations.h"
 
-@interface MainMenuViewController : UIViewController
+@interface MainMenuViewController : UIViewController <CAAnimationDelegate>
 
 @end

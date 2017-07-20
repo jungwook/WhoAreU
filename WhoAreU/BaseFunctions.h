@@ -16,7 +16,8 @@
 #import <Foundation/NSRange.h>
 #import <Foundation/NSObjCRuntime.h>
 
-
+NSString*   NSStringFromCGAffineTransform(CGAffineTransform transform);
+void        setAnchorPoint(CGPoint anchorPoint, UIView *view);
 void        __OP(VoidBlock action);
 BOOL        Coords2DEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2);
 BOOL        Coords2DNotEquals(CLLocationCoordinate2D c1, CLLocationCoordinate2D c2);
@@ -113,6 +114,7 @@ id          __dictionary(id object);
 @end
 
 @interface UIView (extensions)
+@property (nonatomic) CGPoint anchorPoint;
 - (void) drawImage:(UIImage*)image;
 @end
 
